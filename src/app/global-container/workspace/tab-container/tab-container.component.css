@@ -1,0 +1,37 @@
+:host{
+    position: absolute;    
+    height: 590px;
+    top: -5px;
+    bottom: 20px;
+    left: 290px;/*si quieres que estén pegaditos, ponle 270*/
+    right: 8px;
+    background-color: #9fb0da54;/*el definitivo más reciente: #9faecc54*//*#a539a854*//*#b592c454*//*#c5a0d454*//*#977ca154*//*grises: #a2adc254*//*gris azulado: #a8badb54*/
+   
+    /*background-color: #d5d5e4;*/
+
+    
+    padding: 20px;
+
+    /*box-shadow: -10px -10px 15px rgba(255,255,255,0.5),
+            10px 7px 15px rgba(70,70,70,0.12);*/
+}
+
+.tab-container, .normal{
+    border-radius: 15px;
+    border: 1px solid grey;
+    height: 100%;
+    width: 99%;
+
+    background: rgb(233,237,251);
+    background: linear-gradient(90deg, rgba(233,237,251,1) 0%, rgba(224,224,238,1) 59%);
+    /*background: rgb(233,237,251);
+    background: linear-gradient(90deg, rgba(233,237,251,1) 0%, rgba(224,224,238,1) 100%);*/
+
+    box-shadow: -10px -10px 15px rgba(255,255,255,0.5),
+            10px 7px 15px rgba(70,70,70,0.12);
+}
+
+.large{
+    height: 120%;
+}
+

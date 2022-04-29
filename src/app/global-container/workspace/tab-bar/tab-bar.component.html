@@ -1,0 +1,20 @@
+<div class = "input_area">
+    <input id="input-file" class="form-control" type="text" placeholder="new file name"/>
+    <button class="option-button" (click)="addFile()"><i class="bi bi-plus-circle" style="font-size: 23px;"></i></button><!--<img src="./assets/more.png" width="24px"/>-->
+    <div id="setImage">
+        <button class="option-button" (click)="spreadOutClickFile()" style="width: 35px; border-radius: 0px 10px 10px 0px;">
+            <i class="bi bi-upload" style="font-size: 20px;"></i><!--<img src="assets/upload-icon.png" width="26px" style="margin-left: -3px;"/>-->
+            <input id="fileButton" type="file" style="display: none;"/><!--tendré que colocar algo en accept???-->
+        </button>
+        
+    </div>
+</div>
+<div class = "list-area">
+    <!--<ng-container ngIf="{{filesName.length > 0}}">-->
+        <ul class="list-group">      
+            <li class="list-group-item item" *ngFor="let filename of CRL_files; index as indice" (click)="selectTab(indice)">
+                {{filename.name}}
+            </li>
+        </ul>
+    <!--</ng-container>-->
+</div>

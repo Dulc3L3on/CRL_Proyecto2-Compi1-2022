@@ -1,0 +1,12 @@
+<div class = "file-section">
+    <app-tab-bar (senderFiles)="receiveFiles($event)" (senderSelectedFile)="receiveActiveFile($event)"></app-tab-bar>
+</div>
+
+<div class="tab-section">
+    <app-tab-container [CRL_Active_Files] = "CRL_Active_Files" (closerTab)="deleteTab($event)" [sizeAdapter]="sizeType"></app-tab-container>
+</div>
+
+<div class="console-section">
+    <app-console (minimaxer)="minimaxer($event)"></app-console>
+</div>
+<!--terminado xD-->

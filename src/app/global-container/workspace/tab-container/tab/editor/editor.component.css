@@ -1,0 +1,27 @@
+.app-ace-editor {
+    border: 2px solid #f8f9fa;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    width: 100%;
+    height: 455px;
+  }
+
+.large-editor{
+    height: 566px;
+}
+
+.location-container{
+    display: flex;
+    border-radius: 0px 0px 15px 15px;
+    padding: 8px;
+
+    background-color: rgba(132, 111, 150, 0.651);/*rgb(149, 122, 175)*/
+    width: 99.8%;
+    height: 42px;
+    margin-left: 1px;
+    margin-right: 1px;
+    font-family: 'Raleway', sans-serif;
+    color: black;
+
+    box-shadow: -10px -10px 15px rgba(255,255,255,0.5),
+            10px 7px 15px rgba(70,70,70,0.12);
+}

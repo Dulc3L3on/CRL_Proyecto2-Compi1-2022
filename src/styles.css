@@ -1,1 +1,17 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Alumni+Sans+Inline+One&family=Anybody:wght@300;500&family=Cookie&family=Cutive+Mono&family=Handlee&family=Jost&family=Lobster&family=Lobster+Two&family=Manrope:wght@600&family=Monoton&family=Poppins&family=Raleway&family=Righteous&family=Rubik+Glitch&family=Staatliches&display=swap');
+
+/*:host{
+    background-color: rgba(0, 0, 0, 0.788);
+}*//*No funciona aquí tpco el background...*/
+
+html, body {
+    height: 95%;
+    /*background-color: rgba(0, 0, 0, 0.788);*//*solo aquí funcionó xD*/
+    
+ }
+body {     
+    margin: 0px; 
+    font-family: Roboto, "Helvetica Neue", sans-serif;        
+}
+
+

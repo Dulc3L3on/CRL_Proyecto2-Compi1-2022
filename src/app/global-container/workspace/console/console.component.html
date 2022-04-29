@@ -1,0 +1,30 @@
+<div class="host" id="host">
+    <div class="title" id="title">
+        <img src="./assets/red_dot.png" width="15px" height="15px">
+        <p>&nbsp;</p><img src="./assets/orange_dot.png" width="15px" height="15px">
+        <p>&nbsp;</p><img src="./assets/yellow_dot.png" width="15px" height="15px">
+        <select class="terminalType" style="box-shadow: -10px -10px 15px rgba(255,255,255,0.5),
+        10px 7px 15px rgba(70,70,70,0.12);">
+            <option>
+                Terminal
+            </option>
+            <option>
+                LOG
+            </option>
+        </select>
+        <ng-container *ngIf="!isHide; else shower"><!--en el caso del else, necesariamente debe ser un template!-->
+            <button class="visibility-button" (click)="hide(true)"><i class="bi bi-chevron-down"></i></button>
+        </ng-container>
+        <ng-template #shower>
+            <button class="visibility-button" (click)="hide(false)"><i class="bi bi-chevron-up"></i></button>
+        </ng-template>
+        
+        <!--<span>&nbsp;&nbsp;Terminal/LOG</span>-->
+    </div>
+    
+    <div class="content" id="content">
+    
+    </div>    
+</div>
+
+

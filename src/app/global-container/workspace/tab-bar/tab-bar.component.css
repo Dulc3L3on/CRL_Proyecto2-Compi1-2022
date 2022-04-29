@@ -1,0 +1,71 @@
+:host{
+    position: absolute;    
+    height: 810px;
+    width: 282px;
+    top: -5px;
+    bottom: 20px;
+    left: 8px;
+    /*right: 20px;*/
+    background-color: #9fb0da54;/*principal: #4a67b654*/
+    /*background-color: #e0e0ee;*/
+
+    border-radius: 0px 0px 0px 15px; 
+    padding: 20px;
+
+
+    /*box-shadow: -10px -10px 15px rgba(255,255,255,0.5),
+            10px 7px 15px rgba(70,70,70,0.12);*/
+}
+
+.input_area{    
+    display: flex;
+    
+    margin-left: 10px;
+}
+
+#input-file{
+    width: 170px;
+    height: 39px;
+    border: 1px solid grey;
+    border-radius: 10px 0px 0px 10px;
+
+    box-shadow: -10px -10px 15px rgba(255,255,255,0.5),
+    10px 7px 15px rgba(70,70,70,0.12);
+
+}
+
+.option-button{
+    background-color: transparent;
+    border: 1px solid grey;
+    height: 39px;
+
+    box-shadow: -10px -10px 15px rgba(255,255,255,0.5),
+            10px 7px 15px rgba(70,70,70,0.12);
+}
+
+.list-area{    
+    background-color: rgba(180, 193, 221, 0.329);/*#a3b1d354*/
+
+    margin-top: 15px;
+    margin-left: 10px;
+    width: 100%;       
+    height:720px;
+    overflow:auto;
+    border: 0.2px solid grey;
+    border-radius: 15px;
+    margin-top: 9px;
+
+    background-color: #e9edfb;
+    /*background-color: #7288c021;*/
+
+    box-shadow: -10px -10px 15px rgba(255,255,255,0.5),
+            10px 7px 15px rgba(70,70,70,0.12);
+}
+
+.item{
+    background-color: rgba(180, 193, 221, 0.329);
+}
+
+.item:hover{
+    background-color: rgba(196, 180, 221, 0.329);
+}

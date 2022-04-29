@@ -1,0 +1,22 @@
+<app-menu-bar (senderSelection)="setSelection($event)"></app-menu-bar>
+
+<div id="seccion-container">
+    <ng-container [ngSwitch]="seccion">        
+        <ng-container *ngSwitchCase=1>
+            <app-workspace></app-workspace>
+        </ng-container>
+        <ng-container *ngSwitchCase=2>
+            <app-report-space></app-report-space>
+        </ng-container>
+        <!--<ng-container *ngSwitchCase="3">
+            <app-report-space></app-report-space>
+        </ng-container>
+        <ng-container *ngSwitchCase="4">
+            <app-report-space></app-report-space>
+        </ng-container>--><!--puesto que aún no los he creado xD-->
+        <ng-container *ngSwitchDefault><!--sería bueno setear el valor anterior para que así no sucediera algo, pero en realidad esto lo puse porque aún no tengo las otras opciones, y con tal que no se genere un error xD-->
+            <app-workspace></app-workspace>
+        </ng-container>
+    </ng-container>    
+</div>
+<!--si no fuera por los container comentados, debido a su inexistencia, ya estaría terminado xD-->

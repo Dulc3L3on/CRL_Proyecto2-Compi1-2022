@@ -1,0 +1,58 @@
+   :host{
+    border-radius: 15px 15px 0px 0px;   
+    position: absolute;
+    margin-top: 15px;
+    top: 0;/*poner top, left, right, bottom, en lugar de height y width, permite que al momento de minimizar la ventana, el contenido se ajuste, al menos horizontalmente xD, no sé como hacerlo tb con lo vertical, pero creo que no es necesario applo xD, las páginas bonitas que he visto, creo que no lo hacen xD*/
+    left: 63px;/*antes 55*/
+    right: 63px;
+    height: 80px;
+    /*background-color: #e0e0ee;/*#dde1ee*/
+    background-color: #9fb0da54;
+    /*background-image: linear-gradient(to top, #e6e9f0 0%, #eef1f5 100%);*/
+
+    font-family: 'Raleway', sans-serif;/*'Anybody', cursive*/
+    font-weight: 900;
+    padding: 20px 34px 7px 34px;    
+  }
+
+  .toolbar{
+    color: white;
+    height: 100%;    
+    display: flex;
+    align-items: center;
+    padding-top: 0px;    
+    border-radius: 15px;
+    border: 1px solid grey;
+
+    background-color: #adadccab;
+
+    box-shadow: -10px -10px 15px rgba(255,255,255,0.5),
+            10px 7px 15px rgba(70,70,70,0.12);
+  }
+
+  .toolbar img {
+    margin: 0 20px;    
+  }
+
+  .asLink{
+      margin-left: 20px;
+      border: none;
+      background-color: transparent;
+  }
+
+  .asLink:hover{
+      text-decoration: underline;
+  }
+
+  #selected{
+    font-weight: bold;
+  }
+
+  #unselected{
+    font-weight: 100;
+  }
+
+  .toolbar #twitter-logo:hover,
+  .toolbar #youtube-logo:hover {
+    opacity: 0.8;
+  }

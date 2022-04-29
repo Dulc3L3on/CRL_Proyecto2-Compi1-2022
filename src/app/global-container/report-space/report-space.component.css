@@ -1,0 +1,11 @@
+:host{
+    position: absolute;    
+    height: 800px;
+    top: 100px;
+    bottom: 23px;
+    left: 55px;
+    right: 55px;
+    background-color: #e0e0ee54;
+    border-radius: 15px;
+    padding: 20px;
+}
