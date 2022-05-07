@@ -9,4 +9,9 @@ export class TAS{
     //también estaba pensando que el "Heap", no sería necesario, addlo aquí, puesto que con el listado de 
     //"por ejecutar" basta para crear el stack, quien será el que contenga el orden de ejecución...
 
+
+    draw(){
+        
+    }
+
 }

@@ -1,17 +1,19 @@
    :host{
     border-radius: 15px 15px 0px 0px;   
     position: absolute;
-    margin-top: 15px;
+    margin-top: 5px;
     top: 0;/*poner top, left, right, bottom, en lugar de height y width, permite que al momento de minimizar la ventana, el contenido se ajuste, al menos horizontalmente xD, no sé como hacerlo tb con lo vertical, pero creo que no es necesario applo xD, las páginas bonitas que he visto, creo que no lo hacen xD*/
     left: 63px;/*antes 55*/
     right: 63px;
-    height: 80px;
+    height: 90px;
     /*background-color: #e0e0ee;/*#dde1ee*/
     background-color: #9fb0da54;
     /*background-image: linear-gradient(to top, #e6e9f0 0%, #eef1f5 100%);*/
 
-    font-family: 'Raleway', sans-serif;/*'Anybody', cursive*/
-    font-weight: 900;
+    font-family: 'Raleway', sans-serif;
+    /*'Anybody', cursive*/
+    font-size: 14px;
+    font-weight: 900px;
     padding: 20px 34px 7px 34px;    
   }
 
@@ -35,7 +37,7 @@
   }
 
   .asLink{
-      margin-left: 20px;
+      margin-left: 30px;
       border: none;
       background-color: transparent;
   }
