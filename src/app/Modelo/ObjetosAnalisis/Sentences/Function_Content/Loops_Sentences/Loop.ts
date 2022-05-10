@@ -1,3 +1,4 @@
+import { Container } from "../../Container";
 import { LocalContainer } from "../../LocalContainer";
 import { Expresion } from "../Content/Expresion";
 import { Result } from "../Content/Result";
@@ -5,10 +6,16 @@ import { Result } from "../Content/Result";
 export class Loop extends LocalContainer{
     condition:Expresion;
 
-    constructor(padre:LocalContainer, condition:Expresion){
-        super(padre);
+    constructor(/*padre:LocalContainer,*/ condition:Expresion){
+        super(/*padre*/);
 
         this.condition = condition;
+        //this.condition.setFather(padre);
+    }
+
+    override setFather(father: Container): void {
+        this.father = father;
+        this.condition.setFather(this.father);
     }
 
     override exe(): Result {
@@ -28,7 +35,7 @@ export class Loop extends LocalContainer{
 
     evaluateCondition():Result{        
         if(this.condition.getValue().getType() == ContentType.BOOLEAN){
-            return this.condition.getValue().getResult();//Esto se hará con la clase que s eencarga de castear, aunque quizá no porque nada más que un boolean, puede ser un boolean xD
+            return this.condition.getValue().getValue();//Esto se hará con la clase que s eencarga de castear, aunque quizá no porque nada más que un boolean, puede ser un boolean xD
         }
 
         //se add el error de tipo

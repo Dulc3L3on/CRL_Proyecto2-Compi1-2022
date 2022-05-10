@@ -1,3 +1,4 @@
+import { TAS } from "../../../EDDs/TablaSimbolos/TAS";
 import { LocalContainer } from "../../LocalContainer";
 import { Expresion } from "../Content/Expresion";
 import { Result } from "../Content/Result";
@@ -17,6 +18,7 @@ export class If extends Control_sentence{
 
     override exe_ControlSentence(): Result {
         if(this.evaluateCondition().getType() == ContentType.BOOLEAN){
+            this.TAS = new TAS();
             let result:Result;            
 
             if((this.evaluateCondition().getResult() as boolean)){

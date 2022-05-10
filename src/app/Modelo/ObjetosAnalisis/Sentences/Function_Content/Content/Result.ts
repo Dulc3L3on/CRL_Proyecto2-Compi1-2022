@@ -2,17 +2,25 @@ export class Result{
     type:ContentType;
     result:any;
 
-    constructor(type?:ContentType, result?:any){
+    constructor(type?:ContentType, result?:any){//pienso que aquí no provocará problemas el tener los ?
         this.type = (type == null)?ContentType.VOID:type;
         this.result = (result == null)?"":result;
     }//luego cuando se obtenga la info, se hará el casteo a partir del valor que esté contenido en type...
     //Este mencionado casteo, se hará en 
 
+    setType(type:ContentType){
+        this.type = type;
+    }
+
+    setValue(value:any){
+        this.result = value;
+    }
+
     getType():ContentType{
         return this.type;
     }
 
-    getResult():any{
+    getValue():any{
         return this.result;
     }
 

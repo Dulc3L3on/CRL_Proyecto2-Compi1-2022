@@ -2,6 +2,7 @@ import { LocalContainer } from "../../LocalContainer";
 import { Expresion } from "../Content/Expresion";
 import { Result } from "../Content/Result";
 import { Loop } from "./Loop";
+import { TAS } from "../../../EDDs/TablaSimbolos/TAS";
 
 export class While extends Loop{
     constructor(padre:LocalContainer, condition:Expresion){
@@ -10,6 +11,7 @@ export class While extends Loop{
 
     override exeLoop(): Result{       
         if(this.evaluateCondition().getType() == ContentType.BOOLEAN){
+            this.TAS = new TAS();
             let result:Result;
 
             while((this.evaluateCondition().getResult() as boolean)){
@@ -19,14 +21,11 @@ export class While extends Loop{
                     break;
                  }else if(result.getType() == ContentType.CONTINUE){
                     continue;
-                 }else if(result.getType() == ContentType.RETURN){
-                    return new Result(ContentType.RETURN, "");//puesto que este hace que se salga de una vez de este método, debo hacer que se emule eso en lo demás xD
                  }
-
                  //tendría que ser else-if?? yo digo que sí xD
                  else if(result.getType() != ContentType.NOTHING){
                     return result;
-                 }                 
+                 }//es decir ERR, B, C, S, I, D y RET xD                 
             }
         }else{
             return new Result(ContentType.ERROR);

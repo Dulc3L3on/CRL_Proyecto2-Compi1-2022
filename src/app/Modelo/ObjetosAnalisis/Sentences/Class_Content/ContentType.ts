@@ -10,7 +10,9 @@ enum ContentType{
 
     BREAK,
     CONTINUE,
-    RETURN
+    RETURN,
+
+    SUCCESS//será útil tanto para la corroboración de parámetros como para el MAIN xD y así devolver un msjito bonito xD
 }
 //NOTHING, no es lo mismo que void, puesto que este se planea
 //retornar, cuando la sentence, no tiene posibilidad de devolver

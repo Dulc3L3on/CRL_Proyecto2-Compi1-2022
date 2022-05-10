@@ -7,9 +7,9 @@ import { Result } from "../../Content/Result";
 import { BreakPoint } from "./BreakPoint";
 
 export class Return extends BreakPoint{
-    expr?:Expresion;//en dado caso sea un simple, esto se quedrará vacío, no nukll, sino vacío xD
+    expr:Expresion|null;//en dado caso sea un simple, esto se quedrará vacío, no nukll, sino vacío xD
 
-    constructor(expresion?:Expresion){
+    constructor(expresion:Expresion|null){
         super();
 
         this.expr = expresion;
