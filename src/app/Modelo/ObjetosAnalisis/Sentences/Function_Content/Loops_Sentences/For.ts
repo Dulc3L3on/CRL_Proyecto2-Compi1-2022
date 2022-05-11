@@ -13,6 +13,8 @@ export class For extends Loop{
 
         this.index = index;
         this.incremento = incremento;
+        
+        this.sentenceName = "PARA";
     }//creo que solo para el caso en que el for sea hijo directo de la f/mét, el padre podrá ser setado en el cnstrc,de lo contrario no... sino implicaría hacer muchísimas búsquedas, por lo tanto, se procederá a crear el método para setearlo
 
     override exeLoop(): Result{       

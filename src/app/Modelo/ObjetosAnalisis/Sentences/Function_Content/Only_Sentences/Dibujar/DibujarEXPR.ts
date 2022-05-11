@@ -1,3 +1,4 @@
+import { Container } from "../../../Container";
 import { Expresion } from "../../Content/Expresion";
 import { Dibujar } from "./Dibujar";
 
@@ -8,6 +9,14 @@ export class DibujarEXPR extends Dibujar{
         super();
 
         this.expr = expr;
+
+        this.sentenceName = "DIBUJAR_EXPR";
+    }
+
+    override setFather(father: Container): void {
+        this.father = father;
+
+        this.expr.setFather(this.father);
     }
     
     override generateScript(): string {

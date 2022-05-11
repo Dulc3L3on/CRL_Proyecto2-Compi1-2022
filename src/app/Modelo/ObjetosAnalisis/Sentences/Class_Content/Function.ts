@@ -23,7 +23,7 @@ export class Function extends LocalContainer{
     }
 
     loadArguments(theArguments:Array<Expresion>){
-        this.TAS = new TAS();
+        //la ini de la TAS, se hace en el método initTAS, del globalConatiner, cuando se halla la función invocada, por lo tanto no debe hacerse de nuevo aquí xD
 
         for(let index = 0; index < this.parametros.length; index++){//par así indicar tb si además de no corresponde el #, no corresp el tipo...            
             this.TAS.setVariable(new Variable(this.parametros[index].getName()

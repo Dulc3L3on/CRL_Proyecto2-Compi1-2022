@@ -8,6 +8,8 @@ export class DibujarAST extends Dibujar{
         super();
 
         this.functionName = functionName;
+
+        this.sentenceName = "DIBUJAR_AST";
     }
 
     //debería colocar aquí el método para buscar la función o debería ser algo más general ó en su defecto, estar en 

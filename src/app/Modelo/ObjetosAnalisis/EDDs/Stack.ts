@@ -48,6 +48,10 @@ export class Stack<T>{//LIFO
         return null;
     }
 
+    getElements(){
+        return this.elements;
+    }
+
     isEmpty():boolean{
         return (this.elements.length==0);
     }

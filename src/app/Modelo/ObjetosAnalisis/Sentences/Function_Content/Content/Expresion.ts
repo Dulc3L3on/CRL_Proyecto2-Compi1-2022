@@ -10,13 +10,15 @@ import { Result } from "./Result";
 import { Variable } from "./Variable";
 
 export class Expresion{//no la hago genérica, puesto que no se hará una clase de la que hereden todos para que así al nec un obj de expre, se envíe a los diamantes dicha clase Padre...
+    sentenceName:string;
+    
     left:Expresion|null;
     content:any;
     right:Expresion|null;
     operationResult:OperationResult;
     operationHandler:OperationHandler;
 
-    father:Container;//puesto que puede ser un GC como tb un LC...
+    father:Container;//no sé por qué no hice que heradara de directiva... lo que no tendría es el método exe, pero lo demás si...
     caster:Caster;
     
     constructor(left:Expresion|null, content:any, right:Expresion|null){
@@ -26,20 +28,22 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
 
         this.caster = new Caster();
         this.operationHandler= new OperationHandler();
+
+        this.sentenceName = "EXPRESION";        
     }//en el caso de las expresiones que corresp a valores netos, los hijos serán null...
     
     setFather(father:Container){
         this.setFather_Intern(this, father);
     }
 
-    setFather_Intern(expresion:Expresion|null, father:Container){
+    private setFather_Intern(expresion:Expresion|null, father:Container){
         if(expresion != null){
             expresion.setFather_Intern(expresion.getLeftChild(), father);
             expresion.setFather_Intern(expresion.getRightChild(), father);
 
             expresion.father = father;
         }
-    }//puesto que para sino solo la expresión más externa tendría conociemiento de su progenitors
+    }//puesto que para sino solo la expresión más externa tendría conociemiento de su progenitors. El intern lo coloqué porque setea el padre de las expr más adentro y porque solo deberá poder accederse a este método desde aquí dentro xD
 
     getValue():Result{
         this.operate(this);
@@ -75,6 +79,8 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
             let invocation:Invocacion = this.content as Invocacion;
             invocation.setFather(this.father);
             let result:Result = invocation.exe();//sale mejor que se repita esta axn a provocar errores y hacer el proceso más largo...
+
+            //se add un error (a parte del que dará cuando intente operar con el result de tipo incorrecto)cuando el tipo == NOTHING [puesto que para ERR, no tendría reportar otro ERR xD]
 
             this.operationResult = new OperationResult(OperatorType.VALUE, new Result(result.getType(), result.getValue()));
         }
@@ -213,7 +219,11 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
         }
         return new OperationResult(OperatorType.ERROR, new Result(ContentType.ERROR, "One or more expresions with errors, impossible to operate"));
     }//se supone que si se llegó hasta aquí es porque no surgió error alguno al momento de hacer la evaluación sintáctica...
-    
+  
+    getSentenceName():string{
+        return this.sentenceName;
+    }//si me da problemas al momento de ir recorriendo los obj para graficar HAZ QUE HEREDE DE DIRECTIVE!!!, hasta podría tener imple el método de exe, que es lo único que no utilizaría en caso siguiera igual, siendo una sustitución del nombre que tiene el método actual de getValue()...
+
     getOperationResult():OperationResult{
         return this.operationResult;
     }

@@ -1,7 +1,14 @@
+import { symlink } from "fs";
 import { TAS } from "src/app/Modelo/ObjetosAnalisis/EDDs/TablaSimbolos/TAS";
 import { Dibujar } from "./Dibujar";
 
 export class DibujarTS extends Dibujar{
+
+    constructor(){
+        super();
+
+        this.sentenceName = "DIBUJAR_TS";
+    }
 
     override generateScript(): string {
         

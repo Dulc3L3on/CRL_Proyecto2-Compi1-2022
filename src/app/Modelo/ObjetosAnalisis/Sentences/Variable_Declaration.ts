@@ -4,6 +4,7 @@ import { TAS } from "../EDDs/TablaSimbolos/TAS";
 import { Result } from "./Function_Content/Content/Result";
 import { Variable } from "./Function_Content/Content/Variable";
 import { Container } from "./Container";
+import { ThisReceiver } from "@angular/compiler";
 
 export class Variable_Declaration extends Directive{
     type:ContentType;
@@ -16,6 +17,8 @@ export class Variable_Declaration extends Directive{
         this.type = type;
         this.variableName = variableName;
         this.asignatedExpresion = asignatedExpresion;
+
+        this.sentenceName = "DECLARACION";
     }
 
     override setFather(father: Container): void {

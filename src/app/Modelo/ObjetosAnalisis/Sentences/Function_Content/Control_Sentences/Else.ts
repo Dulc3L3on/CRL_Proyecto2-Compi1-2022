@@ -5,8 +5,10 @@ import { Control_sentence } from "./Control_Sentence";
 
 export class Else extends Control_sentence{
     
-    constructor(padre:LocalContainer){//por ser un else, no es nec que reciba la condi, puesto que se debe exe en situaciones contrarias al if...
-        super(padre, null);
+    constructor(/*padre:LocalContainer*/){//por ser un else, no es nec que reciba la condi, puesto que se debe exe en situaciones contrarias al if...
+        super(/*padre, */null);
+
+        this.sentenceName = "SINO";
     }
 
     override exe_ControlSentence(): Result {

@@ -10,6 +10,7 @@ export class Void_Function extends Function{
     }
 
     override exe_Function(): Result {
+        //Recuerda que no se requiere inicializar la TAS, puesto que esto se hace con la directiva loadArguments, que es invocada en la exe de Invocación xD        
         let result:Result = this.readStack();
 
         //SI, EES UN HECHO QUE NO DEBE HACERSE ALGO AL recibir un ERROR!
@@ -24,6 +25,10 @@ export class Void_Function extends Function{
             result = new Result(ContentType.ERROR, "A method cannot "
             +"return any expression");
         }//es decir I, D, S, B
+        if(result.getType() == ContentType.RETURN){//no pongo else if, porque aunque entre en el if de arriba, no tendría oportunidad de entrar a este, por solo ser un if xD
+            return new Result(ContentType.NOTHING);//puesto que la axn del return muere al llegar a instancias del padre void_function xD y por lo tanto este RETURN, no puede ni debe afectar a los demás métodos, a menos que hicieran un return de éste, pero por ser de tipo void la fun, esto sería un err xD
+                                                   //y además está nice hacer esto, ya que los Result de las funciones van a recaer a una expre y esta en sus revisiones de valores correctos, no incluye a RETURN xD
+        }
 
         return result;        
     }

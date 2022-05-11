@@ -1,4 +1,6 @@
+import { ThisReceiver } from "@angular/compiler";
 import { TAS } from "../../../EDDs/TablaSimbolos/TAS";
+import { Container } from "../../Container";
 import { LocalContainer } from "../../LocalContainer";
 import { Expresion } from "../Content/Expresion";
 import { Result } from "../Content/Result";
@@ -8,9 +10,13 @@ import { Else } from "./Else";
 export class If extends Control_sentence{
     else_Condition:Else|null = null;
     
-    constructor(padre:LocalContainer, condition:Expresion){
-        super(padre, condition);
+    constructor(/*padre:LocalContainer, */condition:Expresion){
+        super(/*padre, */condition);
+
+        this.sentenceName = "SI";
     }
+
+    //aquí no debe sobreescribirse al padre, puesto que el control_sentence se encargó de ello según el caso que corresp...
 
     setElse(else_condition:Else){
         this.else_Condition = else_condition;
@@ -21,7 +27,7 @@ export class If extends Control_sentence{
             this.TAS = new TAS();
             let result:Result;            
 
-            if((this.evaluateCondition().getResult() as boolean)){
+            if((this.evaluateCondition().getValue() as boolean)){
                 result = this.readStack();
                 return result;
                 //no haog en esa misma línea de arribita el return por los errores que podría lanzar el readStack()... Aunque si mal no recuerdo, en tus programas a pesar que el método pueda devolver el error, de todos modos haces el return al invocar a ese método xD

@@ -35,4 +35,5 @@ export class Complex_Function extends Function{
         //puesto que eso se debe informar a los demás este tipo de R//
     }
     //al crear el commit que add todo esto por 1ra vez, al repo, tenía exe pero en realidad debería ser exe_function, creo que habías olvidado eso xD
+    //NO OLVIDES, que los RESULT que las fun/met retornan van a caer a una epxre, entonces todo nice, no hay problema y mejor dicho una fun debe retornar el tipo corresp al que recibió luego de leer su respect stack xD
 }

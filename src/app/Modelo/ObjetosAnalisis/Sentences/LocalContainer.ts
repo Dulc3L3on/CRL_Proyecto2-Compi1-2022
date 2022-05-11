@@ -20,14 +20,21 @@ export class LocalContainer extends Container{
 
     setContent(sentence:Sentence){
         this.content.insert(sentence);
-    }    
+    }        
     
-    //necesario de sobreescribir
     readStack():Result{
-        return new Result();
-    }//Este método será implementado por cada uno de los hijos, en el caso que 
-    //estos tengan un tipo asignado void en el caso de las funciones, o simplemente
-    //no tengan una instrucción return, se devolverá NOTHING     
+        let temporalStack:Stack<Sentence> = new Stack<Sentence>();
+        temporalStack.setAll(this.content.getReverse());        
+
+        for(let index = 0; index < temporalStack.size(); index++){
+            let result:Result = temporalStack.getElements()[index].exe();
+
+            if(result.getType() != ContentType.NOTHING ){
+                return result;
+            }//es decir un tipo I, D, S, B, C, o ERR xD
+        }
+        return new Result(ContentType.NOTHING);//puesto que no sucedió algo xD
+    }//puesto que la axn a realizar por cada heredero no varía, este método NO DEBE SOBREESCRIBIRSE! xD
 
     getFather(){
         return this.father;        

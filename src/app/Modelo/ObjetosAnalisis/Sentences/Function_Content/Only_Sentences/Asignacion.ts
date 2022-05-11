@@ -12,6 +12,8 @@ export class Asignacion extends Directive{
 
         this.variableName = variableName;
         this.expr = expr;
+
+        this.sentenceName = "ASIGNACION";
     }
 
     override setFather(father: Container): void {

@@ -3,10 +3,13 @@ import { Expresion } from "../Content/Expresion";
 import { Result } from "../Content/Result";
 import { Loop } from "./Loop";
 import { TAS } from "../../../EDDs/TablaSimbolos/TAS";
+import { ThisReceiver } from "@angular/compiler";
 
 export class While extends Loop{
-    constructor(padre:LocalContainer, condition:Expresion){
-        super(padre, condition);
+    constructor(/*padre:LocalContainer, */condition:Expresion){
+        super(/*padre, */condition);
+
+        this.sentenceName = "MIENTRAS";
     }
 
     override exeLoop(): Result{       
@@ -14,7 +17,7 @@ export class While extends Loop{
             this.TAS = new TAS();
             let result:Result;
 
-            while((this.evaluateCondition().getResult() as boolean)){
+            while((this.evaluateCondition().getValue() as boolean)){
                  result = this.readStack();
 
                  if(result.getType() == ContentType.BREAK){
