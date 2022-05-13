@@ -2,6 +2,7 @@ import { newArray } from "@angular/compiler/src/util";
 import { Result } from "../Function_Content/Content/Result";
 import { Variable } from "../Function_Content/Content/Variable";
 import { GlobalContainer } from "../GlobalContainer";
+import { ContentType } from "./ContentType";
 import { Function } from "./Function";
 
 export class Main extends Function{

@@ -8,22 +8,25 @@ import { OperationResult } from "./OperationResult";
 import { Operator } from "./Operator";
 import { Result } from "./Result";
 import { Variable } from "./Variable";
+import { ContentType } from "../../Class_Content/ContentType";
+import { OperatorType } from "./OperatorType";
+import { Incertitude } from "../../Class_Content/Incertitude";
 
 export class Expresion{//no la hago genérica, puesto que no se hará una clase de la que hereden todos para que así al nec un obj de expre, se envíe a los diamantes dicha clase Padre...
     sentenceName:string;
+    father:Container;//no sé por qué no hice que heradara de directiva... lo que no tendría es el método exe, pero lo demás si...
     
     left:Expresion|null;
     content:any;
     right:Expresion|null;
     operationResult:OperationResult;
-    operationHandler:OperationHandler;
 
-    father:Container;//no sé por qué no hice que heradara de directiva... lo que no tendría es el método exe, pero lo demás si...
-    caster:Caster;
+    operationHandler:OperationHandler;    
+    caster:Caster;    
     
     constructor(left:Expresion|null, content:any, right:Expresion|null){
         this.left = left;
-        this.content = content;
+        this.content = content;//puede ser un Operator o un valor primitivo...
         this.right = right;
 
         this.caster = new Caster();
@@ -61,16 +64,16 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
     }//like as postOrder route
 
     private obtainResult(){
-        if(this.content instanceof Number){
-            this.operationResult = new OperationResult(OperatorType.VALUE, new Result(ContentType.INTEGER, this.content as Number));
+        if(this.content instanceof Number && this.caster.isADecimal(this.content as number)){//de primero el double por la rev de los deci...
+            this.operationResult = new OperationResult(OperatorType.VALUE, new Result(ContentType.DOUBLE, this.content as Number));            
         }else if(this.content instanceof Number){//Debes revisar cómo le hiciste en la practica1, para extraer los decimales de un número double...
-            this.operationResult = new OperationResult(OperatorType.VALUE, new Result(ContentType.DOUBLE, this.content as Number));
-        }else if(this.content instanceof String){
-            this.operationResult = new OperationResult(OperatorType.VALUE, new Result(ContentType.STRING, this.content as String));
+            this.operationResult = new OperationResult(OperatorType.VALUE, new Result(ContentType.INTEGER, this.content as Number));            
+        }else if(this.content instanceof String && (this.content as String).length == 1){
+            this.operationResult = new OperationResult(OperatorType.VALUE, new Result(ContentType.CHAR, this.content as String));            
         }else if(this.content instanceof Boolean){
             this.operationResult = new OperationResult(OperatorType.VALUE, new Result(ContentType.BOOLEAN, this.content as Boolean));
-        }else if(this.content instanceof CharacterData){//Debes ver cómo manejar los char...
-            this.operationResult = new OperationResult(OperatorType.VALUE, new Result(ContentType.CHAR, this.content as CharacterData));
+        }else if(this.content instanceof String){//Debes ver cómo manejar los char...
+            this.operationResult = new OperationResult(OperatorType.VALUE, new Result(ContentType.STRING, this.content as String));
         }else if(this.content instanceof Variable){
             let result:Result = this.father.findVariable((this.content as Variable).getName());
 
@@ -166,7 +169,7 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
 
     private getIncertitude():Result{
         let globalContainer:GlobalContainer = this.getGlobalContainer(this.father);
-        let index:number = globalContainer.getTAS().findVariable("INCERTITUDE");//siempre va a existir
+        let index:number = globalContainer.getTAS().findVariable(Incertitude.incertitudeVarName);//siempre va a existir
         
         return globalContainer.getTAS().getVariable(index).getContent();
     }

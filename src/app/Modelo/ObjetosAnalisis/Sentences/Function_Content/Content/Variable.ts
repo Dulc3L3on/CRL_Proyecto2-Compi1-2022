@@ -1,10 +1,11 @@
+import { ContentType } from "../../Class_Content/ContentType";
 import { Result } from "./Result";
 
-export class Variable{    
+export class Variable{//NOTA, recuerda que las variables reciben en resultado de una vez, es decir que no contienen a un objeto intermedio por medio del cual generen su valor, NO, porque de esto ya se habrá encargado otra estructura...
     name:string;        
     content:Result;
 
-    constructor(name:string, type:ContentType|null, value:any|null){//se tendrá type, nomrbre y value, cuando se use como param [puesto que se llenará la TAS, cuando la función sea invocada xD], ninguno de eso dos cuando se utilice en expr. Cuando sea la var de la TAS, se empleará el setValue, por las != asignaciones que se podrán hacer...
+    constructor(type:ContentType|null, name:string, value:any|null){//se tendrá type, nomrbre y value, cuando se use como param [puesto que se llenará la TAS, cuando la función sea invocada xD], ninguno de eso dos cuando se utilice en expr. Cuando sea la var de la TAS, se empleará el setValue, por las != asignaciones que se podrán hacer...
         this.name = name;
 
         this.content = new Result();//independientemente de que se le haya asignado o no el tipo, ahí te recuerdas que por defecto tendrá NOTHING, lo cual es un error para la variable

@@ -1,3 +1,4 @@
+import { ContentType } from "../../Class_Content/ContentType";
 import { Container } from "../../Container";
 import { LocalContainer } from "../../LocalContainer";
 import { Expresion } from "../Content/Expresion";

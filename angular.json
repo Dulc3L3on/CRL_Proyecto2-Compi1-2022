@@ -32,7 +32,8 @@
               "node_modules/bootstrap/dist/css/bootstrap.css"
             ],
             "scripts": [
-              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+              "node_modules/bootstrap/dist/js/bootstrap.min.js",
+              "src/app/Modelo/Analizadores/CRLGrammar.js"
             ]
           },
           "configurations": {

@@ -1,17 +1,19 @@
 <!--<div class="host host-{{sizeAdapter}}" id="host">-->
     <div class="tab-container {{sizeAdapter}}" id="tab-container">
+        <menu-options [files]="this.CRL_Files"></menu-options>
+
         <ng-container>
             <mat-tab-group>
                 <ng-container *ngFor="let file of CRL_Active_Files; index as indice"><!--genial!, no da errores cuando el arreglo no ha sido inicializado :3 xD-->
                     <mat-tab>
-                        <ng-template mat-tab-label>                    
+                        <ng-template mat-tab-label style="height:15px;margin-top: -7px;">
                             {{file.name}}
                             <span (mouseenter)="showOrHide(true, indice)" (mouseleave)="showOrHide(false, indice)" (click)="closeTab(indice)">
                                 <i class="bi bi-x-circle" 
                                    id="close{{indice}}"
                                    style="margin-left: 7px;font-size: 15px;font-weight: bolder;visibility: hidden;"></i>
                             </span>
-                          </ng-template>
+                        </ng-template>
                         <app-tab [title]="file.name" [content]="file.content" [sizeAdapter]="sizeAdapter"></app-tab>
                     </mat-tab>    
                 </ng-container><!--de alguna manera al colocar el ngFor dentro de un container y no applo en la tag de math tab, ya no se cb a la pestaña que se acaba de add :v, extraño xD-->

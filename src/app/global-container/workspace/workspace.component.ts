@@ -7,7 +7,7 @@ import { CRL_File } from 'src/app/Modelo/CRL_File';
   styleUrls: ['./workspace.component.css']
 })
 export class WorkspaceComponent implements OnInit {  
-  CRL_Files: CRL_File[];
+  CRL_Files: Array<CRL_File>;
   //indexOfSelected: number;//no creo que deba setear un valor para cuando no se halla seleccionado algo se transmita eso hacia el tag container y no se modifique el arreglo de las tab activas... puesto que esto es como un evt, entonces no se activa, hasta que se requiere...
   CRL_Active_Files:Array<CRL_File> = new Array();
   sizeType: string = "normal";
@@ -17,7 +17,7 @@ export class WorkspaceComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  receiveFiles(CRL_Files: CRL_File[]){
+  receiveFiles(CRL_Files: Array<CRL_File>){
     this.CRL_Files = CRL_Files;
   }
 

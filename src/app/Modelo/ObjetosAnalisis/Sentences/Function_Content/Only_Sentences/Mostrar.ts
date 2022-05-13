@@ -1,5 +1,5 @@
-import { ThisReceiver } from "@angular/compiler";
 import { resourceUsage } from "process";
+import { ContentType } from "../../Class_Content/ContentType";
 import { Container } from "../../Container";
 import { Directive } from "../../Directive";
 import { Expresion } from "../Content/Expresion";
@@ -37,13 +37,33 @@ export class Mostrar extends Directive{
 
     print(){
         let resultante:string = this.stringBase;
+        //se cuenta el número de {, para saber si el #argus corrsponde a lo que está en el string base...
 
         for(let index = 0; index < this.argumentos.length; index++){
-            resultante.replace("{"+index+"}", String (this.argumentos[index]));//por el momento se hace así, pero se deberá llamar a la clase que se encarga de los casteos, para así tener los valores según el enunciado lo requiere xD
+            if(this.existRequest("{"+(index)+"}", this.stringBase)){//por el momento si requerirá que los valores estén pegaditos, a menos que haga un anaĺisis por separado
+                resultante.replace("{"+(index)+"}", String (this.argumentos[index]));//por el momento se hace así, pero se deberá llamar a la clase que se encarga de los casteos, para así tener los valores según el enunciado lo requiere xD
+            }else{
+                //Se muestra el msje: Errores en la directiva MOSTRAR, imposible continuar
+                break;//puesto que no hay razón para seguir...
+            }
+        }//si no hubieran argumentos no habría problema, ya que no se entraría al for y por lo tanto se imprimiría solo el string base xD
+
+        //se imprime el resultante, a partir de la clase que modifica la consola... [o servicio, porque ahora que lo pienso si se puede :v xD]
+        console.log(resultante);
+    }
+
+    existRequest(request:string, expect:string):boolean{
+        if(expect.includes(request)){
+            if(expect.includes(request, request.indexOf(request)+request.length)){
+                //Se add el error por repetición de un índice de request
+                return false;//pues con una repetición más basta para devolver error
+            }else{                
+                return true;
+            }
         }
 
-        //se invoca al SERVICIO que se encarga de modificar el contenido de la consola...
-        console.log(resultante);
+        //se add el error porque hay argumentos pero no request en el stringBase...
+        return false;
     }
 
      //NOTA: hay que devolver error, cuando el número de argus no sea igual [ya sea < o >] al # de request en el baseString...

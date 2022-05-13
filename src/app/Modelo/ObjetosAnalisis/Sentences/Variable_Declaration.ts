@@ -4,7 +4,7 @@ import { TAS } from "../EDDs/TablaSimbolos/TAS";
 import { Result } from "./Function_Content/Content/Result";
 import { Variable } from "./Function_Content/Content/Variable";
 import { Container } from "./Container";
-import { ThisReceiver } from "@angular/compiler";
+import { ContentType } from "./Class_Content/ContentType";
 
 export class Variable_Declaration extends Directive{
     type:ContentType;
@@ -21,7 +21,7 @@ export class Variable_Declaration extends Directive{
         this.sentenceName = "DECLARACION";
     }
 
-    override setFather(father: Container): void {
+    override setFather(father: Container): void {//el padre es un container, puesto que puede ser un GC o LC
         this.father = father;
 
         if(this.asignatedExpresion != null){
@@ -32,12 +32,12 @@ export class Variable_Declaration extends Directive{
     override exe(): Result {
         let TAS:TAS = this.father.getTAS();
 
-        let value:any = ((this.asignatedExpresion != null)?this.asignatedExpresion.getValue():
+        let value:any = ((this.asignatedExpresion != null)?this.asignatedExpresion.getValue()://SINO, se setean los valores por defecto xD
                 ((this.type == ContentType.INTEGER)?new Result(ContentType.INTEGER, 0):((this.type == ContentType.DOUBLE)?new Result(ContentType.DOUBLE, 0.0):
                 ((this.type == ContentType.STRING)?new Result(ContentType.STRING, ""):((this.type == ContentType.BOOLEAN)?new Result(ContentType.BOOLEAN, true):new Result(ContentType.CHAR, ''))))));
 
         if(value.getType() == this.type){
-            TAS.setVariable(new Variable(this.variableName, this.type, value.getResult()));
+            TAS.setVariable(new Variable(this.type, this.variableName, value.getResult()));
             return new Result(ContentType.NOTHING);
         }else if(value.getType() == ContentType.ERROR){
             return value;//puesto que aquí se estará enviando el objeto result de tipo ERROR, lo cual está bien, porque ya está creado, entonces por qué volver a hacerlo...

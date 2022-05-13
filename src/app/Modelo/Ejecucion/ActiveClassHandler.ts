@@ -1,10 +1,22 @@
 import { GlobalContainer } from "../ObjetosAnalisis/Sentences/GlobalContainer";
 
 export class ActiveClassHandler{
+    private static instance:ActiveClassHandler;
+
     mainClass:GlobalContainer;
     clasesActivas:Array<GlobalContainer>;
 
-    constructor(){
+    private constructor(){}
+
+    public static getInstance():ActiveClassHandler{
+        if(ActiveClassHandler.instance){
+            ActiveClassHandler.instance = new ActiveClassHandler();
+        }
+
+        return ActiveClassHandler.instance;
+    }
+
+    refreshClassList(){
         this.clasesActivas = new Array<GlobalContainer>();
     }
 
@@ -16,7 +28,19 @@ export class ActiveClassHandler{
         this.mainClass = mainClass;
     }
 
-    getActiveClass(name:string):GlobalContainer{
+    getMainClass():GlobalContainer{
+        return this.mainClass;
+    }
+
+    getClone(className:string):GlobalContainer{
+        if(className == this.mainClass.getName()){
+            return JSON.parse(JSON.stringify(this.mainClass));
+        }
+
+        return JSON.parse(JSON.stringify(this.getActiveClass(className)));        
+    }
+
+    private getActiveClass(name:string):GlobalContainer{
         let indexEncountered = 0;
 
         for(let index:number = 0; index < this.clasesActivas.length; index++){
@@ -27,9 +51,4 @@ export class ActiveClassHandler{
         }        
         return this.clasesActivas[indexEncountered];
     }
-
-    getMainClass():GlobalContainer{
-        return this.mainClass;
-    }
-
 }

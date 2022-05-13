@@ -1,3 +1,5 @@
+import { ContentType } from "../../Class_Content/ContentType";
+
 export class Result{
     type:ContentType;
     result:any;

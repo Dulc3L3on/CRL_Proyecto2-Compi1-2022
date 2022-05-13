@@ -1,3 +1,5 @@
+import { ContentType } from "../../Class_Content/ContentType";
+import { OperatorType } from "./OperatorType";
 import { Result } from "./Result";
 
 export class OperationResult{

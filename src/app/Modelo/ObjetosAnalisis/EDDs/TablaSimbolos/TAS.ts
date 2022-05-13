@@ -20,13 +20,13 @@ export class TAS{
         return -1;
     }
 
-    draw(){
-        
-    }
-
     getVariable(index:number):Variable{
         return this.variables[index];
     }
+
+    generateScript():string{
+        return "";
+    }  
 
 }
 

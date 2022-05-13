@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TabContainerComponent } from './tab-container.component';
 import { TabModule } from './tab/tab.module';
 import {MatTabsModule} from '@angular/material/tabs'
+import { MenuOptionsComponent } from './menu-options/menu-options.component';
 
 @NgModule({
   providers:[
@@ -10,6 +11,7 @@ import {MatTabsModule} from '@angular/material/tabs'
   ],
   declarations: [
     TabContainerComponent,    
+    MenuOptionsComponent
   ],
   imports: [
     CommonModule, 

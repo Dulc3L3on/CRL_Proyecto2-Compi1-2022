@@ -2,15 +2,15 @@ import { Container } from "./Container";
 import { Stack } from "../EDDs/Stack";
 import { Sentence } from "./Sentence";
 import { Result } from "./Function_Content/Content/Result";
+import { ContentType } from "./Class_Content/ContentType";
 
 export class LocalContainer extends Container{
     father:Container;//solo puede ser Clase en el caso de las funciones, yo me encargaré de verificar eso, entonces no problem xD    
     content:Stack<Sentence>;
 
-    constructor(/*padre:Container*/){
+    constructor(){
         super();
 
-        //this.father = padre;
         this.content = new Stack<Sentence>();
     }//a mi pensar, el padre no debería tener que estar en el cnstruct, puesto que la mejor parte en la que se puede setear al progenitor es cuando se están guardando las sentencias, dentro de su respectivo contenedor xD
 

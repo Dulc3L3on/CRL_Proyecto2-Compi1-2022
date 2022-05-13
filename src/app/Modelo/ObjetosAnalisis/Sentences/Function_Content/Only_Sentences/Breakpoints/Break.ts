@@ -1,3 +1,4 @@
+import { ContentType } from "../../../Class_Content/ContentType";
 import { Result } from "../../Content/Result";
 import { BreakPoint } from "./BreakPoint";
 

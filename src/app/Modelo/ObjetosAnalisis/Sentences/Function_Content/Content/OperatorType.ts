@@ -1,4 +1,4 @@
-enum OperatorType{
+export enum OperatorType{
     ERROR = -1,
 
     VALUE,

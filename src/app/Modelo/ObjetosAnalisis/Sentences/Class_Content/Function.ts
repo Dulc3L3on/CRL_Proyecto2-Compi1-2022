@@ -4,6 +4,7 @@ import { Result } from "../Function_Content/Content/Result";
 import { GlobalContainer } from "../GlobalContainer";
 import { LocalContainer } from "../LocalContainer";
 import { Variable } from "../Function_Content/Content/Variable";
+import { ContentType } from "./ContentType";
 
 export class Function extends LocalContainer{    
     type:ContentType;
@@ -12,12 +13,14 @@ export class Function extends LocalContainer{
     parametros: Array<Variable>;    
 
     constructor(padre:GlobalContainer, type:number, functionName:string, parametros:Array<Variable>){
-        super(/*padre*/);
+        super();
 
+        this.setScope(0);//puesto que este valor es fijo
         this.setFather(padre);
+        
         this.type = type;
         this.name = functionName;        
-        this.parametros = new Array<Variable>();//si no va a tener params, entonces se recbirá una lista vacía, no null xD
+        this.parametros = parametros;//si no va a tener params, entonces se recbirá una lista vacía, no null xD
 
         this.hash = this.tool.generateFunctionHash(functionName, parametros);//no va a dar NullPonter, puesto que el super, se invocó previo a hacer esto, entonces NO PROBLEM! xD
     }
@@ -26,8 +29,8 @@ export class Function extends LocalContainer{
         //la ini de la TAS, se hace en el método initTAS, del globalConatiner, cuando se halla la función invocada, por lo tanto no debe hacerse de nuevo aquí xD
 
         for(let index = 0; index < this.parametros.length; index++){//par así indicar tb si además de no corresponde el #, no corresp el tipo...            
-            this.TAS.setVariable(new Variable(this.parametros[index].getName()
-            ,this.parametros[index].getType(), theArguments[index].getValue()));
+            this.TAS.setVariable(new Variable(this.parametros[index].getType(), 
+            this.parametros[index].getName(), theArguments[index].getValue()));
         }   
     }//no es nec hacer una verificación de correspondencia, puesto que si se halló la función, esto indica que 
     //el #params y tipos de la invocada estaban definidos en la función de algun GlobalContainer    

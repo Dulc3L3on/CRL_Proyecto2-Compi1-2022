@@ -1,0 +1,8 @@
+<div id="menu-bar">
+    <select id="activeFiles_list">        
+        <option selected disabled>Select your main file</option>
+        <option *ngFor="let file of files; index as indice">{{file.getName()}}</option>
+    </select>
+
+    <button id="compile" (click)="compile">Compilar <i class="bi bi-caret-right"></i></button>
+</div>

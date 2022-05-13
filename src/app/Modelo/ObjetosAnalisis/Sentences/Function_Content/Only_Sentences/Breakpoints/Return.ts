@@ -2,6 +2,7 @@
 //no creo que sea nec crear una clase para cuando es S y otra para cuando es C...
     //Eso ya lo veremos xD
 
+import { ContentType } from "../../../Class_Content/ContentType";
 import { Container } from "../../../Container";
 import { Expresion } from "../../Content/Expresion";
 import { Result } from "../../Content/Result";

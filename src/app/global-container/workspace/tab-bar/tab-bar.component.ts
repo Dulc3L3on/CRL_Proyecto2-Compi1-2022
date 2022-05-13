@@ -9,9 +9,9 @@ import { CRL_File } from 'src/app/Modelo/CRL_File';
 export class TabBarComponent implements OnInit {
   //filesName = [""];
   @Output() senderSelectedFile: EventEmitter<number> = new EventEmitter<number>();
-  @Output() senderFiles : EventEmitter<CRL_File[]> = new EventEmitter<CRL_File[]>();
-  CRL_files: CRL_File[] = [];
-  texto: string = "type your code here :D";
+  @Output() senderFiles : EventEmitter<Array<CRL_File>> = new EventEmitter<Array<CRL_File>>();
+  CRL_files: Array<CRL_File> = new Array<CRL_File>();
+  texto: string = "'''Type your code here :D'''";
 
   constructor() { }
 
@@ -20,7 +20,8 @@ export class TabBarComponent implements OnInit {
 
   addFile():void{
     const inputText = document.getElementById('input-file') as HTMLInputElement;
-    this.CRL_files.push({name: inputText.value, content: "Type your code here :D"});
+  
+    this.addUniqueFile(inputText.value, this.texto);    
 
     //para así enviar la info al contenedor de páginas
     this.sendCRLFiles();
@@ -58,11 +59,25 @@ export class TabBarComponent implements OnInit {
 
       console.log("Paso#4");    
       console.log("[TEXTO]"+this.texto);
-      this.CRL_files.push({name: file.name, content: this.texto});
+      this.addUniqueFile(file.name, this.texto);      
     }
 
     console.log("Paso#2");    
     reader.readAsText(file, "UTF-8");    
+  }
+
+  private addUniqueFile(fileName:string, content:string){
+    if(this.ensureUniqueness(fileName)){
+      this.CRL_files.push(new CRL_File(fileName, content));  
+    }
+  }
+
+  private ensureUniqueness(fileName:string){
+    for(let index:number = 0; index < this.CRL_files.length; index++)
+        if(this.CRL_files[index].getName() == fileName){
+          return false;
+        }    
+    return true;
   }
 
   selectTab(index:number){

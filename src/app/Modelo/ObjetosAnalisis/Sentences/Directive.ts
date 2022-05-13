@@ -4,6 +4,10 @@ import { Sentence } from "./Sentence";
 export class Directive extends Sentence{
     father:Container;//esto es solo para que esté informada la directiva, porque en realidad no es necesario que la posea, a menos que req buscar en la TAS para obtener algún dato...
 
+    constructor(){
+        super();
+    }   
+
     setFather(father:Container){
         this.father = father;
     }//los container tb deben tener este método, pero como solo el local tiene ese atrib, entonces ahí tendrá que colocarse

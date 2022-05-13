@@ -1,31 +1,40 @@
 import { CRL_File } from "../CRL_File";
-import { Stack } from "../ObjetosAnalisis/EDDs/Stack";
+import { ContentType } from "../ObjetosAnalisis/Sentences/Class_Content/ContentType";
 import { Function } from "../ObjetosAnalisis/Sentences/Class_Content/Function";
 import { Expresion } from "../ObjetosAnalisis/Sentences/Function_Content/Content/Expresion";
 import { Result } from "../ObjetosAnalisis/Sentences/Function_Content/Content/Result";
 import { GlobalContainer } from "../ObjetosAnalisis/Sentences/GlobalContainer";
+import { ActiveFileHandler } from "../Handlers/ActiveFileHandler";
 import { Tool } from "../Tool/Tool";
 import { ActiveClassHandler } from "./ActiveClassHandler";
 
+declare var CRLGrammar:any;
+
 export class CompilationCenter{
-    private classFiles:Array<CRL_File>;
+    private activeFiles:Array<CRL_File>;
+    private NAME_MAIN_FUNCTION:string = "Principal";
+
     private activeClassHandler:ActiveClassHandler;
-    private NAME_MAIN:string = "Principal";
+    private activeFileHandler:ActiveFileHandler;
     //por la forma en que se trabajó con las pilas locales de cada función, no será nec, tener una pila gobal a partir de la cual se vayan buscando las sentencias para hacer que exe sus axn :3 GRACIAS DIOS!!! xD
 
     tool:Tool;
 
-    constructor(classFiles:Array<CRL_File>){
-        this.classFiles = classFiles;
+    constructor(activeFiles:Array<CRL_File>){
+        this.activeFiles = activeFiles;
 
-        this.activeClassHandler = new ActiveClassHandler();
+        this.activeFileHandler = ActiveFileHandler.getInstance();
+        this.activeClassHandler = ActiveClassHandler.getInstance();        
         this.tool = new Tool();
     }
 
     compile(mainFileName:string){
-        for(let index:number = 0; index < this.classFiles.length; index++){
-            let activeClass:GlobalContainer = parser.parse(this.classFiles[index].content);
-            activeClass.setName(this.classFiles[index].getName());           
+        this.activeFileHandler.setInfo(this.activeFiles, mainFileName);
+        this.activeClassHandler.refreshClassList();
+
+        for(let index:number = 0; index < this.activeFiles.length; index++){
+            let activeClass:GlobalContainer = CRLGrammar.parse(this.activeFiles[index].content);
+            activeClass.setName(this.activeFiles[index].getName());           
             
             if(activeClass.getName() != mainFileName){
                 this.activeClassHandler.setActiveClass(activeClass);//hago esto porque en primer lugar el archivo del main no tendría porque poder ser improtado y porque si esto se revisa en la gramática, entonces ese arch, nada más estaría ocupando espacio en la lista de las activeClass xD
@@ -43,9 +52,9 @@ export class CompilationCenter{
         this.initExe();
     }
 
-    initExe(){
+    private initExe(){
         let theFunction:Function|null = this.activeClassHandler.getMainClass().getMainFunction(
-            this.tool.regenerateFunctionHash(this.NAME_MAIN, new Array<Expresion>()));
+            this.tool.regenerateFunctionHash(this.NAME_MAIN_FUNCTION, new Array<Expresion>()));
             
         if(theFunction != null){
             let result:Result = theFunction.exe();

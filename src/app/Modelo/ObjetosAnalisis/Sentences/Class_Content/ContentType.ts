@@ -1,4 +1,4 @@
-enum ContentType{
+export enum ContentType{
     ERROR = -1,
     INTEGER,
     DOUBLE,

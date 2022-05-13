@@ -3,7 +3,7 @@
 </div>
 
 <div class="tab-section">
-    <app-tab-container [CRL_Active_Files] = "CRL_Active_Files" (closerTab)="deleteTab($event)" [sizeAdapter]="sizeType"></app-tab-container>
+    <app-tab-container [CRL_Files]="this.CRL_Files" [CRL_Active_Files] = "CRL_Active_Files" (closerTab)="deleteTab($event)" [sizeAdapter]="sizeType"></app-tab-container>
 </div>
 
 <div class="console-section">

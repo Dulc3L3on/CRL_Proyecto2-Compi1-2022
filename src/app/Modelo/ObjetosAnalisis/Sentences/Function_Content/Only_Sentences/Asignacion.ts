@@ -2,6 +2,7 @@ import { Directive } from "../../Directive";
 import { Expresion } from "../Content/Expresion";
 import { Result } from "../Content/Result";
 import { Container } from "../../../Sentences/Container";
+import { ContentType } from "../../Class_Content/ContentType";
 
 export class Asignacion extends Directive{
     variableName:string;
@@ -26,19 +27,19 @@ export class Asignacion extends Directive{
     }
 
     exe_Asignation(container:Container):Result{        
-        let index:number = container.getTAS().findVariable(this.variableName);
+        let variableContent:Result = container.findVariable(this.variableName);//puesto que la variable se debe buscar solo en la clase donde se encuentra la estructura de la función que se está exe, entonces se asegura que la TAS de dicha clase, esté ini, puesto que al encontrar la función invocada, se realiza esta inicailización...
         
-        if(index != -1){
+        if(variableContent.getType() != ContentType.ERROR){
             let result:Result = this.expr.getValue();
 
-            if(result.getType() == container.getTAS().getVariable(index).getType()){
-                container.getTAS().getVariable(index).setValue(result.getValue());
+            if(result.getType() == variableContent.getType()){
+                variableContent.setValue(result.getValue());
                 return new Result(ContentType.NOTHING);
             }else{
                 return new Result(ContentType.ERROR, "asignated value type"+
                 " does not match with the variable's type");
             }            
         }
-        return new Result(ContentType.ERROR, "There is no variable named "+this.variableName);
+        return variableContent;//se retorna el Result original de ERROR
     }
 }

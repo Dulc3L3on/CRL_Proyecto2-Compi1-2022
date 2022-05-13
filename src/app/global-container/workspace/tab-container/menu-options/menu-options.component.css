@@ -1,0 +1,34 @@
+:host{
+    font-family: 'Raleway';    
+}
+
+#menu-bar{
+    height: 40px;
+    width: 100%;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.637);
+    border-radius: 15px 15px 0px 0px;
+    background-color: #E0E7F7;
+}
+
+#activeFiles_list{
+    background-color: transparent;
+    border: none;
+    border-radius: 15px 0px 0px 0px;    
+    padding: 10px;
+
+    width: 185px;
+}
+
+#compile{
+    background-color: transparent;
+    border: none;
+    border-left: 1px solid grey;    
+    height: 30px;
+    width: 115px;
+    margin-left: 15px;
+}
+
+#compile:hover{
+    /*background-color: rgba(13, 126, 13, 0.089);*/
+    font-weight: bold;
+}

@@ -1,5 +1,6 @@
 import { ThisReceiver } from "@angular/compiler";
 import { TAS } from "../../../EDDs/TablaSimbolos/TAS";
+import { ContentType } from "../../Class_Content/ContentType";
 import { Container } from "../../Container";
 import { LocalContainer } from "../../LocalContainer";
 import { Expresion } from "../Content/Expresion";
@@ -20,7 +21,7 @@ export class If extends Control_sentence{
 
     setElse(else_condition:Else){
         this.else_Condition = else_condition;
-    }
+    }//se seteará cuando se haga la reducción en la pila...
 
     override exe_ControlSentence(): Result {
         if(this.evaluateCondition().getType() == ContentType.BOOLEAN){

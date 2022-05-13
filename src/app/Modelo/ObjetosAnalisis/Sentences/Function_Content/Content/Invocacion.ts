@@ -5,21 +5,25 @@ import { Directive } from "../../Directive";
 import { Expresion } from "./Expresion";
 import { Result } from "./Result";
 import { Function } from "../../Class_Content/Function";
+import { ContentType } from "../../Class_Content/ContentType";
 
 export class Invocacion extends Directive{
     functioName:string;
     argumentos:Array<Expresion>;    
-    isOnlyInvocated:boolean;//este atributo lo coloco por le hecho que una inovcación en la mayoría de los casos está dentro de una exp y ahí si o sí debe devolver lo que el mét/fun le dio a este obj al exe la funcSolicitada, a difernecia de cuando es solo una invoc, puesto que no está dentro de un return ni nada que deba recibir su valor, sino que está "al aire", por lo tanto no debe decirle a la pila que pare, porque el valor que retornó es irrelevante xD, al menos en ese caso xD
+    isOnlyInvocated:boolean = true;//este atributo lo coloco por le hecho que una inovcación en la mayoría de los casos está dentro de una exp y ahí si o sí debe devolver lo que el mét/fun le dio a este obj al exe la funcSolicitada, a difernecia de cuando es solo una invoc, puesto que no está dentro de un return ni nada que deba recibir su valor, sino que está "al aire", por lo tanto no debe decirle a la pila que pare, porque el valor que retornó es irrelevante xD, al menos en ese caso xD
 
-    constructor(functionName:string, argumentos:Array<Expresion>, isOnlyInvocated:boolean){//este último parám es para saber si cuando tenga que devolver el resultado de una fun != void, tendrá que devolver ese result o un nothing, esto por la fun readStack(), puesto que esta cuando recibe un Result != NOTHING, deja de leer y hace el respectivo return xD
+    constructor(functionName:string, argumentos:Array<Expresion>){//este último parám es para saber si cuando tenga que devolver el resultado de una fun != void, tendrá que devolver ese result o un nothing, esto por la fun readStack(), puesto que esta cuando recibe un Result != NOTHING, deja de leer y hace el respectivo return xD
         super();
 
         this.functioName = functionName;
-        this.argumentos = argumentos;
-        this.isOnlyInvocated = isOnlyInvocated;
+        this.argumentos = argumentos;        
 
         this.sentenceName = "INVOCACION";
     }//en caso no envíen argumentos se recibirá una lista vacía no un null!
+
+    setIsOnlyInvocated(isOnlyInvocated:boolean){
+        this.isOnlyInvocated = isOnlyInvocated;
+    }
 
     override setFather(father: Container): void {
         this.father = father;

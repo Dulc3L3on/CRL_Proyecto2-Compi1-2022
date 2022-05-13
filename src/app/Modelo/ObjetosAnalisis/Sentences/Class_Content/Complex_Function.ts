@@ -2,6 +2,7 @@ import { Variable } from "../Function_Content/Content/Variable";
 import { Function } from "./Function";
 import { Result } from "../Function_Content/Content/Result";
 import { GlobalContainer } from "../GlobalContainer";
+import { ContentType } from "./ContentType";
 
 export class Complex_Function extends Function{    
 

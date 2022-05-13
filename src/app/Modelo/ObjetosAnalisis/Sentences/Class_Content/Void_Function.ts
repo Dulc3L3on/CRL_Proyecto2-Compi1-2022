@@ -2,6 +2,7 @@ import { Variable } from "../Function_Content/Content/Variable";
 import { Function } from "./Function";
 import { GlobalContainer } from "../GlobalContainer";
 import { Result } from "../Function_Content/Content/Result";
+import { ContentType } from "./ContentType";
 
 export class Void_Function extends Function{
 

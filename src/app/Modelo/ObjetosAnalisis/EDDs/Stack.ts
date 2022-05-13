@@ -26,7 +26,7 @@ export class Stack<T>{//LIFO
         //return this.elements.reverse();//no voy a usar reverse, porque la referencia que se obtiene es al mismo array y yo no quiero que se modifique el arreglo original...
     }
 
-    getLast():T|null{
+    getElement():T|null{
         if(!this.isEmpty()){
             let element:T = this.elements.pop() as T;            
             return element;
@@ -34,19 +34,26 @@ export class Stack<T>{//LIFO
         return null;
     }//es decir obtener el siguiente ele que está en el tope de la pila
 
-    reviewPrevious():T|null{
+    previewElement():T|null{
+        if(!this.isEmpty()){
+            return this.elements[this.size()-1];//el objetivo es devolverlo sin removerlo de la pila
+        }
+        return null;
+    }
+
+    /*reviewPrevious():T|null{
         if(!this.isEmpty()){
             return this.elements[this.size()-1];
         }
         return null;
-    }//con previo me refiero al penúltimo xD [útil al revisar los scope para hacer los set y para la revisión del else...]
+    }*///con previo me refiero al penúltimo xD [útil al revisar los scope para hacer los set y para la revisión del else...]
 
-    getFirst():T|null{
+    /*getFirst():T|null{
         if(!this.isEmpty()){
             return this.elements[0];
         }       
         return null;
-    }
+    }*/
 
     getElements(){
         return this.elements;
@@ -57,6 +64,6 @@ export class Stack<T>{//LIFO
     }
 
     size():number{
-        return this.elements.length;
+        return this.elements.length;//Debe ser así, puesto que el valor puede ir variando de un momento a otro
     }
 }

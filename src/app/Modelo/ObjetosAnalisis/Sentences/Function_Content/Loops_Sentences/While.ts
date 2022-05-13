@@ -4,6 +4,7 @@ import { Result } from "../Content/Result";
 import { Loop } from "./Loop";
 import { TAS } from "../../../EDDs/TablaSimbolos/TAS";
 import { ThisReceiver } from "@angular/compiler";
+import { ContentType } from "../../Class_Content/ContentType";
 
 export class While extends Loop{
     constructor(/*padre:LocalContainer, */condition:Expresion){

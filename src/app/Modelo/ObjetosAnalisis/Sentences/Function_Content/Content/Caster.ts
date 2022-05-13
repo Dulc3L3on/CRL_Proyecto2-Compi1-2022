@@ -1,4 +1,6 @@
 import { COMPILER_OPTIONS } from "@angular/core"
+import { Tool } from "src/app/Modelo/Tool/Tool"
+import { ContentType } from "../../Class_Content/ContentType"
 import { Result } from "./Result"
 
     export const types_ADD = [
@@ -79,9 +81,18 @@ import { Result } from "./Result"
     ]//yo pienso que el Nothing, en este caso no debería addse puesto que no hay ocasión en que el Result pueda obtener eso... ah no si habría, con la invocación de funciones xD
     //no está bien...
 export class Caster{
+    tool:Tool;
+
+    constructor(){
+        this.tool = new Tool();
+    }
+
+    isADecimal(num:number){
+        return this.tool.isADecimal(num);
+    }
+
     //se supone que cuando se empleen estos, se tendrá una completa seguridad de que la conversión puede realizarse sin problemas, sino de todos modos tendrá el return con un ContentType ERROR, por si acaso xD
     //también se supone que no se invocarán cuando el tipo es el esperado, pero por si, mejor tendré un return result.getValue() para evitar problemas xD
-
     getPreferibleNumberType(type:ContentType):ContentType{
         switch(type){
             case ContentType.DOUBLE: case ContentType.INTEGER:

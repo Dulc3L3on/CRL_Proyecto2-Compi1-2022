@@ -1,6 +1,8 @@
+import { ContentType } from "../../Class_Content/ContentType";
 import { Caster, types_ADD, types_DIV, types_MOD, types_MULT, types_POW, types_RES } from "./Caster";
 import { Expresion } from "./Expresion";
 import { OperationResult } from "./OperationResult";
+import { OperatorType } from "./OperatorType";
 import { Result } from "./Result";
 
 export class OperationHandler{
