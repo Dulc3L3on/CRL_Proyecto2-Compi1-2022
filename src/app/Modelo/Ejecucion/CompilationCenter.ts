@@ -7,8 +7,9 @@ import { GlobalContainer } from "../ObjetosAnalisis/Sentences/GlobalContainer";
 import { ActiveFileHandler } from "../Handlers/ActiveFileHandler";
 import { Tool } from "../Tool/Tool";
 import { ActiveClassHandler } from "./ActiveClassHandler";
+import { parser as Parser } from "src/app/Modelo/Analizadores/CRLGrammar.js";
+//import { parser as Parser } from "src/app/Modelo/Analizadores/GramaticaPrueba_SinAxn.js";
 
-declare var CRLGrammar:any;
 
 export class CompilationCenter{
     private activeFiles:Array<CRL_File>;
@@ -28,12 +29,17 @@ export class CompilationCenter{
         this.tool = new Tool();
     }
 
-    compile(mainFileName:string){
+    compile(mainFileName:string){//este parám se llena con la opción que haya sido seleciconada en el select...
         this.activeFileHandler.setInfo(this.activeFiles, mainFileName);
         this.activeClassHandler.refreshClassList();
+        console.log("#activeFiles: "+this.activeFiles.length);
 
         for(let index:number = 0; index < this.activeFiles.length; index++){
-            let activeClass:GlobalContainer = CRLGrammar.parse(this.activeFiles[index].content);
+            console.log("class#"+index);
+
+            let modifiedContent:string = this.activeFiles[index].content.trim();//de una vez los dos, aunque al final deba add un \n xD
+
+            let activeClass:GlobalContainer = Parser.parse(modifiedContent+"\n");//esto es debido a que para el primer elemento que aparezca en la gramática, sea del header o un elemento de clase, no se tiene considerado que aparezca un NL, antes de ellos, por lo cual para evitar modif en la gramática y hacer que todo esté en una sola RP, se usará el trim para esto. El \n que aparece aquí es porque toda instrucción si mal no recuerdo xD, tiene al final de su defi un NL, por lo cual el archivo siempre deberá terminar en este \n, para que el usaurio no se entere de esto xD, lo haré yo jaja xD
             activeClass.setName(this.activeFiles[index].getName());           
             
             if(activeClass.getName() != mainFileName){

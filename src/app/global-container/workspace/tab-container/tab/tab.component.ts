@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { CRL_File } from 'src/app/Modelo/CRL_File';
 
 @Component({
   selector: 'app-tab',
@@ -7,9 +8,8 @@ import { Component, Input, OnInit } from '@angular/core';
   providers: []
 })
 export class TabComponent implements OnInit {
-  @Input() title: string;
-  @Input() content: string;
-  @Input() sizeAdapter: string;
+  @Input() ID_File:number;
+  @Input() sizeAdapter: string;  
 
   constructor() { }
 

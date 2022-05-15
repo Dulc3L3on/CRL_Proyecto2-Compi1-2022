@@ -5,8 +5,8 @@
       const {ActiveFileHandler} = require("../Handlers/ActiveFileHandler.ts");      
 
       const {GlobalContainer} = require("../ObjetosAnalisis/Sentences/GlobalContainer.ts");
-      const {Import} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Import.ts");      
-      const {Incertitude} = require("../ObjetosAnalisis/Incertitude.ts");
+      const {Import} = require("../ObjetosAnalisis/Sentences/Class_Content/Import.ts");      
+      const {Incertitude} = require("../ObjetosAnalisis/Sentences/Class_Content/Incertitude.ts");
       const {Sentence} = require("../ObjetosAnalisis/Sentences/Sentence.ts");
       const {ContentType} = require("../ObjetosAnalisis/Sentences/Class_Content/ContentType.ts");
 
@@ -63,7 +63,7 @@
       function addImport(importClassName){
             if(activeFileHandler.isExistFile(importClassName)){
                   if(!activeFileHandler.isMainFile(importClassName)){
-                        console.log("import: "+ importClassName+" added");
+                        console.log("[S] Header content: IMPORT [ "+ importClassName+" ]");
                         clase.addImport(new Import(importClassName));
                   }else{
                         //Se add el error, puesto que el archivo Main no tendría porque poder importarse, ya que eso no impediría que se pudiera invocar el método Main de nuevo, y así provocar un error por quedarse enciclado...
@@ -75,16 +75,17 @@
 
       function addIncertitude(expression){
             //Simplemente se debe crear el obj y addlo al globalContent (lo cual se puede hacer sin problema, pruesto que para que pudiera ser seteada al contenido se hizo que heredara de Directive...), puesto que la revisión profunda [con respecto a la exp], se hace en la clase Incert...
-            console.log("incertitude added");
+            console.log("[S] Header content: INCERTITUDE");
             clase.addGlobalContent(new Incertitude(expresion));
       }
 
   //CLASS CONTENT
 
-      function getHierarchy(){
-            //falta implementar
+      function getHierarchy(sangria){
+            let lexemma = sangria.charAt();//si no funciona usa split y "" nada xD
+            console.log("SANGRIA: "+lexema.lenght);
 
-            return 1;
+            return lexema.lenght;
       }
 
       function addClassContent(declaratedVars, theFunction){
@@ -96,11 +97,13 @@
                         declaratedVars[index].setFather(clase);
                         clase.addGlobalContent(declaratedVars[index]);
                   }
+                  console.log("[S] Class content: VAR DECLARATION");                  
             }else{
                   //la función ya tiene por defecto scope = 0, entonces no hay que hacer eso aquí
                   //tb ya tiene seteado su respectivo padre xD
                   clase.addGlobalContent(theFunction);//que se quede, puesto que encaja con las axn del stack xD
                   hierarchyStack.addFunction(theFunction);
+                  console.log("[S] Class content: FUNCTION");
             }
       }//por la RP que contiene ambos tipos de contenido, se me ocurrió que quizá podría hacer el seteo de cada contenido, por medio de difernetes métodos, además como el proceso de seteo varía, puesto que en uno va directo al padre y en el otro directo a la func que está al ini de la pila o dir a la pila, entonces... xD      
 
@@ -109,44 +112,54 @@
 
             if(isADirective){
                   hierarchyStack.addLocalDirective(content);
+                  console.log("[S] Function content: SANGRIA [ directive on "+scope +" level]");
             }else{
+                  console.log("[S] Function content: SANGRIA [ sentence on "+scope +" level]");
                   hierarchyStack.addLocalContainer(content);
             }//no tengo que resetear la var isADirective, puesto que no se va a llegar a la RP que invoca a este método, sin haber caido en la axn que setea esta var xD
       }
 
       function createVarDeclaration(type, varList, asignatedValue){//Este último puede ser null, puesto que no es obligatorio que especifiquen este valor...
-            let declaratedVars = new Array<Variable_Declaration>();
+            let declaratedVars = [];//new Array<Variable_Declaration>()
 
             for(let index = 0; index < varList.lenght; index++){
-                  declaratedVars.push(type, varlist[index], asignatedValue);
+                  declaratedVars.push(type, varList[index], asignatedValue);
             }
+
+            console.log("[S] Global content: DECLARATION [ "+((varList.lenght>0)?"var list":"var")+((asignatedValue != null)?" + expr":"")+ " ]");
             return declaratedVars;
       }//sin importar que sea G o L, puesto que esto se determina en prod más arriba de la RP en donde se crea el obj xD      
 
       function createFunction(functionType, returnType, name, params){
             switch(functionType){
-                  "SIMPLE":
+                  case "SIMPLE":
+                        console.log("[S] Global content: S_FUNCTION [ "+returnType +", "+name+", "+((params.lenght>0)?", params":""));
                         return new Void_Function(clase, returnType, name, params);
-                  "COMPLEX":
+                  case "COMPLEX":
+                        console.log("[S] Global content: C_FUNCTION [ "+returnType +", "+name+", "+((params.lenght>0)?", params":""));
                         return new Complex_Function(clase, returnType, name, params);
-                  "MAIN":
+                  case "MAIN":
+                        console.log("[S] Global content: M_FUNCTION [ "+returnType +", "+name);
                         return new Void_Function(clase);
             }
             return null;//pero nunca se va a caer acá...
       }//LISTO
 
       function createParam(type, name){
+            console.log("[S] Function sub-content: PARAM ["+type+", "+name+"]");
             return new Variable(type, name);
       }      
 
  //FUNCTION CONTENT
 
       function createAsignation(name, expr){
+            console.log("[S] Function content: ASIGNATION [ "+name+" + expr ]");
             return new Asignacion(name, expr);
       }
 
    //EXPRESSIONS
       function createExpr_Operation(operationType, left, symbol, right){//ya sea la root o no
+            console.log("[S] Function content: EXPR-OPERATION [ "+symbol+" ]");
             return new Expression(left, createExp_Operator(operationType, symbol), right);
       }//se creó el método solo con tal que no esté así explícito en las axn xD, porque en realidad lo único que se hará aquí es crear el objeto y devolverlo :v xD
 
@@ -195,19 +208,21 @@
             return null; //pero nunca se llegará hasta acá xD
       }
 
-      function createExp_Value(valueType, content){
+      function createExpr_Value(valueType, content){
+            console.log("[S] Function content: EXPR-VALUE [ "+valueType+", "+content+" ]");
+
             switch(valueType){
-                  "INTEGER"//no lo dejo como number, puesto que si lo hago así, no tendría oportunidad de setear los decimales
+                  case "INTEGER"://no lo dejo como number, puesto que si lo hago así, no tendría oportunidad de setear los decimales
                         return new Expresion(null, new Number(content), null);
-                  "DECIMAL"
+                  case "DECIMAL":
                         return new Expresion(null, new Number(content), null);//para tratarlo como decimal, es que se hará las respectivas revisiones en la parte de la clase Expresión...                   
-                  "CADENA"
+                  case "CADENA":
                         return new Expresion(null, new String(content), null);
-                  "BOOLEAN"
+                  case "BOOLEAN":
                         return new Expresion(null, new Boolean(content), null);
-                  "CHARACTER"
+                  case "CHARACTER":
                         return new Expresion(null, new String(content), null);
-                  "VARIABLE"
+                  case "VARIABLE":
                         return new Expresion(null, new Variable(null, content, null), null);//para este caso el argu para el valor, en realidad será el nombre xD
             }
             return null;//no se llegará aquí, puesto que el tipo siempre será enviado por mí xD, a lo que voy es que será certero jaja xD
@@ -215,26 +230,33 @@
       //fin de los métodos para expresión
 
       function createInvocation(invocatedFunction, argumentos){
+            console.log("[S] Function content: INVOCATION [ arguments? "+ ((argumentos.lenght>0)?"T":"F") + " list? "+ isAList+" ]");
             return new Invocacion(invocatedFunction, argumentos);
       }
 
       function createMostrar(stringBase, argumentos){//simi a los de la func... o yo creo que iguales xD
+            console.log("[S] Function content: MOSTRAR [arguments? "+ ((argumentos.lenght>0)?"T":"F") + "list? "+isAList);
             return new Mostrar(stringBase, argumentos);
       }
 
       function createDraw_AST(functionName){
+            console.log("[S] Function content: DRAW_AST of "+functionName);
             return new DibujarAST(functionName);
       }
 
       function createDraw_EXP(expression){
+            console.log("[S] Function content: DRAW_EXPR");
             return new DibujarEXP(expression);
       }     
 
       function createDraw_TS(){
+            console.log("[S] Function content: DRAW_TS");
             return new DibujarTS();
       }//mejor cree 3 para cada uno, puesto que los tipos de param varían y son algo diferentes xD, pero si no es nec, entonces solo los fusionas y luego les indicas su tipo, para que sepa a que obj crear y poor ello devolver xD
 
       function createBreakPoint(breakpointType, expr){//solo tendrá valor != null cuando el breakpoint a crear se un return complejo...
+            console.log("[S] Function subcontent: BREAKPOINT [ "+breakpointType+((breakpointType == "RETURN" && expr != null)?+"+ expr":""));
+
             switch(breakpointType){
                   case "RETURN":
                         return new Return(expr);//si es simple pues recibirá null, sino la expr xD, así que NO PROBLEM jaja xD
@@ -247,21 +269,26 @@
       }     
 
       function createFor(variable, condition, incremento){
+            console.log("[S] Function content: FOR");
             return new For(variable, condition, incremento);
       } 
 
       function createForVar(variableName, value){//este valor siempre será un entero, por lo que dijo el aux, aunque creo que en os objetos tengo ahí una expr xD
+            console.log("[S] Function subcontent: FOR-VAR [ "+variableName+" ]");
             return new Variable(ContentType.INTEGER, variableName, value);
       }
 
       function createWhile(condition){
+            console.log("[S] Function content: WHILE");
             return new While(condition);
       }      
 
       function createControl_Sentence(expre){//será null cuando la sent a crear sea else xD
             if(expre == null){
+                  console.log("[S] Function content: ELSE");
                   return new Else();
             }
+            console.log("[S] Function content: IF");
             return new If(expre);
       }                  
 
@@ -287,15 +314,29 @@
 //decimal       {digito}+("."{digito}+)?\b
 letra           [a-zA-Z\u00f1\u00d1]          
 
-%x COMMENT
-%s SSTRING ERROR
+%s COMMENT SSTRING ERROR
 %%
+
+//"!!"[^\n]*                                                                  {console.log("[L] comentario: "+ yytext);/*ignore*/}
+
+\n+                                                                         {console.log("[L] especial: NL"); return 'NEW_LINE';}
+\t+                                                                         {console.log("[L] especial: SANGRIA"); return 'SANGRIA';}
+
+\s                                                                           /*ignored*/
+
+\r                                                                           /*ignored*/
+
+"!!"[^\n]*                                                                  {console.log("[L] comentario: "+ yytext);}/*ignore*/
+
+"'''"                                                                       {this.begin('COMMENT');}
+<COMMENT>"'''"                                                              {console.log("[L] comentario"); this.popState();}
+<COMMENT>.                                                                   /*ignore*/
 
 //[1.2] ER
 //reservadas
 "Importar"                                                                  {console.log("[L] reservada: IMPORT"); return 'IMPORT';}
-"Incerteza"                                                                 {console.log("[L] reservada: INCERT"); return 'INCERTEZA';}
-"Principal"                                                                 {console.log("[L] reservada: PRINCI"); return 'MAIN';}
+"Incerteza"                                                                 {console.log("[L] reservada: INCERTEZA"); return 'INCERTEZA';}
+"Principal"                                                                 {console.log("[L] reservada: PRINCIPAL"); return 'MAIN';}
 "Int"                                                                       {console.log("[L] reservada: INT"); return 'INT';}
 "Double"                                                                    {console.log("[L] reservada: DOUBLE"); return 'DOUBLE';}
 "String"                                                                    {console.log("[L] reservada: STRING"); return 'STRING';}
@@ -341,11 +382,9 @@ letra           [a-zA-Z\u00f1\u00d1]
 ";"                                                                         {console.log("[L] reservada: ;"); return ';';}
 "Retorno"                                                                   {console.log("[L] reservada: RETORNO"); return 'RETORNO';}
 
-\n+                                                                         {console.log("[L] especial: NL"); return 'NEW_LINE';}
-\t+                                                                         {console.log("[L] especial: SANGRIA"); return 'SANGRIA';}
+[0-9]+("."[0-9]+)                                                           {console.log("[L] ER: DEC"); return 'DECIMAL';}
+[0-9]+                                                                      {console.log("[L] ER: INT"); return 'INTEGER';}
 
-[0-9]+\b                                                                    {console.log("[L] ER: INT"); return 'INTEGER';}
-[0-9]+("."[0-9]+)?\b                                                        {console.log("[L] ER: DEC"); return 'DECIMAL';}
 "'"{letra}|\s"'"                                                            {console.log("[L] ER: CHAR"); return 'CHARACTER';}
 
 "."                                                                         {console.log("[L] reservada: ."); return '.';}
@@ -353,12 +392,6 @@ letra           [a-zA-Z\u00f1\u00d1]
 
 
 ("$"|{letra})|("_"|"$"|{letra})("_"|"$"|{letra}|[0-9])+                     {console.log("[L] ER: ID"); return 'ID';}
-
-"!!".*                                                                      {console.log("[L] comentario: "+ yytext);/*ignore*/}
-
-"'''"                                                                       {this.begin('COMMENT');}
-<COMMENT>"'''"                                                              {console.log("[L] comentario"); this.popState();}
-<COMMENT>.                                                                   /*ignore*/
 
 ["]                                                                         {this.begin('SSTRING');}
 <SSTRING>[^"\n]*                                                            {console.log("ER: CADENA: "+yytext);return 'CADENA';}/*quizá si vaya aquí, como ignora todo lo que sea un \n o "*/
@@ -368,7 +401,7 @@ letra           [a-zA-Z\u00f1\u00d1]
 
 <<EOF>>                                                                     {console.log("[L] EOF"); return 'EOF';}
  
-<ERROR>\s+                                                                  {addError(yyloc.first_line, yylloc.first_column); this.popState();}//aquí se invoca a la función que se encarga de recisar lo de substring de reservadas xD
+<ERROR>\s+                                                                  {addError(yylloc.first_line, yylloc.first_column); this.popState();}//aquí se invoca a la función que se encarga de recisar lo de substring de reservadas xD
 
 [.]                                                                         {handleLexerError(); this.yybegin('ERROR');}//Aquí se debe hacer la concat de los errores     
 
@@ -400,9 +433,14 @@ inicio : clase EOF                        {console.log("---Parser process termin
                                            // se hace el return del objeto creado para que pueda setearse en la lista que posee el CompilerCenter...}
        ;
 
-clase : header content                    {console.log("Header + Content");}
-      | content                           {console.log("Only Body");}
-      ;
+clase : NEW_LINE class_elements      
+      | SANGRIA NEW_LINE class_elements
+      | class_elements
+      ;//sangría de por sí sola NO, porque ellos no deben tener nada de ese tipo de espacios!
+
+class_elements : header content                    {console.log("Header + Content");}
+               | content                           {console.log("Only Body");}
+               ;
 
 header : imports incerteza                {console.log("Header: Import + Incertitude");}
        | imports                          {console.log("Header: Import");}
@@ -439,13 +477,14 @@ declaracion_var_global : declaracion_var                     {console.log("Class
                        ;
 
 declaracion_var : content_type creacion_vars asignation_value                        { $$ = createVarDeclaration($1, $2, $3); }
+                | content_type creacion_vars                                         { $$ = createVarDeclaration($1, $2, null); }
                 ;
 
 creacion_vars : var_list                        { $$ = $1; }
               ;
 
 var_list : var_list ',' ID                      { $$ = $$.push($1); }
-         | ID                                   { $$ = new Array<string>();
+         | ID                                   { $$ = [];
                                                   SS.push($1); }//Aunue tb hubieras podido probar así como lo tenías antes, si se puede ini desde la instaciación [por medio de enviar un argu a los parám xD]
          ;
 
@@ -458,15 +497,15 @@ content_type : INT                        { $$ = ContentType.INTEGER; }
 
 declaracion_funcion : content_type ID '(' params ')' ':'                      { createFunction("COMPLEX", $1, $2, $4); }
                     | VOID ID '(' params ')' ':'                              { createFunction("SIMPLE", $1, $2, $4); }
-                    | VOID MAIN '(' ')' ':'                                   { createFunction("MAIN", $1, $2, new Array<Variable>()); }
+                    | VOID MAIN '(' ')' ':'                                   { createFunction("MAIN", $1, $2, []); }
                     ;
 
 params : params_list                        { $$ = $1; }
-       |                                    { $$ = new Array<Variable>(); }
+       |                                    { $$ = []; }
        ;
 
 params_list : params_list ',' param                   { $$ = $1.push($3); }
-            | param                                   { $$ = new Array<Variable>();
+            | param                                   { $$ = [];
                                                         $$.push($1); }
             ;
       
@@ -501,84 +540,84 @@ asignation_value : '=' expression                    { $$ = $2; }
 expression : expr                         { $$ = $1; }
            ;
 
-expr : expr '+' expr2                       { $$ = createOperation($1, $2, $3); }               
-     | expr '-' expr2                       { $$ = createOperation($1, $2, $3); }
+expr : expr '+' expr2                       { $$ = createExpr_Operation(OperatorType.ARITMETIC, $1, $2, $3); }               
+     | expr '-' expr2                       { $$ = createExpr_Operation(OperatorType.ARITMETIC, $1, $2, $3); }
      | expr2                                { $$ = $1; }//puesto que hace una de dos cosas, subir el resultado o nada xD, ahora que lo pienso quizá debería subirse xD
      ;
 
-expr2 : expr2 '*' expr3                   { $$ = createOperation($1, $2, $3); }
-      | expr2 '/' expr3                   { $$ = createOperation($1, $2, $3); }
-      | expr2 '%' expr3                   { $$ = createOperation($1, $2, $3); }
+expr2 : expr2 '*' expr3                   { $$ = createExpr_Operation(OperatorType.ARITMETIC, $1, $2, $3); }
+      | expr2 '/' expr3                   { $$ = createExpr_Operation(OperatorType.ARITMETIC, $1, $2, $3); }
+      | expr2 '%' expr3                   { $$ = createExpr_Operation(OperatorType.ARITMETIC, $1, $2, $3); }
       | expr3                             { $$ = $1; }
       ;
 
-expr3 : expr4 '^' expr3                   { $$ = createOperation($1,$2, $3); }
+expr3 : expr4 '^' expr3                   { $$ = createExpr_Operation(OperatorType.ARITMETIC, $1,$2, $3); }
       | expr4                             { $$ = $1; }
       ;//puesto que la aso es hacia la derecha
 
 expr4 : '-' expr5   %prec UMINUS                      { let expre = new Expresion(null, 0, null);
                                                         expre.getValue();//puesto que el operate es de acceso privado xD
-                                                        $$ = createOperation(expre, $1, $2); }
+                                                        $$ = createExpr_Operation(OperatorType.ARITMETIC, expre, $1, $2); }
       | expr5                                         { $$ = $1; }
       ;
 
-expr5 : expr5 '==' expr6                        { $$ = createOperation($1, $2, $3); }
-      | expr5 '!=' expr6                        { $$ = createOperation($1, $2, $3); }
-      | expr5 '<' expr6                         { $$ = createOperation($1, $2, $3); }
-      | expr5 '>' expr6                         { $$ = createOperation($1, $2, $3); }
-      | expr5 '<=' expr6                        { $$ = createOperation($1, $2, $3); }
-      | expr5 '>=' expr6                        { $$ = createOperation($1, $2, $3); }
-      | expr5 '~' expr6                         { $$ = createOperation($1, $2, $3); }
+expr5 : expr5 '==' expr6                        { $$ = createExpr_Operation(OperatorType.RELATIONAL, $1, $2, $3); }
+      | expr5 '!=' expr6                        { $$ = createExpr_Operation(OperatorType.RELATIONAL, $1, $2, $3); }
+      | expr5 '<' expr6                         { $$ = createExpr_Operation(OperatorType.RELATIONAL, $1, $2, $3); }
+      | expr5 '>' expr6                         { $$ = createExpr_Operation(OperatorType.RELATIONAL, $1, $2, $3); }
+      | expr5 '<=' expr6                        { $$ = createExpr_Operation(OperatorType.RELATIONAL, $1, $2, $3); }
+      | expr5 '>=' expr6                        { $$ = createExpr_Operation(OperatorType.RELATIONAL, $1, $2, $3); }
+      | expr5 '~' expr6                         { $$ = createExpr_Operation(OperatorType.RELATIONAL, $1, $2, $3); }
       | expr6                                   { $$ = $1; }
       ;
 
-expr6 : expr6 '||' expr7                        { $$ = createOperation($1, $2, $3); }
+expr6 : expr6 '||' expr7                        { $$ = createExpr_Operation(OperatorType.LOGIC, $1, $2, $3); }
       | expr7                                   { $$ =  $1; }
       ;
 
-expr7 : expr7 '|&' expr8                        { $$ = createOperation($1, $2, $3); }
+expr7 : expr7 '|&' expr8                        { $$ = createExpr_Operation(OperatorType.LOGIC, $1, $2, $3); }
       | expr8                                   { $$ = $1; }
       ;
       
-expr8 : expr8 '&&' expr9                        { $$ = createOperation($1, $2, $3); }
+expr8 : expr8 '&&' expr9                        { $$ = createExpr_Operation(OperatorType.LOGIC, $1, $2, $3); }
       | expr9                                   { $$ = $1; }
       ;
 
-expr9 : '!' expr10                        { $$ = createOperation(null, $2, $3); }
+expr9 : '!' expr10                        { $$ = createExpr_Operation(OperatorType.LOGIC, null, $2, $3); }
        | expr10                           { $$ = $1; }
        ;
 
-expr10 : INTEGER                    { $$ = createValue("INTEGER", $1); }
-       | DECIMAL                    { $$ = createValue("DECIMAL", $1); }
-       | CADENA                     { $$ = createValue("CADENA", $1); }
-       | booleano                   { $$ = createValue("BOOLEAN", $1); }
-       | CHARACTER                  { $$ = createValue("CHARACTER", $1); }
+expr10 : INTEGER                    { $$ = createExpr_Value("INTEGER", $1); }
+       | DECIMAL                    { $$ = createExpr_Value("DECIMAL", $1); }
+       | CADENA                     { $$ = createExpr_Value("CADENA", $1); }
+       | booleano                   { $$ = createExpr_Value("BOOLEAN", $1); }
+       | CHARACTER                  { $$ = createExpr_Value("CHARACTER", $1); }
        | contenido_var              { $$ = $1; }
-       | '(' expr ')'               { $$ = createOperation($2, "()", null); }
+       | '(' expr ')'               { $$ = createExpr_Operation($2, "()", null); }
        ;
 
 booleano : TRUE                     { $$ = $1; }//también hubieramos podido crear el value desde aquí y ya solo enviarlo a la RP que invoca a "booleano" de arribita, pero para que todo se vea igual xD
          | FALSE                    { $$ = $1; }
          ;      
 
-contenido_var : ID                  { $$ = createValue("VARIABLE", $1); }
+contenido_var : ID                  { $$ = createExpr_Value("VARIABLE", $1); }
               | invocacion          { $1.setIsOnlyInvocated(false);//puesto que si vino aquí, pues no lo es xD
                                       $$ = $1; }
               ;
 
 invocacion : ID '(' argumentos ')'                    { $$ = createInvocation($1, $3); }
-           | ID '(' ')'                               { $$ = createInvocation($1, new Array<Expresion>()); }
+           | ID '(' ')'                               { $$ = createInvocation($1, []); }
            ;
 
 mostrar : MOSTRAR '(' CADENA contenido_asignacion ')'                   { $$ = createMostrar($3, $4); }
         ;
 
 contenido_asignacion : ',' argumentos                       { $$ = $2; }
-                     |                                      { $$ = new Array<Expresion>(); }
+                     |                                      { $$ = []; }
                      ;
 
 argumentos : argumentos ',' expression                      { $$ = $1.push($3); }//la verdad no estoy segura que deba ser $1, en todo caso si prefiriría crear una lista aparte para que aquí solo se seteen los datos...
-           | expression                                     { $$ = new Array<Expresion>();
+           | expression                                     { $$ = [];
                                                               $$.push($1); }
            ;
 

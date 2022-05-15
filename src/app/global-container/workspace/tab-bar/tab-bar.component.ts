@@ -1,30 +1,22 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { CRL_File } from 'src/app/Modelo/CRL_File';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FileService } from 'src/app/Services/FileService';
 
 @Component({
   selector: 'app-tab-bar',
   templateUrl: './tab-bar.component.html',
   styleUrls: ['./tab-bar.component.css']
 })
-export class TabBarComponent implements OnInit {
-  //filesName = [""];
-  @Output() senderSelectedFile: EventEmitter<number> = new EventEmitter<number>();
-  @Output() senderFiles : EventEmitter<Array<CRL_File>> = new EventEmitter<Array<CRL_File>>();
-  CRL_files: Array<CRL_File> = new Array<CRL_File>();
+export class TabBarComponent implements OnInit { 
   texto: string = "'''Type your code here :D'''";
 
-  constructor() { }
+  constructor(public fileService_tb:FileService) { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void { }
 
   addFile():void{
     const inputText = document.getElementById('input-file') as HTMLInputElement;
   
     this.addUniqueFile(inputText.value, this.texto);    
-
-    //para así enviar la info al contenedor de páginas
-    this.sendCRLFiles();
   }  
 
   spreadOutClickFile():void{
@@ -40,8 +32,7 @@ export class TabBarComponent implements OnInit {
           }
         } 
       //para así enviar la info al contenedor de páginas
-      console.log("Paso final");
-      this.sendCRLFiles();
+      console.log("Paso final");      
     }
     
       fileUpLoad.click(); 
@@ -54,8 +45,7 @@ export class TabBarComponent implements OnInit {
     reader.onload = () =>{
       console.log("Paso#3");    
       console.log(reader.result);
-      this.texto = reader.result as string;//(reader.result != null)? reader.result as string: "contenido xD"      
-      
+      this.texto = reader.result as string;//(reader.result != null)? reader.result as string: "contenido xD"            
 
       console.log("Paso#4");    
       console.log("[TEXTO]"+this.texto);
@@ -67,25 +57,11 @@ export class TabBarComponent implements OnInit {
   }
 
   private addUniqueFile(fileName:string, content:string){
-    if(this.ensureUniqueness(fileName)){
-      this.CRL_files.push(new CRL_File(fileName, content));  
-    }
-  }
-
-  private ensureUniqueness(fileName:string){
-    for(let index:number = 0; index < this.CRL_files.length; index++)
-        if(this.CRL_files[index].getName() == fileName){
-          return false;
-        }    
-    return true;
+    this.fileService_tb.addFile(fileName, content);
   }
 
   selectTab(index:number){
-    this.senderSelectedFile.emit(index);
-  }
-
-  sendCRLFiles(){
-    this.senderFiles.emit(this.CRL_files);
-  }
+    this.fileService_tb.addActiveFile(index);
+  } 
 
 }

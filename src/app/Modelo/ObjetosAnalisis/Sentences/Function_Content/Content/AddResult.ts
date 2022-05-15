@@ -1,3 +1,4 @@
+import { ContentType } from "../../Class_Content/ContentType";
 import { OperationResult } from "./OperationResult";
 import { Result } from "./Result";
 

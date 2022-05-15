@@ -7,7 +7,62 @@
   },
   "files": [
     "src/main.ts",
-    "src/polyfills.ts"
+    "src/polyfills.ts",
+
+    "src/app/Modelo/CRL_File.ts",
+    "src/app/Modelo/Tool/Tool.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Content/Caster.ts",
+
+    "src/app/Modelo/Prev-Ejecucion/HierarchyStack.ts",
+
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Class_Content/Import.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Class_Content/Incertitude.ts",
+    
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Sentence.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Container.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/GlobalContainer.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/LocalContainer.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Directive.ts",
+
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Variable_Declaration.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Class_Content/Function.ts",
+
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Class_Content/Main.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Class_Content/Complex_Function.ts",    
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Class_Content/Void_Function.ts",
+
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Control_Sentences/Control_Sentence.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Control_Sentences/If.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Control_Sentences/Else.ts",
+
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Loops_Sentences/Loop.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Loops_Sentences/For.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Loops_Sentences/While.ts",
+
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Breakpoints/BreakPoint.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Breakpoints/Break.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Breakpoints/Continue.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Breakpoints/Return.ts",    
+
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Dibujar/Dibujar.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Dibujar/DibujarAST.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Dibujar/DibujarEXP.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Dibujar/DIbujarTS.ts",
+  
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Asignacion.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Mostrar.ts",
+
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Content/Expresion.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Class_Content/ContentType.ts",    
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Content/Invocacion.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Content/Variable.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Content/Result.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Content/OperationHandler.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Content/Operator.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Content/OperatorType.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Content/OperationResult.ts",
+    "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Content/AddResult.ts",
+    
   ],
   "include": [
     "src/**/*.d.ts"

@@ -1,4 +1,3 @@
-import { symlink } from "fs";
 import { TAS } from "src/app/Modelo/ObjetosAnalisis/EDDs/TablaSimbolos/TAS";
 import { ContentType } from "../../../Class_Content/ContentType";
 import { Result } from "../../Content/Result";

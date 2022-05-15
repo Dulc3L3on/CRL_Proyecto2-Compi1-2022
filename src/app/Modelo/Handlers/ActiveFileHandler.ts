@@ -9,7 +9,7 @@ export class ActiveFileHandler{
     private constructor(){}
 
     public static getInstance():ActiveFileHandler{
-        if(ActiveFileHandler.instance){
+        if(ActiveFileHandler.instance == null){
             ActiveFileHandler.instance = new ActiveFileHandler();
         }
 

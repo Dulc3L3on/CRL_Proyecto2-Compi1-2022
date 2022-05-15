@@ -9,7 +9,7 @@ export class ActiveClassHandler{
     private constructor(){}
 
     public static getInstance():ActiveClassHandler{
-        if(ActiveClassHandler.instance){
+        if(ActiveClassHandler.instance == null){
             ActiveClassHandler.instance = new ActiveClassHandler();
         }
 

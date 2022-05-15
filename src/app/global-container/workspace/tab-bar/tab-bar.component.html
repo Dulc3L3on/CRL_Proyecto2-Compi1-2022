@@ -12,7 +12,7 @@
 <div class = "list-area">
     <!--<ng-container ngIf="{{filesName.length > 0}}">-->
         <ul class="list-group">      
-            <li class="list-group-item item" *ngFor="let filename of CRL_files; index as indice" (click)="selectTab(indice)">
+            <li class="list-group-item item" *ngFor="let filename of this.fileService_tb.getAllFiles(); index as indice" (click)="selectTab(indice)">
                 {{filename.name}}
             </li>
         </ul>
