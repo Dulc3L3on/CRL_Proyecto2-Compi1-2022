@@ -20,7 +20,7 @@ export class MenuOptionsComponent implements OnInit {
     this.compilationCenter = new CompilationCenter(this.fileService_mo.getAllFiles());    
     let index = (document.getElementById("activeFiles_list") as HTMLSelectElement).selectedIndex;    
     
-    let mainFile:CRL_File = this.fileService_mo.getFile(((index == -1)?0:(index-1)), true)!;//esto es para cuando no esté seleccionado archivo alguno, auqnue lo mejor sería activar el btn de compilar hasta que algo estuviera seleccionado    
+    let mainFile:CRL_File = this.fileService_mo.getFile(((index == 0)?0:(index-1)), true)!;//esto es para cuando no esté seleccionado archivo alguno, auqnue lo mejor sería activar el btn de compilar hasta que algo estuviera seleccionado    
 
     console.log("ENTRO AL método compile");    
     console.log("#files: "+this.fileService_mo.getAllFiles());

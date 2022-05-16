@@ -4,7 +4,7 @@ import { LocalContainer } from "../../LocalContainer";
 import { Expresion } from "../Content/Expresion";
 import { Result } from "../Content/Result";
 
-export class Control_sentence extends LocalContainer{
+export class Control_Sentence extends LocalContainer{
     condition:Expresion|null;
 
     constructor(/*padre:LocalContainer, */condition:Expresion|null){//el null, es debido al else... no habrá problemas con el if, puesto que al llegar a esa línea, siempre se va a establecer como argu un objeto expre...

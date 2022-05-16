@@ -9,11 +9,11 @@ export class Operator{
         this.operator = operator;
     }
     
-    getType():OperatorType{
+    public getType():OperatorType{
         return this.type;
     }//la clasificación del signo
 
-    getOperator():OperatorType{
+    public getOperator():OperatorType{
         return this.operator;
     }//el operador específico
 }

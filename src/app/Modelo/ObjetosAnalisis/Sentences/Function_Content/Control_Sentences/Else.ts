@@ -1,10 +1,9 @@
 import { TAS } from "../../../EDDs/TablaSimbolos/TAS";
-import { LocalContainer } from "../../LocalContainer";
 import { Result } from "../Content/Result";
-import { Control_sentence } from "./Control_Sentence";
+import { Control_Sentence } from "./Control_Sentence";
 
-export class Else extends Control_sentence{
-    
+export class Else extends Control_Sentence{
+
     constructor(/*padre:LocalContainer*/){//por ser un else, no es nec que reciba la condi, puesto que se debe exe en situaciones contrarias al if...
         super(/*padre, */null);
 

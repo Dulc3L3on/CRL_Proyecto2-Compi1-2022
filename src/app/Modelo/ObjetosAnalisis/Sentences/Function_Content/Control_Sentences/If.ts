@@ -1,14 +1,12 @@
 import { ThisReceiver } from "@angular/compiler";
 import { TAS } from "../../../EDDs/TablaSimbolos/TAS";
 import { ContentType } from "../../Class_Content/ContentType";
-import { Container } from "../../Container";
-import { LocalContainer } from "../../LocalContainer";
 import { Expresion } from "../Content/Expresion";
 import { Result } from "../Content/Result";
-import { Control_sentence } from "./Control_Sentence";
+import { Control_Sentence } from "./Control_Sentence";
 import { Else } from "./Else";
 
-export class If extends Control_sentence{
+export class If extends Control_Sentence{
     else_Condition:Else|null = null;
     
     constructor(/*padre:LocalContainer, */condition:Expresion){

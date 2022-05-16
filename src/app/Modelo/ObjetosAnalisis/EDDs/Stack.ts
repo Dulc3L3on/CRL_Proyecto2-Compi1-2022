@@ -9,6 +9,10 @@ export class Stack<T>{//LIFO
 
     insert(element:T){
         this.elements.push(element);
+
+        console.log("-----oo> stack state <oo-----");
+        console.log("> #elements: " + this.size());
+        console.log("> elements: " + this.getElements());
     }
 
     setAll(theElements:Array<T>){

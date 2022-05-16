@@ -59,7 +59,7 @@ export class GlobalContainer extends Container{
             if(!this.instantiated){
                 this.instantiated = true;
                 this.initTAS();
-            }                    
+            }//se hace la ini de la TAS de la CLASE                  
         }        
         return theFunction;
     }//A este método solo se le enviará el HASH debido a su naturaleza...

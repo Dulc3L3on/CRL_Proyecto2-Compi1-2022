@@ -14,7 +14,7 @@ export class Sentence{
         this.caster = new Caster();
     }
 
-    setScope(scope:number){
+    public setScope(scope:number){
         this.scope = scope;
     }
 
@@ -23,8 +23,12 @@ export class Sentence{
     }//puesto que tanto los contenedores como las directivas req usarlo
      //a excep por el momento GlobalContainer xD
 
-     getScope():number{
+    public getScope():number{
         return this.scope;
+    }
+
+    public getSentenceName():string{
+        return this.sentenceName;
     }
 
 }

@@ -6,6 +6,10 @@ import { LocalContainer } from "../ObjetosAnalisis/Sentences/LocalContainer";
 export class HierarchyStack{
     private stack:Stack<LocalContainer>;//pueso que solo se pueden insertar o funciones o estructuras [loop, control_sentence]
 
+    constructor(){
+        this.stack = new Stack<LocalContainer>();
+    }
+
     //para la declaración de variables globales se llamará directamente al reduceStack
 
     addFunction(fun:Function){
@@ -30,13 +34,16 @@ export class HierarchyStack{
 
     addLocalDirective(directive:Directive){//puesto que las globales solo provocan el reduce
         if(!this.stack.isEmpty()){//este if evita que una directiva esté como primer elemento de la pila
+            console.log("preview element");
+            console.log(this.stack.previewElement()!);                        
+
             if(this.stack.previewElement()!.getScope() < (directive.getScope()-1)){//caso 2
                 //se add msje de error, porque el elemento nuevo está desfasado [específicamente, tiene tabs de más]
             }else{
                 let father:LocalContainer = this.reduceUntil(directive.getScope());
                 
                 father.setContent(directive);
-                this.stack.insert(father);//puesto que la pila ya lo había sacado por completo de ella, aunque en realidad debería seguir ahí xD                
+                this.stack.insert(father);//puesto que la pila ya lo había sacado por completo de ella, aunque en realidad debería seguir ahí xD                                
             }
         }else{
             //Se add error, porque si se leyó una directiva, quiere decir que una función
@@ -66,6 +73,7 @@ export class HierarchyStack{
 
         while(!this.stack.isEmpty()){//puedo poner así la condición, porque fijo va a entrar al if que devuelve el localContainer hallado
             let actualContainer = this.stack.getElement();
+            console.log("number of elements "+this.stack.size());
 
             if(actualContainer!.getScope() == (scope -1)){//se asegura que será != null, puesto que el for avanza según el tamaño del scope según vaya variando
                 return actualContainer!;
@@ -73,6 +81,7 @@ export class HierarchyStack{
                 actualContainer!.setFather(this.stack.previewElement()!);//se setea el padre
                 this.stack.previewElement()!.setContent(actualContainer!);
             }
+            console.log("number of elements "+this.stack.size());
         }
 
         return actualContainer!;
@@ -87,4 +96,8 @@ export class HierarchyStack{
         //solo que en este caso, no se hará la revisión [si se llegará a caer hasta
         //el 1er elemento de la pila] de si el 1st element == Function, puesto que
         //no es el objetivo
+
+    getStack():Stack<LocalContainer>{
+        return this.stack;
+    }
 }

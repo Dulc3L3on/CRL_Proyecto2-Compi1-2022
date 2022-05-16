@@ -3,51 +3,60 @@
 %{      
       const {HierarchyStack} = require("../Prev-Ejecucion/HierarchyStack.ts");
       const {ActiveFileHandler} = require("../Handlers/ActiveFileHandler.ts");      
-
-      const {GlobalContainer} = require("../ObjetosAnalisis/Sentences/GlobalContainer.ts");
+      
       const {Import} = require("../ObjetosAnalisis/Sentences/Class_Content/Import.ts");      
       const {Incertitude} = require("../ObjetosAnalisis/Sentences/Class_Content/Incertitude.ts");
+
       const {Sentence} = require("../ObjetosAnalisis/Sentences/Sentence.ts");
-      const {ContentType} = require("../ObjetosAnalisis/Sentences/Class_Content/ContentType.ts");
+      //const {Container} = require("../ObjetosAnalisis/Sentences/Container.ts");
+      const {GlobalContainer} = require("../ObjetosAnalisis/Sentences/GlobalContainer.ts");      
+      const {LocalContainer} = require("../ObjetosAnalisis/Sentences/LocalContainer.ts");
+      const {Directive} = require("../ObjetosAnalisis/Sentences/Directive.ts");      
 
       const {Variable_Declaration} = require("../ObjetosAnalisis/Sentences/Variable_Declaration.ts");
-
       const {Function} = require("../ObjetosAnalisis/Sentences/Class_Content/Function.ts");
+
       const {Main} = require("../ObjetosAnalisis/Sentences/Class_Content/Main.ts");
       const {Complex_Function} = require("../ObjetosAnalisis/Sentences/Class_Content/Complex_Function.ts");
       const {Void_Function} = require("../ObjetosAnalisis/Sentences/Class_Content/Void_Function.ts");
 
-      const {Asignacion} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Asignacion.ts");
-      const {Variable} = require("../ObjetosAnalisis/Sentences/Function_Content/Content/Variable.ts");
-      const {Expresion} = require("../ObjetosAnalisis/Sentences/Function_Content/Content/Expresion.ts");
-      const {Operator} = require("../ObjetosAnalisis/Sentences/Function_Content/Content/Operator.ts");
-      const {OperatorType} = require("../ObjetosAnalisis/Sentences/Function_Content/Content/OperatorType.ts");
-      
-      const {Invocacion} = require("../ObjetosAnalisis/Sentences/Function_Content/Content/Invocacion.ts");      
-      
-      const {Mostrar} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Mostrar.ts");
+      const {Control_Sentence} = require("../ObjetosAnalisis/Sentences/Function_Content/Control_Sentences/Control_Sentence.ts");
+      const {If} = require("../ObjetosAnalisis/Sentences/Function_Content/Control_Sentences/If.ts");
+      const {Else} = require("../ObjetosAnalisis/Sentences/Function_Content/Control_Sentences/Else.ts");
 
-      const {DibujarAST} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Dibujar/DibujarAST.ts");
-      const {DibujarEXP} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Dibujar/DibujarEXP.ts");
-      const {DibujarTS} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Dibujar/DIbujarTS.ts");
+      const {Loop} = require("../ObjetosAnalisis/Sentences/Function_Content/Loops_Sentences/Loop.ts");
+      const {For} = require("../ObjetosAnalisis/Sentences/Function_Content/Loops_Sentences/For.ts");
+      const {While} = require("../ObjetosAnalisis/Sentences/Function_Content/Loops_Sentences/While.ts");      
 
       const {Breakpoint} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Breakpoints/BreakPoint.ts");
       const {Break} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Breakpoints/Break.ts");
       const {Continue} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Breakpoints/Continue.ts");
-      const {Return} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Breakpoints/Return.ts");
+      const {Return} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Breakpoints/Return.ts");      
 
-      const {For} = require("../ObjetosAnalisis/Sentences/Function_Content/Loops_Sentences/For.ts");
-      const {While} = require("../ObjetosAnalisis/Sentences/Function_Content/Loops_Sentences/While.ts");
+      const {Dibujar} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Dibujar/Dibujar.ts");
+      const {DibujarAST} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Dibujar/DibujarAST.ts");
+      const {DibujarEXP} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Dibujar/DibujarEXP.ts");
+      const {DibujarTS} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Dibujar/DIbujarTS.ts");
 
-      const {If} = require("../ObjetosAnalisis/Sentences/Function_Content/Control_Sentences/If.ts");
-      const {Else} = require("../ObjetosAnalisis/Sentences/Function_Content/Control_Sentences/Else.ts");
+      const {Asignacion} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Asignacion.ts");
+      const {Mostrar} = require("../ObjetosAnalisis/Sentences/Function_Content/Only_Sentences/Mostrar.ts");
+
+      const {Expresion} = require("../ObjetosAnalisis/Sentences/Function_Content/Content/Expresion.ts");
+      const {ContentType} = require("../ObjetosAnalisis/Sentences/Class_Content/ContentType.ts");
+      const {Invocacion} = require("../ObjetosAnalisis/Sentences/Function_Content/Content/Invocacion.ts");      
+      const {Variable} = require("../ObjetosAnalisis/Sentences/Function_Content/Content/Variable.ts");      
+      const {Result} = require("../ObjetosAnalisis/Sentences/Function_Content/Content/Result.ts");
+      const {OperationHandler} = require("../ObjetosAnalisis/Sentences/Function_Content/Content/OperationHandler.ts");
+      const {Operator} = require("../ObjetosAnalisis/Sentences/Function_Content/Content/Operator.ts");
+      const {OperatorType} = require("../ObjetosAnalisis/Sentences/Function_Content/Content/OperatorType.ts");
+      const {OperatorResult} = require("../ObjetosAnalisis/Sentences/Function_Content/Content/OperationResult.ts");
+      const {AddResult} = require("../ObjetosAnalisis/Sentences/Function_Content/Content/AddResult.ts");
 %}
 
 //[0.2] options
-%options flex 
-         case-sensitive
-//%options case-sensitive
-         
+/*%options flex 
+         case-sensitive*///probé y no se app lo de flex, es decir no busca la regla con la que haga mayor coincidencia antes de escoger la 1ra que aparezca :C XD
+%options case-sensitive         
 
 //[0.3] user code
 %{
@@ -58,6 +67,10 @@
 
       let hierarchyStack = new HierarchyStack();
       let isADirective;
+      let isAVariableDeclaration;
+      let isAList;//Esta es solo para dar un msje más informativo al momento consolear xD el objeto creado
+
+      var varList = [];
 
    //HEADERS
       function addImport(importClassName){
@@ -75,25 +88,26 @@
 
       function addIncertitude(expression){
             //Simplemente se debe crear el obj y addlo al globalContent (lo cual se puede hacer sin problema, pruesto que para que pudiera ser seteada al contenido se hizo que heredara de Directive...), puesto que la revisión profunda [con respecto a la exp], se hace en la clase Incert...
-            console.log("[S] Header content: INCERTITUDE");
-            clase.addGlobalContent(new Incertitude(expresion));
+            console.log("[S] Header content: INCERTITUDE "+expression);
+            clase.addGlobalContent(new Incertitude(expression));
       }
 
   //CLASS CONTENT
 
       function getHierarchy(sangria){
-            let lexemma = sangria.charAt();//si no funciona usa split y "" nada xD
-            console.log("SANGRIA: "+lexema.lenght);
+            let lexema = sangria.split("");//sangria.charAt();//si no funciona usa split y "" nada xD
+            console.log("[S] Hierarchy [SANGRIA]: "+lexema.length);
 
-            return lexema.lenght;
+            return lexema.length;
       }
 
       function addClassContent(declaratedVars, theFunction){
             if(theFunction == null){//no reviso si el listado está vacío, porque bien podría ser que el dato que se envió fue el de una declaración, pero que... iba a decir que no contenga vars, pero en ese caso tendría que haber sucedido un error para que llegue vacía la lista...
                   hierarchyStack.reduceStack();//se hace aquí puesto que el for es para add cada var que se colocó en una misma línea de creación
 
-                  for(let index = 0; index < declaratedVars.lenght; index++){                        
+                  for(let index = 0; index < declaratedVars.length; index++){                        
                         declaratedVars[index].setScope(0);
+                        console.log("seteo el scope en var global");
                         declaratedVars[index].setFather(clase);
                         clase.addGlobalContent(declaratedVars[index]);
                   }
@@ -101,46 +115,66 @@
             }else{
                   //la función ya tiene por defecto scope = 0, entonces no hay que hacer eso aquí
                   //tb ya tiene seteado su respectivo padre xD
-                  clase.addGlobalContent(theFunction);//que se quede, puesto que encaja con las axn del stack xD
+                  clase.addGlobalContent(theFunction);//que se quede, puesto que encaja con las axn del stack xD                  
                   hierarchyStack.addFunction(theFunction);
-                  console.log("[S] Class content: FUNCTION");
+
+                  console.log(theFunction);
+                  console.log("[S] Class content: FUNCTION");                  
             }
       }//por la RP que contiene ambos tipos de contenido, se me ocurrió que quizá podría hacer el seteo de cada contenido, por medio de difernetes métodos, además como el proceso de seteo varía, puesto que en uno va directo al padre y en el otro directo a la func que está al ini de la pila o dir a la pila, entonces... xD      
 
-      function addFunctionContent(scope, content){
-            content.setScope(scope);
+      function addFunctionContent(scope, content){            
+            console.log("content ");
+            console.log(content);
+            console.log("scope "+scope);            
 
-            if(isADirective){
-                  hierarchyStack.addLocalDirective(content);
-                  console.log("[S] Function content: SANGRIA [ directive on "+scope +" level]");
+            if(isADirective){           
+                  if(isAVariableDeclaration){
+                        for(let index = 0; index < content.length; index++){
+                              content[index].setScope(scope);
+                              console.log("content name: " + content[index].getSentenceName());
+                              hierarchyStack.addLocalDirective(content[index]);
+                              console.log("[S] Function content: SANGRIA [ directive on "+scope +" level]");
+                        }
+
+                        isAVariableDeclaration = false;//sino provocará problemas xD
+                  }else{
+                        content.setScope(scope);
+                        console.log("content name: " + content.getSentenceName());
+                        hierarchyStack.addLocalDirective(content);
+                        console.log("[S] Function content: SANGRIA [ directive on "+scope +" level]");
+                  }                  
             }else{
-                  console.log("[S] Function content: SANGRIA [ sentence on "+scope +" level]");
+                  content.setScope(scope);                  
+                  console.log("content name: " + content.getSentenceName());
                   hierarchyStack.addLocalContainer(content);
+                  console.log("[S] Function content: SANGRIA [ sentence on "+scope +" level]");
             }//no tengo que resetear la var isADirective, puesto que no se va a llegar a la RP que invoca a este método, sin haber caido en la axn que setea esta var xD
       }
 
       function createVarDeclaration(type, varList, asignatedValue){//Este último puede ser null, puesto que no es obligatorio que especifiquen este valor...
             let declaratedVars = [];//new Array<Variable_Declaration>()
+            console.log("list size "+varList.length);
 
-            for(let index = 0; index < varList.lenght; index++){
-                  declaratedVars.push(type, varList[index], asignatedValue);
+            for(let index = 0; index < varList.length; index++){
+                  declaratedVars.push(new Variable_Declaration(type, varList[index], asignatedValue));
             }
 
-            console.log("[S] Global content: DECLARATION [ "+((varList.lenght>0)?"var list":"var")+((asignatedValue != null)?" + expr":"")+ " ]");
-            return declaratedVars;
+            console.log("[S] (G/L) content: DECLARATION [ "+((varList.length>0)?"var list":"var")+((asignatedValue != null)?" + expr":"")+ " ]");
+            return declaratedVars;//pongo G/L, puesto que esta se usa para un decl en general, no para un tipo de decl en específico
       }//sin importar que sea G o L, puesto que esto se determina en prod más arriba de la RP en donde se crea el obj xD      
 
       function createFunction(functionType, returnType, name, params){
             switch(functionType){
                   case "SIMPLE":
-                        console.log("[S] Global content: S_FUNCTION [ "+returnType +", "+name+", "+((params.lenght>0)?", params":""));
+                        console.log("[S] Global content: S_FUNCTION [ "+returnType +", " + name + ((params.length>0)?", params":"")+" ]");
                         return new Void_Function(clase, returnType, name, params);
                   case "COMPLEX":
-                        console.log("[S] Global content: C_FUNCTION [ "+returnType +", "+name+", "+((params.lenght>0)?", params":""));
+                        console.log("[S] Global content: C_FUNCTION [ "+returnType +", " + name + ((params.length>0)?", params":"")+" ]");
                         return new Complex_Function(clase, returnType, name, params);
                   case "MAIN":
-                        console.log("[S] Global content: M_FUNCTION [ "+returnType +", "+name);
-                        return new Void_Function(clase);
+                        console.log("[S] Global content: MAIN [ "+returnType +", "+name+" ]");
+                        return new Main(clase);
             }
             return null;//pero nunca se va a caer acá...
       }//LISTO
@@ -160,7 +194,7 @@
    //EXPRESSIONS
       function createExpr_Operation(operationType, left, symbol, right){//ya sea la root o no
             console.log("[S] Function content: EXPR-OPERATION [ "+symbol+" ]");
-            return new Expression(left, createExp_Operator(operationType, symbol), right);
+            return new Expresion(left, createExp_Operator(operationType, symbol), right);
       }//se creó el método solo con tal que no esté así explícito en las axn xD, porque en realidad lo único que se hará aquí es crear el objeto y devolverlo :v xD
 
       function createExp_Operator(type, symbol){
@@ -230,12 +264,12 @@
       //fin de los métodos para expresión
 
       function createInvocation(invocatedFunction, argumentos){
-            console.log("[S] Function content: INVOCATION [ arguments? "+ ((argumentos.lenght>0)?"T":"F") + " list? "+ isAList+" ]");
+            console.log("[S] Function content: INVOCATION [ arguments? "+ ((argumentos.length>0)?"T":"F") + " list? "+ isAList+" ]");
             return new Invocacion(invocatedFunction, argumentos);
       }
 
       function createMostrar(stringBase, argumentos){//simi a los de la func... o yo creo que iguales xD
-            console.log("[S] Function content: MOSTRAR [arguments? "+ ((argumentos.lenght>0)?"T":"F") + "list? "+isAList);
+            console.log("[S] Function content: MOSTRAR [arguments? "+ ((argumentos.length>0)?"T":"F") + "list? "+isAList);
             return new Mostrar(stringBase, argumentos);
       }
 
@@ -270,7 +304,7 @@
 
       function createFor(variable, condition, incremento){
             console.log("[S] Function content: FOR");
-            return new For(variable, condition, incremento);
+            return new For(variable, condition, ((incremento == "++")?1:-1));
       } 
 
       function createForVar(variableName, value){//este valor siempre será un entero, por lo que dijo el aux, aunque creo que en os objetos tengo ahí una expr xD
@@ -306,31 +340,38 @@
 //////////////////////[ 1. LEXER ]/////////////////////////
 %lex
 
+%options ranges
 
 //[1.1] macros 
 //generales
 //sangria       [\n\t]+
 //number        [0-9]+\b
 //decimal       {digito}+("."{digito}+)?\b
-letra           [a-zA-Z\u00f1\u00d1]          
+letra           [a-zA-Z\u00f1\u00d1]      
+//blank           [" "" "" "" "]
 
-%s COMMENT SSTRING ERROR
+%s ERROR
 %%
 
 //"!!"[^\n]*                                                                  {console.log("[L] comentario: "+ yytext);/*ignore*/}
 
-\n+                                                                         {console.log("[L] especial: NL"); return 'NEW_LINE';}
+//\n+                                                                         {console.log("[L] especial: NL"); return 'NEW_LINE';}
+//(\n|\r|\v)+                                                                   {console.log("[L] especial: NL"); return 'NEW_LINE';}//esta es la solución para que acepte los |, lo que pasa es que toma al | como si fuera parate del conjunto de estudio, supongo que es por los [], que ahí se colocan listados y por lo tanto NO deben ponerse, a dif de los (), que toman todo como un todo a menos que se les diga que son dif ops xD, o eso es lo que entiendo xD
+[\n|\r|\v]+                                                                 {console.log("[L] especial: NL"); return 'NEW_LINE';}
+
 \t+                                                                         {console.log("[L] especial: SANGRIA"); return 'SANGRIA';}
+
+//{blank}+                                                                    {console.log("[L] especial: SANGRIA"); return 'SANGRIA';}
 
 \s                                                                           /*ignored*/
 
 \r                                                                           /*ignored*/
 
-"!!"[^\n]*                                                                  {console.log("[L] comentario: "+ yytext);}/*ignore*/
+" "                                                                         /*ignored*/
 
-"'''"                                                                       {this.begin('COMMENT');}
-<COMMENT>"'''"                                                              {console.log("[L] comentario"); this.popState();}
-<COMMENT>.                                                                   /*ignore*/
+"!!"[^\n]*                                                                  {console.log("[L] S_comentario: "+ yytext);}/*ignored*/
+
+(\'\'\')([^']*)(\'\'\')                                                     {console.log("[L] M_comentario: "+ yytext);}/*ignored*/
 
 //[1.2] ER
 //reservadas
@@ -352,9 +393,11 @@ letra           [a-zA-Z\u00f1\u00d1]
 "Mostrar"                                                                   {console.log("[L] reservada: MOSTRAR"); return 'MOSTRAR';}
 "DibujarAST"                                                                {console.log("[L] reservada: DRAW_AST"); return 'DRAW_AST';}
 "DibujarEXP"                                                                {console.log("[L] reservada: DRAW_EXP"); return 'DRAW_EXP';}
-"DibujarTS"                                                                 {console.log("[L] reservada: DRAW_ES"); return 'DRAW_TS';}
+"DibujarTS"                                                                 {console.log("[L] reservada: DRAW_TS"); return 'DRAW_TS';}
 "true"                                                                      {console.log("[L] reservada: TRUE"); return 'TRUE';}
 "false"                                                                     {console.log("[L] reservada: FALSE"); return 'FALSE';}
+"++"                                                                        {console.log("[L] reservada: ++"); return 'INCREMENTO';}
+"--"                                                                        {console.log("[L] reservada: --"); return 'INCREMENTO';}
 "+"                                                                         {console.log("[L] reservada: +"); return '+';}
 "-"                                                                         {console.log("[L] reservada: -"); return '-';}
 "*"                                                                         {console.log("[L] reservada: *"); return '*';}
@@ -363,17 +406,15 @@ letra           [a-zA-Z\u00f1\u00d1]
 "^"                                                                         {console.log("[L] reservada: ^"); return '^';}
 "=="                                                                        {console.log("[L] reservada: =="); return '==';}
 "!="                                                                        {console.log("[L] reservada: !="); return '!=';}
-"<"                                                                         {console.log("[L] reservada: <"); return '<';}
-">"                                                                         {console.log("[L] reservada: >"); return '>';}
 "<="                                                                        {console.log("[L] reservada: <="); return '<=';}
 ">="                                                                        {console.log("[L] reservada: >="); return '>=';}
+"<"                                                                         {console.log("[L] reservada: <"); return '<';}
+">"                                                                         {console.log("[L] reservada: >"); return '>';}
 "~"                                                                         {console.log("[L] reservada: ~"); return '~';}
 "&&"                                                                        {console.log("[L] reservada: &&"); return '&&';}
-"||"                                                                        {console.log("[L] reservada: ||"); return '||';}
-"|&"                                                                        {console.log("[L] reservada: |&"); return '|&';}
+"||"                                                                        {console.log("[L] reservada: ||"); return 'OR';}
+"|&"                                                                        {console.log("[L] reservada: |&"); return 'XOR';}
 "!"                                                                         {console.log("[L] reservada: !"); return '!';}
-"++"                                                                        {console.log("[L] reservada: ++"); return 'INCREMENTO';}
-"--"                                                                        {console.log("[L] reservada: --"); return 'INCREMENTO';}
 "("                                                                         {console.log("[L] reservada: ("); return '(';}
 ")"                                                                         {console.log("[L] reservada: )"); return ')';}
 ":"                                                                         {console.log("[L] reservada: :"); return ':';}
@@ -381,23 +422,20 @@ letra           [a-zA-Z\u00f1\u00d1]
 ","                                                                         {console.log("[L] reservada: ,"); return ',';}
 ";"                                                                         {console.log("[L] reservada: ;"); return ';';}
 "Retorno"                                                                   {console.log("[L] reservada: RETORNO"); return 'RETORNO';}
+"."                                                                         {console.log("[L] reservada: ."); return '.';}
+"crl"                                                                       {console.log("[L] reservada: crl"); return 'CRL';}
+
+(\"[^\"]*\")                                                                {console.log("[L] ER: CADENA "+ (yytext.substring(1, yyleng -1)));
+                                                                             yytext = yytext.substring(1, yyleng -1);
+                                                                             return 'CADENA';}
+
+//(("$"|{letra})|("_"|"$"|{letra})("_"|"$"|{letra}|[0-9]))+                   {console.log("[L] ER: ID "+console.log(yytext)); return 'ID';}
+("_"|"$"|{letra})("_"|"$"|{letra}|[0-9])*                                   {console.log("[L] ER: ID "+console.log(yytext)); return 'ID';}
 
 [0-9]+("."[0-9]+)                                                           {console.log("[L] ER: DEC"); return 'DECIMAL';}
 [0-9]+                                                                      {console.log("[L] ER: INT"); return 'INTEGER';}
 
 "'"{letra}|\s"'"                                                            {console.log("[L] ER: CHAR"); return 'CHARACTER';}
-
-"."                                                                         {console.log("[L] reservada: ."); return '.';}
-"crl"                                                                       {console.log("[L] reservada: .crl"); return 'CRL';}
-
-
-("$"|{letra})|("_"|"$"|{letra})("_"|"$"|{letra}|[0-9])+                     {console.log("[L] ER: ID"); return 'ID';}
-
-["]                                                                         {this.begin('SSTRING');}
-<SSTRING>[^"\n]*                                                            {console.log("ER: CADENA: "+yytext);return 'CADENA';}/*quizá si vaya aquí, como ignora todo lo que sea un \n o "*/
-<SSTRING>[\n]                                                               {this.yybegin('ERROR');}
-<SSTRING><<EOF>>                                                            {this.yybegin('ERROR');}
-<SSTRING>["]                                                                {this.popState();}
 
 <<EOF>>                                                                     {console.log("[L] EOF"); return 'EOF';}
  
@@ -415,8 +453,8 @@ letra           [a-zA-Z\u00f1\u00d1]
 %right '^'
 %nonassoc UMINUS
 %nonassoc '==' '!=' '<' '>' '<=' '>=' '~'
-%left '||'
-%left '!&'
+%left OR
+%left XOR
 %left '&&'
 %left '!'
 %nonassoc '(' ')'
@@ -429,63 +467,68 @@ letra           [a-zA-Z\u00f1\u00d1]
 %%
 
 //////////////////////////[ 3.2 grammar ]////////////////////////
-inicio : clase EOF                        {console.log("---Parser process terminated---");}
+inicio : clase EOF                        { console.log("---Parser process terminated---");
+                                            return clase; }
                                            // se hace el return del objeto creado para que pueda setearse en la lista que posee el CompilerCenter...}
        ;
 
-clase : NEW_LINE class_elements      
-      | SANGRIA NEW_LINE class_elements
+clase : nl class_elements      
+      | SANGRIA nl class_elements
       | class_elements
       ;//sangría de por sí sola NO, porque ellos no deben tener nada de ese tipo de espacios!
 
-class_elements : header content                    {console.log("Header + Content");}
-               | content                           {console.log("Only Body");}
+class_elements : header content                    {console.log("[S] Header + Content");}
+               | content                           {console.log("[S] Only Body");}
                ;
 
-header : imports incerteza                {console.log("Header: Import + Incertitude");}
-       | imports                          {console.log("Header: Import");}
-       | incerteza                        {console.log("Header: Incertitude");}
+header : imports incerteza                {console.log("[S] Header: Import + Incertitude");}
+       | imports                          {console.log("[S] Header: Import");}
+       | incerteza                        {console.log("[S] Header: Incertitude");}
        ;
 
-imports : imports import                  {console.log("Header: +1 import");}
-        | import                          {console.log("Header: 1st import");}
+imports : imports import                  {console.log("[S] Header: +1 import");}
+        | import                          {console.log("[S] Header: 1st import");}
         ;
 
-import : IMPORT ID '.' CRL NEW_LINE                       {addImport($2);}       
+import : IMPORT ID '.' CRL nl                       {addImport($2);}       
        ;
 
-incerteza : INCERTEZA expression NEW_LINE                       {addIncertitude($2);}     
+incerteza : INCERTEZA expression nl                       {addIncertitude($2);}     
           ;
 
-content : content sentences                       {console.log("Content: +1 sentence");}
-        | sentences                               {console.log("Content: 1st sentence");}
+content : content sentences                       {console.log("[S] Content: +1 sentence");}
+        | sentences                               {console.log("[S] Content: 1st sentence");}
         ;
 
-sentences : class_content                       {console.log("CLASS- content added");}//La axn se implementará aquí puest aquí ya no habrá oportunidaa de que exista error, eso si, como aún no se qué obtendría el método si null o si al intentar acceder al valor de esa var, por el hecho que hubo un err y no se le seteó algo, vaya a dar erro, quizá por esa razón sea mejor hacer el seteo en el método de la RP de abajito [la que contiene el NL...]
-          | function_content                    {console.log("FUN- content added");}
+sentences : class_content                       {console.log("[S] CLASS- content added");}//La axn se implementará aquí puest aquí ya no habrá oportunidaa de que exista error, eso si, como aún no se qué obtendría el método si null o si al intentar acceder al valor de esa var, por el hecho que hubo un err y no se le seteó algo, vaya a dar erro, quizá por esa razón sea mejor hacer el seteo en el método de la RP de abajito [la que contiene el NL...]
+          | function_content                    {console.log("[S] FUN- content added");}
           ;
 
-class_content: class_content_elements NEW_LINE                    //no se tiene nada por hacer, puseto que el contenido ya se add abajito, al hacerlo así, quiere decir que en caso no hayan colocado NL, esto no afectará a la sentencia que obvi dobi estaba bien formada xD
+class_content: class_content_elements nl                    //no se tiene nada por hacer, puseto que el contenido ya se add abajito, al hacerlo así, quiere decir que en caso no hayan colocado NL, esto no afectará a la sentencia que obvi dobi estaba bien formada xD
              ;
 
 class_content_elements : declaracion_var_global                   { addClassContent($1, null); }
                        | declaracion_funcion                      { addClassContent(null, $1); }
                        ;
 
-declaracion_var_global : declaracion_var                     {console.log("ClassC: "+ $1.lenght +"GLOBAL var created");
+declaracion_var_global : declaracion_var                     {console.log("[S] ClassC: "+ $1.length +"GLOBAL var created");
                                                               $$ = $1; }
                        ;
 
-declaracion_var : content_type creacion_vars asignation_value                        { $$ = createVarDeclaration($1, $2, $3); }
+declaracion_var : content_type creacion_vars asignation_value                        { console.log("var_list-Dec "+ $2);
+                                                                                       $$ = createVarDeclaration($1, $2, $3); }
                 | content_type creacion_vars                                         { $$ = createVarDeclaration($1, $2, null); }
                 ;
 
-creacion_vars : var_list                        { $$ = $1; }
+creacion_vars : var_list                        { $$ = $1;
+                                                  console.log("var_list-crec "+$$); }
               ;
 
-var_list : var_list ',' ID                      { $$ = $$.push($1); }
-         | ID                                   { $$ = [];
-                                                  SS.push($1); }//Aunue tb hubieras podido probar así como lo tenías antes, si se puede ini desde la instaciación [por medio de enviar un argu a los parám xD]
+var_list : var_list ',' ID                      { $1.push($3); 
+                                                  $$ = $1;
+                                                  console.log("var_list "+$$); }
+         | ID                                   { console.log("id-element_list "+$1);
+                                                  $$ = [yytext]; }//Aunue tb hubieras podido probar así como lo tenías antes, si se puede ini desde la instaciación [por medio de enviar un argu a los parám xD]
          ;
 
 content_type : INT                        { $$ = ContentType.INTEGER; }
@@ -495,24 +538,27 @@ content_type : INT                        { $$ = ContentType.INTEGER; }
              | CHAR                       { $$ = ContentType.CHAR; }
              ;
 
-declaracion_funcion : content_type ID '(' params ')' ':'                      { createFunction("COMPLEX", $1, $2, $4); }
-                    | VOID ID '(' params ')' ':'                              { createFunction("SIMPLE", $1, $2, $4); }
-                    | VOID MAIN '(' ')' ':'                                   { createFunction("MAIN", $1, $2, []); }
+declaracion_funcion : content_type ID '(' params ')' ':'                      { $$ = createFunction("COMPLEX", $1, $2, $4); }
+                    | VOID ID '(' params ')' ':'                              { $$ = createFunction("SIMPLE", $1, $2, $4); }
+                    | VOID MAIN '(' ')' ':'                                   { $$ = createFunction("MAIN", $1, $2, []); }
                     ;
 
 params : params_list                        { $$ = $1; }
        |                                    { $$ = []; }
        ;
 
-params_list : params_list ',' param                   { $$ = $1.push($3); }
-            | param                                   { $$ = [];
-                                                        $$.push($1); }
+params_list : params_list ',' param                   { $1.push($3); 
+                                                        $$ = $1;
+                                                        console.log("param_list "+$$); }
+            | param                                   { $$ = [];                                                        
+                                                        $$.push($1);
+                                                        console.log("element_param_list "+$$); }
             ;
       
 param : content_type ID                       { $$ = createParam($1, $2); }
       ;
 
-function_content : SANGRIA function_sentence NEW_LINE                        { addFunctionContent(getHierarchy($1), $2); }
+function_content : SANGRIA function_sentence nl                        { addFunctionContent(getHierarchy($1), $2); }
                  ;
 
 function_sentence : only_sentence                       { isADirective = true;
@@ -523,7 +569,8 @@ function_sentence : only_sentence                       { isADirective = true;
                                                           $$ = $1; }
                   ;
 
-only_sentence : declaracion_var                       { $$ = $1; }
+only_sentence : declaracion_var                       { isAVariableDeclaration = true;//Esto lo coloco pues es el único contenido de una función que puede ser una lista, por lo cual debe ser tratado de manera diferente
+                                                        $$ = $1; }
               | asignacion_var                        { $$ = $1; }
               | invocacion                            { $$ = $1; }
               | mostrar                               { $$ = $1; }
@@ -537,7 +584,8 @@ asignacion_var : ID asignation_value                        { $$ = createAsignat
 asignation_value : '=' expression                    { $$ = $2; }
                  ;
 
-expression : expr                         { $$ = $1; }
+expression : expr                         { $$ = $1;
+                                            console.log("expresión "+$$); }
            ;
 
 expr : expr '+' expr2                       { $$ = createExpr_Operation(OperatorType.ARITMETIC, $1, $2, $3); }               
@@ -571,11 +619,12 @@ expr5 : expr5 '==' expr6                        { $$ = createExpr_Operation(Oper
       | expr6                                   { $$ = $1; }
       ;
 
-expr6 : expr6 '||' expr7                        { $$ = createExpr_Operation(OperatorType.LOGIC, $1, $2, $3); }
+expr6 : expr6 OR expr7                        { $$ = createExpr_Operation(OperatorType.LOGIC, $1, $2, $3); }
       | expr7                                   { $$ =  $1; }
       ;
 
-expr7 : expr7 '|&' expr8                        { $$ = createExpr_Operation(OperatorType.LOGIC, $1, $2, $3); }
+expr7 : expr7 XOR expr8                        { $$ = createExpr_Operation(OperatorType.LOGIC, $1, $2, $3); 
+                                                   console.log("XOR "+$2);}
       | expr8                                   { $$ = $1; }
       ;
       
@@ -593,7 +642,7 @@ expr10 : INTEGER                    { $$ = createExpr_Value("INTEGER", $1); }
        | booleano                   { $$ = createExpr_Value("BOOLEAN", $1); }
        | CHARACTER                  { $$ = createExpr_Value("CHARACTER", $1); }
        | contenido_var              { $$ = $1; }
-       | '(' expr ')'               { $$ = createExpr_Operation($2, "()", null); }
+       | '(' expr ')'               { $$ = createExpr_Operation(OperatorType.AGRUP, $2, "()", null); }//puesto que en realidad no pertenece a ninguno de los 3 grandes grupos
        ;
 
 booleano : TRUE                     { $$ = $1; }//también hubieramos podido crear el value desde aquí y ya solo enviarlo a la RP que invoca a "booleano" de arribita, pero para que todo se vea igual xD
@@ -616,9 +665,14 @@ contenido_asignacion : ',' argumentos                       { $$ = $2; }
                      |                                      { $$ = []; }
                      ;
 
-argumentos : argumentos ',' expression                      { $$ = $1.push($3); }//la verdad no estoy segura que deba ser $1, en todo caso si prefiriría crear una lista aparte para que aquí solo se seteen los datos...
+argumentos : argumentos ',' expression                      { $1.push($3); 
+                                                              $$ = $1; 
+                                                              console.log("argu_list "+$$);
+                                                              isAList = true; }//la verdad no estoy segura que deba ser $1, en todo caso si prefiriría crear una lista aparte para que aquí solo se seteen los datos...
            | expression                                     { $$ = [];
-                                                              $$.push($1); }
+                                                              $$.push($1);
+                                                              console.log("element_argu_list "+$$);
+                                                              isAList = false; }
            ;
 
 dibujar : DRAW_AST '(' ID ')'                   { $$ = createDraw_AST($3); }
@@ -626,13 +680,13 @@ dibujar : DRAW_AST '(' ID ')'                   { $$ = createDraw_AST($3); }
         | DRAW_TS '(' ')'                       { $$ = createDraw_TS(); }
         ;
 
-breakpoints : return                      { $$ = createBreakPoint("RETURN", null); }
-            | return expression           { $$ = createBreakPoint("RETURN", $2); }
+breakpoints : RETORNO                      { $$ = createBreakPoint("RETURN", null); }
+            | RETORNO expression           { $$ = createBreakPoint("RETURN", $2); }
             | CONTINUAR                   { $$ = createBreakPoint("CONTINUE", null); }
             | DETENER                     { $$ = createBreakPoint("BREAK", null); }
             ;
 
-loop_sentence : PARA ( for_var ';' expression ';' INCREMENTO) ':'                    { $$ = createFor($3, $5, $7); }
+loop_sentence : PARA '(' for_var ';' expression ';' INCREMENTO ')' ':'                    { $$ = createFor($3, $5, $7); }
               | MIENTRAS '(' expression ')' ':'                                      { $$ = createWhile($3); }
               ;
 
@@ -642,3 +696,7 @@ for_var : INT ID '=' INTEGER                      { $$ = createForVar($2, $4); }
 control_sentence : SI '(' expression ')' ':'                      { $$ = createControl_Sentence($3); }
                  | SINO ':'                                       { $$ = createControl_Sentence(null); }
                  ;
+
+nl : nl NEW_LINE
+   | NEW_LINE
+   ;//Agregué esta RP, puesto que por cada aparición de comentario, un grupo NL es agregado, lo cual provocaría errores, aún cuando no deberían existir

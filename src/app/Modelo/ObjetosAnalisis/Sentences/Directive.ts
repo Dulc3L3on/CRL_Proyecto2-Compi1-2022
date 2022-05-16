@@ -8,11 +8,11 @@ export class Directive extends Sentence{
         super();
     }   
 
-    setFather(father:Container){
+    public setFather(father:Container){
         this.father = father;
     }//los container tb deben tener este método, pero como solo el local tiene ese atrib, entonces ahí tendrá que colocarse
 
-    getFather():Container{
+    public getFather():Container{
         return this.father;
     }
 }

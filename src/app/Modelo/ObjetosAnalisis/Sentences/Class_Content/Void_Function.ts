@@ -8,6 +8,8 @@ export class Void_Function extends Function{
 
     constructor(padre:GlobalContainer, type:number, functionName:string, parametros:Array<Variable>){
         super(padre, type, functionName, parametros);     
+
+        this.sentenceName = "[METHOD] ";
     }
 
     override exe_Function(): Result {

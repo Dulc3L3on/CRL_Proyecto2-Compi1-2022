@@ -8,6 +8,8 @@ export class Complex_Function extends Function{
 
     constructor(padre:GlobalContainer, type:number, functionName:string, parametros:Array<Variable>){
         super(padre, type, functionName, parametros);     
+
+        this.sentenceName = "FUNCTION ";//+ toString que da la firma de la función
     }
 
     override exe_Function(): Result {

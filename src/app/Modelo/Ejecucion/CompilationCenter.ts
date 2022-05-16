@@ -38,6 +38,7 @@ export class CompilationCenter{
             console.log("class#"+index);
 
             let modifiedContent:string = this.activeFiles[index].content.trim();//de una vez los dos, aunque al final deba add un \n xD
+            modifiedContent = modifiedContent.replace(/(    )/g,"\t");
 
             let activeClass:GlobalContainer = Parser.parse(modifiedContent+"\n");//esto es debido a que para el primer elemento que aparezca en la gramática, sea del header o un elemento de clase, no se tiene considerado que aparezca un NL, antes de ellos, por lo cual para evitar modif en la gramática y hacer que todo esté en una sola RP, se usará el trim para esto. El \n que aparece aquí es porque toda instrucción si mal no recuerdo xD, tiene al final de su defi un NL, por lo cual el archivo siempre deberá terminar en este \n, para que el usaurio no se entere de esto xD, lo haré yo jaja xD
             activeClass.setName(this.activeFiles[index].getName());           
