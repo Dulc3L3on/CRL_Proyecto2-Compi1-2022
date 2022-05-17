@@ -37,6 +37,7 @@ export class Invocacion extends Directive{
     }
 
     override exe():Result{
+        console.log("invocation father "+this.father);
         return this.exe_Invocation(this.getInitGlobalContainer(this.father));
     }
 

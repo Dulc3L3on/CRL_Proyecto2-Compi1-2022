@@ -30,6 +30,11 @@ export class Tool{
     }//si se generó un error al momento de calcular la expre, el tipo que se debería obtener es el de error, lo cual no está mal, malo sería que al gnerarse un error, se creara una excep real y por lo tanto se parara el programa...
 
     isADecimal(num:number):boolean{
+        if((num%1) > 0){
+            console.log("the number "+ num +" is a decimal");
+            return true;
+        }
+        console.log("the number "+ num +" isn't a decimal");
         return false;
     }
 

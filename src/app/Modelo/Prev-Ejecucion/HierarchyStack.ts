@@ -42,7 +42,9 @@ export class HierarchyStack{
             }else{
                 let father:LocalContainer = this.reduceUntil(directive.getScope());
                 
+                //no hay preocupaciones de NullPointer con respecto a los padres, ya que por las revisiones que se hacen para insertar, se evita esta y otras situaciones problemáticas xD
                 father.setContent(directive);
+                directive.setFather(father);
                 this.stack.insert(father);//puesto que la pila ya lo había sacado por completo de ella, aunque en realidad debería seguir ahí xD                                
             }
         }else{
@@ -78,14 +80,14 @@ export class HierarchyStack{
             if(actualContainer!.getScope() == (scope -1)){//se asegura que será != null, puesto que el for avanza según el tamaño del scope según vaya variando
                 return actualContainer!;
             }else if(this.stack.size() >= 1){//puesto que quiere decir que al menos tendrá el elemento que se req para hacer el acoplamiento final
-                actualContainer!.setFather(this.stack.previewElement()!);//se setea el padre
+                actualContainer!.setFather(this.stack.previewElement()!);//se setea el padre, ojo, esto solo se app a los LC puesto que ese es el único tipo de Sentence que está en el STACK!
                 this.stack.previewElement()!.setContent(actualContainer!);
             }
             console.log("number of elements "+this.stack.size());
         }
 
         return actualContainer!;
-    }//Este será empleado para setear las directivas, si encuentra un error
+    }//Este será empleado para setear las directivas y LC, si encuentra un error
     //seguirá buscando en la pila hasta que se vacíe o se encuentre el LC que
     //contenga un scope == (directiva.scope() -1)
 

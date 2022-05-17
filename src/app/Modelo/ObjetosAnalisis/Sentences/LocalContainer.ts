@@ -26,8 +26,8 @@ export class LocalContainer extends Container{
         let temporalStack:Stack<Sentence> = new Stack<Sentence>();
         temporalStack.setAll(this.content.getReverse());        
 
-        for(let index = 0; index < temporalStack.size(); index++){
-            let result:Result = temporalStack.getElements()[index].exe();
+        while(!temporalStack.isEmpty()){//no se devolverá indefinidos el pop, por haber sobrepasado el número de ele que contiene, gracias a este while que se encarga de llevar el control xD
+            let result:Result = temporalStack.getElements().pop()!.exe();//en lugar de usar getElements y el índice podríamos y más se debería, para ahorrarse el hecho que el for, puesto que se tendría como condi mientrar el stack no esté vacío, pienso que se puede hacer, puesto que en primer lugar el stack que se está tomando aquí es temp y por lo tanto no se afectaría al original y porque ya no se req buscar a los elementos que ya fueron exe...
 
             if(result.getType() != ContentType.NOTHING ){
                 return result;

@@ -23,6 +23,7 @@ export class Incertitude extends Directive{
 
     override exe(): Result {
         let result:Result = this.expr.getValue();
+        console.log("incertitud father "+ this.father);
 
         if(result.getType() == ContentType.ERROR || 
           (result.getType() != ContentType.INTEGER && result.getType() != ContentType.DOUBLE)){

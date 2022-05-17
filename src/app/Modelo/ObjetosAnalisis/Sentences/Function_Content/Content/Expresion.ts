@@ -40,6 +40,9 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
     }
 
     private setFather_Intern(expresion:Expresion|null, father:Container){
+        console.log("expression ")
+        console.log(expresion);
+
         if(expresion != null){
             expresion.setFather_Intern(expresion.getLeftChild(), father);
             expresion.setFather_Intern(expresion.getRightChild(), father);
@@ -64,6 +67,9 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
     }//like as postOrder route
 
     private obtainResult(){
+        console.log("[Expresion] content: "+this.content);
+        console.log("[Expresion] is Number?: "+ (this.content instanceof Number));
+
         if(this.content instanceof Number && this.caster.isADecimal(this.content as number)){//de primero el double por la rev de los deci...
             this.operationResult = new OperationResult(OperatorType.VALUE, new Result(ContentType.DOUBLE, this.content as Number));            
         }else if(this.content instanceof Number){//Debes revisar cómo le hiciste en la practica1, para extraer los decimales de un número double...
@@ -86,10 +92,10 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
             //se add un error (a parte del que dará cuando intente operar con el result de tipo incorrecto)cuando el tipo == NOTHING [puesto que para ERR, no tendría reportar otro ERR xD]
 
             this.operationResult = new OperationResult(OperatorType.VALUE, new Result(result.getType(), result.getValue()));
-        }
-
-        //Si se llega aquí es porque corrsp a un operador        
-        this.operationResult = this.operateExpresion();
+        }else{
+            //Si se llega aquí es porque corrsp a un operador        
+            this.operationResult = this.operateExpresion();    
+        }        
     }
 
     private operateExpresion():OperationResult{        

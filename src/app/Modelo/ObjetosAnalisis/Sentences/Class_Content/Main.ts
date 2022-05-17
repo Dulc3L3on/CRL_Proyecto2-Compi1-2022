@@ -15,7 +15,7 @@ export class Main extends Function{
     }
 
     override exe_Function(): Result {
-        (this.father as GlobalContainer).initTAS();//esto bien podría evitarse al usar el método getInvocatedFunction(), pero para variar un poco, y que esta clase tenga algo sobreescrito xD, lo haremos así xD
+        (this.father as GlobalContainer).initMe();//esto bien podría evitarse al usar el método getInvocatedFunction(), pero para variar un poco, y que esta clase tenga algo sobreescrito xD, lo haremos así xD
         this.TAS = new TAS();//debe hacerse ya que el método loadArguments no se invoca para esta función xD, lo cual se hubiera solucionado al invocar el getInvocatedFunction() xD
 
         let result:Result = this.readStack();

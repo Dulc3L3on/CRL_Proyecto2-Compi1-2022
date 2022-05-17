@@ -56,10 +56,7 @@ export class GlobalContainer extends Container{
         }
         
         if(iHaveTheFunction && theFunction != null){
-            if(!this.instantiated){
-                this.instantiated = true;
-                this.initTAS();
-            }//se hace la ini de la TAS de la CLASE                  
+            this.initMe();
         }        
         return theFunction;
     }//A este método solo se le enviará el HASH debido a su naturaleza...
@@ -80,6 +77,12 @@ export class GlobalContainer extends Container{
     //que recolectar todos los nombres [ahi si nombres xD] iguales    
 
     //a parte hace falta el método para buscar TODAS las funciones que tengan NOMBRE igual, deplano que se tenrá una clase para hacer eso, puesto que debe listar a todas y no parar cuando encuentre una... ahora se me ocurre que debería ser un método de esta clase GC, y que cuando se invoque el método exe de dibujar, a la clase Main se le invoque este método para que así pueda tener acceso a todos los niveles y así encontrar las funcioens [NOTA, en este caso no será nec ini la clase, puesto que solo se req la info literal y no el func de dhica info de la func xD]
+    initMe(){
+        if(!this.instantiated){
+            this.instantiated = true;
+            this.initTAS();
+        }//se hace la ini de la TAS de la CLASE                  
+    }
 
     initTAS(){
         this.TAS = new TAS();

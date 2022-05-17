@@ -271,7 +271,7 @@ case 89:
 break;
 case 90:
  $$[$0].setIsOnlyInvocated(false);//puesto que si vino aquí, pues no lo es xD
-                                      this.$ = $$[$0]; 
+                                      this.$ = createExpr_Value("INVOCACION", $$[$0]); 
 break;
 case 91:
  this.$ = createInvocation($$[$0-3], $$[$0-1]); 
@@ -561,7 +561,9 @@ parse: function parse(input) {
       function addIncertitude(expression){
             //Simplemente se debe crear el obj y addlo al globalContent (lo cual se puede hacer sin problema, pruesto que para que pudiera ser seteada al contenido se hizo que heredara de Directive...), puesto que la revisión profunda [con respecto a la exp], se hace en la clase Incert...
             console.log("[S] Header content: INCERTITUDE "+expression);
-            clase.addGlobalContent(new Incertitude(expression));
+            let incertitude = new Incertitude(expression);
+            incertitude.setFather(clase);
+            clase.addGlobalContent(incertitude);
       }
 
   //CLASS CONTENT
@@ -730,6 +732,8 @@ parse: function parse(input) {
                         return new Expresion(null, new String(content), null);
                   case "VARIABLE":
                         return new Expresion(null, new Variable(null, content, null), null);//para este caso el argu para el valor, en realidad será el nombre xD
+                  case "INVOCACION":
+                        return new Expresion(null, content, null);//seteo de una vez el content, puesto que la invocación ya fue creada en otra parte...
             }
             return null;//no se llegará aquí, puesto que el tipo siempre será enviado por mí xD, a lo que voy es que será certero jaja xD
       }//Este se utilizará en las producciones de las expr que corresp a valores no a ops obvi xD     
