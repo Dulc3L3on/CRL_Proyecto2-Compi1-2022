@@ -1,7 +1,7 @@
 export enum ErrorType{
-    LEXER,
-    SINTACTIC,
-    SEMANTIC,
+    LEXER = "LEXER",
+    SINTACTIC = "SINTACTIC",
+    SEMANTIC = "SEMANTIC",
 
-    RUNTIME_EXCEP
+    RUNTIME_EXCEP = "RUNTIME EXCEPTION"
 }

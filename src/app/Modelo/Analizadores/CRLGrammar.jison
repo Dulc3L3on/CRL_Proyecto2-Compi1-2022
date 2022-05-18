@@ -86,10 +86,12 @@
                         clase.addImport(new Import(line, column, importClassName));
                   }else{
                         //Se add el error, puesto que el archivo Main no tendría porque poder importarse, ya que eso no impediría que se pudiera invocar el método Main de nuevo, y así provocar un error por quedarse enciclado...
-                        this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.INEXISTENT_IMPORTED_FILE,
-                            new SourceLocation(line, column), "IMPORT", clase.getName()));
+                        errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.IMPORT_NOT_ALLOWED,
+                            new SourceLocation((line == undefined)?0:line, (column == undefined)?0:column), "IMPORT", clase.getName()));
                   }                  
             }else{
+                  errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.INEXISTENT_IMPORTED_FILE,
+                     new SourceLocation(line, column), "IMPORT", clase.getName()));
                   //Se add el error al manejador de errores, el cual se encarga de llevar el conteo y addlos de una vez a la consola...
             }            
       }
@@ -355,14 +357,22 @@
             return new If(line, column, expre);
       }                  
 
-      function handleLexerError(lexema){
+      /*function handleLexerError(lexema){
             lexer_error += lexema;
-      }
+      }*/
 
-      function addError(line, column){
+      function addLexer_Error(line, column, yytext){
             //se setea lo recolectado en el manejador de errores
             console.log("[L] ERROR: " + lexer_error);
-            lexer_error = "";//Se limpia la variable, para dejar paso libre a los errores que se vayan a hallar xD            
+            errorHandler.addMessage(new Error(ErrorType.LEXER, ErrorMessage.LEXER_ERROR,
+                     new SourceLocation((line == undefined)?0:line, (column == undefined)?0:column), yytext, clase.getName()));
+      }
+
+      function addParser_Error(errorType, line, column, yytext, errorMessage){
+            //se setea lo recolectado en el manejador de errores
+            console.log("[S] ERROR: " + lexer_error);
+            errorHandler.addMessage(new Error(errorType, errorMessage,
+                     new SourceLocation((line == undefined)?0:line, (column == undefined)?0:column), yytext, clase.getName()));
       }
 %}
 
@@ -468,9 +478,11 @@ letra           [a-zA-Z\u00f1\u00d1]
 
 <<EOF>>                                                                     {console.log("[L] EOF"); return 'EOF';}
  
-<ERROR>\s+                                                                  {addError(yylloc.first_line, yylloc.first_column); this.popState();}//aquí se invoca a la función que se encarga de recisar lo de substring de reservadas xD
+/*<ERROR>\s+                                                                  {addError(yylloc.first_line, yylloc.first_column); this.popState();}//aquí se invoca a la función que se encarga de recisar lo de substring de reservadas xD
 
-[.]                                                                         {handleLexerError(); this.yybegin('ERROR');}//Aquí se debe hacer la concat de los errores     
+[.]                                                                         {handleLexerError(); this.yybegin('ERROR');}//Aquí se debe hacer la concat de los errores     */
+
+.                                                                           { addLexer_Error(yylloc.first_line, yylloc.first_column, yytext); }
 
 //me da duda lo de los errores, lo del string y las macros... si no funciona lo de los errores, entonces usa [.]+ para que aśi lo agrupe, según vi en la docu... y si no funciona lo de los string, quizá sea util usar, el string de la docu...
 
@@ -515,6 +527,7 @@ inicio : clase EOF                        { console.log("---Parser process termi
 clase : nl class_elements      
       | SANGRIA nl class_elements
       | class_elements
+      | error                                      { addParser_Error(ErrorType.SINTACTIC, @1.first_line, @1.first_column, yytext, ErrorMessage.CLASS_WITH_ERRORS); }
       ;//sangría de por sí sola NO, porque ellos no deben tener nada de ese tipo de espacios!
 
 class_elements : header content                    {console.log("[S] Header + Content");}
@@ -528,6 +541,7 @@ header : imports incerteza                {console.log("[S] Header: Import + Inc
 
 imports : imports import                  {console.log("[S] Header: +1 import");}
         | import                          {console.log("[S] Header: 1st import");}
+        | error import                    { addParser_Error(ErrorType.SINTACTIC, @1.first_line, @1.first_column, yytext, ErrorMessage.IMPORT_LIST_WITH_ERRORS); }
         ;
 
 import : IMPORT ID '.' CRL nl                       {addImport(@1.first_line, @1.first_column, ($2+".crl"));}       
@@ -570,6 +584,7 @@ var_list : var_list ',' ID                      { $1.push($3);
                                                   console.log("var_list "+$$); }
          | ID                                   { console.log("id-element_list "+$1);
                                                   $$ = [yytext]; }//Aunue tb hubieras podido probar así como lo tenías antes, si se puede ini desde la instaciación [por medio de enviar un argu a los parám xD]
+         | error ID                             { addParser_Error(ErrorType.SINTACTIC, @1.first_line, @1.first_column, yytext, ErrorMessage.VARIABLE_LIST_WITH_ERRORS); }
          ;
 
 content_type : INT                        { $$ = ContentType.INTEGER; }
@@ -598,6 +613,7 @@ params_list : params_list ',' param                   { $1.push($3);
             | param                                   { $$ = [];                                                        
                                                         $$.push($1);
                                                         console.log("element_param_list "+$$); }
+            | error param                             { addParser_Error(ErrorType.SINTACTIC, @1.first_line, @1.first_column, yytext, ErrorMessage.PARAM_LIST_WITH_ERRORS); }
             ;
       
 param : content_type ID                       { $$ = createParam(@2.first_line, @2.first_column, $1, $2); }
@@ -612,6 +628,7 @@ function_sentence : only_sentence                       { isADirective = true;
                                                           $$ = $1; }
                   | control_sentence                    { isADirective = false;
                                                           $$ = $1; }
+                  | error                               { addParser_Error(ErrorType.SINTACTIC, @1.first_line, @1.first_column, yytext, ErrorMessage.FUNCTION_ELEMENTS_WITH_ERRORS); }
                   ;
 
 only_sentence : declaracion_var                       { isAVariableDeclaration = true;//Esto lo coloco pues es el único contenido de una función que puede ser una lista, por lo cual debe ser tratado de manera diferente
@@ -631,6 +648,7 @@ asignation_value : '=' expression                    { $$ = $2; }
 
 expression : expr                         { $$ = $1;
                                             console.log("expresión "+$$); }
+           | error                        { addParser_Error(ErrorType.SINTACTIC, @1.first_line, @1.first_column, yytext, ErrorMessage.EXPRESSION_ERRATE); }
            ;
 
 expr : expr '+' expr2                       { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.ARITMETIC, $1, $2, $3); }               
@@ -708,6 +726,7 @@ mostrar : MOSTRAR '(' CADENA contenido_asignacion ')'                   { $$ = c
 
 contenido_asignacion : ',' argumentos                       { $$ = $2; }
                      |                                      { $$ = []; }
+                     | error                                { addParser_Error(ErrorType.SINTACTIC, @1.first_line, @1.first_column, yytext, ErrorMessage.ASIGNATED_SHOW_CONTENT_WITH_ERRORS); }
                      ;
 
 argumentos : argumentos ',' expression                      { $1.push($3); 
@@ -718,6 +737,7 @@ argumentos : argumentos ',' expression                      { $1.push($3);
                                                               $$.push($1);
                                                               console.log("element_argu_list "+$$);
                                                               isAList = false; }
+           | error expression                               { addParser_Error(ErrorType.SINTACTIC, @1.first_line, @1.first_column, yytext, ErrorMessage.ARGUMENT_LIST_WITH_ERRORS); }
            ;
 
 dibujar : DRAW_AST '(' ID ')'                   { $$ = createDraw_AST(@1.first_line, @1.first_column, $3); }

@@ -49,7 +49,7 @@ export class Error{
     }
 
     public toString(){
-        return this.errorType + "{ line: "+ this.getLine() + ", column: " + this.getColumn()
+        return "{ type: " + this.errorType + ", line: "+ this.getLine() + ", column: " + this.getColumn()
         + ", message: " + this.message + ", entity: " + this.getErrateEntity() + ", father: "+ this.getEntityFather()+ " }";
     }
 

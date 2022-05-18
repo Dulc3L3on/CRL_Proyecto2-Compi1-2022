@@ -1,4 +1,15 @@
 export enum ErrorMessage{
+    LEXER_ERROR = "The string unmatch any recognized words",
+
+    ARGUMENT_LIST_WITH_ERRORS = "One or more of item argument list, with errors",
+    ASIGNATED_SHOW_CONTENT_WITH_ERRORS = "The asignated elements to show it contain errors",
+    EXPRESSION_ERRATE = "One or more elements of asignated expresion contain errors",
+    FUNCTION_ELEMENTS_WITH_ERRORS = "Asignated function content with errors",
+    PARAM_LIST_WITH_ERRORS = "One or more of item param list, with errors",
+    VARIABLE_LIST_WITH_ERRORS = "One or more of item variable list, with errors",
+    IMPORT_LIST_WITH_ERRORS = "One or more of item import list, with errors",
+    CLASS_WITH_ERRORS = "One or mor class elements with errors",
+
     INEXSITENT_VAR = "There is no variable with that name",
     ABSENT_EXPR_RETURN_FUNCTION = "A function must return a value",
     UNMATCH_EXPR_RETURN_FUNCTION = "A function cannot return other type",
@@ -32,6 +43,7 @@ export enum ErrorMessage{
     INCORRECT_ASIGNATED_INCERTITUDE = "The asignated incertitde expression is invalid",
     INEXISTENT_IMPORTED_FILE = "The importered file doesn't correspond to any existent file",
     INEXISTENT_MAIN = "Cannot find the Principal method",
+    IMPORT_NOT_ALLOWED = "Cannot import the file that contains the Principal method",
 
     FATAL_ERROR = "Ocurrs a fatal error"
 }
