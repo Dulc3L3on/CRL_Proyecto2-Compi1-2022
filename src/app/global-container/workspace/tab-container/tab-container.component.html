@@ -9,8 +9,13 @@
                         <ng-template mat-tab-label style="height:15px;margin-top: -7px;">
                             {{file.name}}
                             <span (mouseenter)="showOrHide(true, indice)" (mouseleave)="showOrHide(false, indice)" (click)="closeTab(indice)">
-                                <i class="bi bi-x-circle" 
+                                <i class="bi bi-x-circle-fill" 
                                    id="close{{indice}}"
+                                   style="margin-left: 7px;font-size: 15px;font-weight: bolder;visibility: hidden;"></i>
+                            </span>
+                            <span (mouseenter)="viewOrNot(true, indice)" (mouseleave)="viewOrNot(false, indice)" (click)="downloadFile(indice)">
+                                <i class="bi bi-arrow-down-circle-fill"
+                                   id="download{{indice}}"
                                    style="margin-left: 7px;font-size: 15px;font-weight: bolder;visibility: hidden;"></i>
                             </span>
                         </ng-template>

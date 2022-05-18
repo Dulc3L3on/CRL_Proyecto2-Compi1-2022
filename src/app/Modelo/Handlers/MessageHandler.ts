@@ -17,7 +17,7 @@ export class MessageHandler{
     public initList(){
         let date:Date = new Date();
 
-        this.messageList.push(">>>>>>>-----------------------[ PROCESS INITIALIZED < "+date.toUTCString()+" > ]----------------------<<<<<<<<");
+        this.messageList.push(">>>>>>>===================--<[[[ PROCESS INITIALIZED < "+date.toUTCString()+" > ]]]>--===============<<<<<<<<");
     }//Esto evitará que pueda estar vacía
 
     public addMessage(message:string){
@@ -27,7 +27,7 @@ export class MessageHandler{
     public finalizeList(){
         let date:Date = new Date();
 
-        this.messageList.push(">>>>------------------[ PROCESS SUCCESSFUL < "+date.toUTCString()+" > ]------------------<<<<");
+        this.messageList.push(">>>>>>>===================--<[[[ PROCESS SUCCESSFUL < "+date.toUTCString()+" > ]]]>--===============<<<<<<<<");
     }
 
     public getMessage():string{

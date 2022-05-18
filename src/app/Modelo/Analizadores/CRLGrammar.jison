@@ -74,7 +74,7 @@
       let hierarchyStack = new HierarchyStack();
       let isADirective;
       let isAVariableDeclaration;
-      let isAList;//Esta es solo para dar un msje más informativo al momento consolear xD el objeto creado
+      let isAList;//Esta es solo para dar un msje más informativo al momento consolear xD el objeto creado      
 
       var varList = [];
 
@@ -111,26 +111,38 @@
             return lexema.length;
       }
 
-      function addClassContent(declaratedVars, theFunction){
-            if(theFunction == null){//no reviso si el listado está vacío, porque bien podría ser que el dato que se envió fue el de una declaración, pero que... iba a decir que no contenga vars, pero en ese caso tendría que haber sucedido un error para que llegue vacía la lista...
+      function addClassContent(declaratedVars, theFunction, asignation){
+            if(asignation != null){
                   hierarchyStack.reduceStack();//se hace aquí puesto que el for es para add cada var que se colocó en una misma línea de creación
-
-                  for(let index = 0; index < declaratedVars.length; index++){                        
-                        declaratedVars[index].setScope(0);
-                        console.log("seteo el scope en var global");
-                        declaratedVars[index].setFather(clase);
-                        clase.addGlobalContent(declaratedVars[index]);
-                  }
-                  console.log("[S] Class content: VAR DECLARATION");                  
+                                      
+                  asignation.setScope(0);
+                  console.log("seteo el scope en asignation global");
+                  asignation.setFather(clase);
+                  clase.addGlobalContent(asignation);
+                  
+                  console.log("[S] Class content: VAR ASIGNATION");                  
             }else{
-                  //la función ya tiene por defecto scope = 0, entonces no hay que hacer eso aquí
-                  //tb ya tiene seteado su respectivo padre xD
-                  clase.addGlobalContent(theFunction);//que se quede, puesto que encaja con las axn del stack xD                  
-                  hierarchyStack.addFunction(theFunction);
+                  if(theFunction == null){//no reviso si el listado está vacío, porque bien podría ser que el dato que se envió fue el de una declaración, pero que... iba a decir que no contenga vars, pero en ese caso tendría que haber sucedido un error para que llegue vacía la lista...
+                        hierarchyStack.reduceStack();//se hace aquí puesto que el for es para add cada var que se colocó en una misma línea de creación
 
-                  console.log(theFunction);
-                  console.log("[S] Class content: FUNCTION");                  
+                        for(let index = 0; index < declaratedVars.length; index++){                        
+                              declaratedVars[index].setScope(0);
+                              console.log("seteo el scope en var global");
+                              declaratedVars[index].setFather(clase);
+                              clase.addGlobalContent(declaratedVars[index]);
+                        }
+                        console.log("[S] Class content: VAR DECLARATION");                  
+                  }else{
+                        //la función ya tiene por defecto scope = 0, entonces no hay que hacer eso aquí
+                        //tb ya tiene seteado su respectivo padre xD
+                        clase.addGlobalContent(theFunction);//que se quede, puesto que encaja con las axn del stack xD                  
+                        hierarchyStack.addFunction(theFunction);
+
+                        console.log(theFunction);
+                        console.log("[S] Class content: FUNCTION");                  
+                  }
             }
+            
       }//por la RP que contiene ambos tipos de contenido, se me ocurrió que quizá podría hacer el seteo de cada contenido, por medio de difernetes métodos, además como el proceso de seteo varía, puesto que en uno va directo al padre y en el otro directo a la func que está al ini de la pila o dir a la pila, entonces... xD      
 
       function addFunctionContent(scope, content){            
@@ -373,8 +385,8 @@ letra           [a-zA-Z\u00f1\u00d1]
 //"!!"[^\n]*                                                                  {console.log("[L] comentario: "+ yytext);/*ignore*/}
 
 //\n+                                                                         {console.log("[L] especial: NL"); return 'NEW_LINE';}
-//(\n|\r|\v)+                                                                   {console.log("[L] especial: NL"); return 'NEW_LINE';}//esta es la solución para que acepte los |, lo que pasa es que toma al | como si fuera parate del conjunto de estudio, supongo que es por los [], que ahí se colocan listados y por lo tanto NO deben ponerse, a dif de los (), que toman todo como un todo a menos que se les diga que son dif ops xD, o eso es lo que entiendo xD
-[\n|\r|\v]+                                                                 {console.log("[L] especial: NL"); return 'NEW_LINE';}
+(\n|\r|\v)+                                                                   {console.log("[L] especial: NL"); return 'NEW_LINE';}//esta es la solución para que acepte los |, lo que pasa es que toma al | como si fuera parate del conjunto de estudio, supongo que es por los [], que ahí se colocan listados y por lo tanto NO deben ponerse, a dif de los (), que toman todo como un todo a menos que se les diga que son dif ops xD, o eso es lo que entiendo xD
+//[\n|\r|\v]+                                                                 {console.log("[L] especial: NL"); return 'NEW_LINE';}
 
 \t+                                                                         {console.log("[L] especial: SANGRIA"); return 'SANGRIA';}
 
@@ -535,8 +547,9 @@ sentences : class_content                       {console.log("[S] CLASS- content
 class_content: class_content_elements nl                    //no se tiene nada por hacer, puseto que el contenido ya se add abajito, al hacerlo así, quiere decir que en caso no hayan colocado NL, esto no afectará a la sentencia que obvi dobi estaba bien formada xD
              ;
 
-class_content_elements : declaracion_var_global                   { addClassContent($1, null); }
-                       | declaracion_funcion                      { addClassContent(null, $1); }
+class_content_elements : declaracion_var_global                   { addClassContent($1, null, null); }
+                       | asignacion_var_global                    { addClassContent(null, null, $1); }
+                       | declaracion_funcion                      { addClassContent(null, $1, null); }
                        ;
 
 declaracion_var_global : declaracion_var                     {console.log("[S] ClassC: "+ $1.length +"GLOBAL var created");
@@ -565,6 +578,10 @@ content_type : INT                        { $$ = ContentType.INTEGER; }
              | BOOLEAN                    { $$ = ContentType.BOOLEAN; }
              | CHAR                       { $$ = ContentType.CHAR; }
              ;
+
+asignacion_var_global : asignacion_var                      { console.log("[S] ClassC: "+ $1.length +"GLOBAL asignation realized");
+                                                              $$ = $1; }
+                      ;
 
 declaracion_funcion : content_type ID '(' params ')' ':'                      { $$ = createFunction(@1.first_line, @1.first_column, "COMPLEX", $1, $2, $4); }
                     | VOID ID '(' params ')' ':'                              { $$ = createFunction(@1.first_line, @1.first_column, "SIMPLE", $1, $2, $4); }

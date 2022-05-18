@@ -18,8 +18,17 @@ export class TabContainerComponent implements OnInit {
     document.getElementById('close'+indice)!.style.visibility = (isShow)?"visible":"hidden";
   }
 
+  viewOrNot(isShow: boolean, indice: number){
+    console.log('download'+indice);
+    document.getElementById('download'+indice)!.style.visibility = (isShow)?"visible":"hidden";
+  }
+
   closeTab(indice: number){//no habrá problemas con los null, pues si no hay pestañas, entonces no hay botón de cerrar xD 
     this.fileService_tc.deleteActiveFile(indice);
   }//iba a hacer la eliminación aquí, pero puesto que este elemento se volverá a leer después de esto, entonces la modif que haga en el workspace, se correrá hacia aquí xD    
+
+  downloadFile(indice:number){
+    this.fileService_tc.downloadFile(indice);
+  }
 
 }

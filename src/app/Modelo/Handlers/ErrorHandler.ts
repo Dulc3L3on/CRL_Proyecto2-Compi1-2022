@@ -19,7 +19,7 @@ export class ErrorHandler{
     private initList(){
         let date:Date = new Date();
 
-        this.errorList.push(">>>>>>>-----------------------[ ERRORS ENCOUNTERED AT < "+date.toUTCString()+" > ]----------------------<<<<<<<<");
+        this.errorList.push(">>>>>>>===================--<[[[ ERRORS ENCOUNTERED AT < "+date.toUTCString()+" > ]]]>--===============<<<<<<<<");
     }//Esto evitará que pueda estar vacía
 
     public addMessage(error:Error){
@@ -32,7 +32,7 @@ export class ErrorHandler{
     public finalizeList(){
         let date:Date = new Date();
 
-        this.errorList.push(">>>>>>>-----------------------[ ERRORS ENCOUNTERED UNTIL < "+date.toUTCString()+" > ]--------------------<<<<<<<<");
+        this.errorList.push(">>>>>>>===================--[[[ ERRORS ENCOUNTERED UNTIL < "+date.toUTCString()+" > ]]]--===============<<<<<<<<");
     }
 
     public getError():string{

@@ -5,7 +5,7 @@ import { Import } from "./Class_Content/Import";
 import { TAS } from "../EDDs/TablaSimbolos/TAS";
 
 export class GlobalContainer extends Container{
-    instantiated:boolean = false;
+    previusInstantiatedLine:number = 0;
     name:string;
 
     imports: Array<Import>;    
@@ -44,7 +44,7 @@ export class GlobalContainer extends Container{
 
     getInvocatedFunction(hash:string):Function|null{
         let theFunction:Function|null = (this.findFunction(null, hash) as Function| null);
-        console.log("i have the invaocated fun? "+ theFunction);
+        console.log("i have the invocated fun? "+ theFunction);
         let iHaveTheFunction:boolean = true;
 
 
@@ -62,7 +62,7 @@ export class GlobalContainer extends Container{
         }
         
         if(iHaveTheFunction && theFunction != null){
-            this.initMe();
+            this.initMe(theFunction.getSourceLocation().getLine());
         }        
         return theFunction;
     }//A este método solo se le enviará el HASH debido a su naturaleza...
@@ -83,24 +83,33 @@ export class GlobalContainer extends Container{
     //que recolectar todos los nombres [ahi si nombres xD] iguales    
 
     //a parte hace falta el método para buscar TODAS las funciones que tengan NOMBRE igual, deplano que se tenrá una clase para hacer eso, puesto que debe listar a todas y no parar cuando encuentre una... ahora se me ocurre que debería ser un método de esta clase GC, y que cuando se invoque el método exe de dibujar, a la clase Main se le invoque este método para que así pueda tener acceso a todos los niveles y así encontrar las funcioens [NOTA, en este caso no será nec ini la clase, puesto que solo se req la info literal y no el func de dhica info de la func xD]
-    initMe(){
-        if(!this.instantiated){
-            this.instantiated = true;
-            this.initTAS();
-        }//se hace la ini de la TAS de la CLASE                  
+    initMe(limit:number){
+        if(this.previusInstantiatedLine < limit){//suponiendo que invocaran una función que está lineas antes del limite de revisión actual, no se exe la instanciación, por qué? bueno porque la clase no es un método y por lo tanto esta no se reinicia cada vez que se llega a ella, así como sucede con los métodos...
+            this.initTAS(limit);//se hace la ini de la TAS de la CLASE          
+        }//Para el caso en el que el Main invoque este método de manera directa esta condi está de más, piensalo xD
     }
 
-    initTAS(){
-        this.TAS = new TAS();
-        let index:number = 0;
+    initTAS(limit:number){
+        console.log(">>Class TAS init<<");
 
-        while(!(this.classContent[index] instanceof Function)){
-            this.classContent[index].exe();//no hay problema con invocar a este método, puesto que todo lo que haya ahí dentro será o una directiva o un contenedor, que al final de cuentas terminan siendo una sentencia xD
-
-            console.log(this.TAS);//para que veas que si se modifica asignando el dato a otra var xD
-            index++;
+        if(this.previusInstantiatedLine == 0){
+            this.TAS = new TAS();
         }
-    }//con esto basta ya que las directivas de declaración de variable e incertidumbre, se encargan de enviar los datos a la TAS...
+
+        for(let index:number = 0; index < this.classContent.length; index++){
+            if(!(this.classContent[index] instanceof Function)){
+                if(this.classContent[index].sourceLocation.getLine() >= this.previusInstantiatedLine//si es < a prevIntL, es porque ese bloque ya se había instanciado y por tanto no hay algo que hacer xD
+                   && this.classContent[index].sourceLocation.getLine() < limit){
+                        this.classContent[index].exe();//no hay problema con invocar a este método, puesto que todo lo que haya ahí dentro será o una directiva o un contenedor, que al final de cuentas terminan siendo una sentencia xD                                                
+                        //console.log(this.TAS);//para que veas que si se modifica asignando el dato a otra var xD
+                }else if(this.classContent[index].sourceLocation.getLine() >= limit){
+                    this.previusInstantiatedLine = limit;
+                    return;
+                }//Esto lo puedo hacer, puesto que se van add en orden asc
+            }
+        }        
+        console.log(this.TAS);//para que veas que si se modifica asignando el dato a otra var xD
+    }//con el exe las directivas[incertitude, dec y asigG] se encargan de hacer su magia xD
 
     getName():string{
         return this.name;

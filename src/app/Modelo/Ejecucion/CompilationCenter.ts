@@ -8,6 +8,10 @@ import { Tool } from "../Tool/Tool";
 import { ActiveClassHandler } from "./ActiveClassHandler";
 import { Main } from "../ObjetosAnalisis/Sentences/Class_Content/Main";
 import { MessageHandler } from "src/app/Modelo/Handlers/MessageHandler";
+import { ErrorHandler } from "../Handlers/ErrorHandler";
+import { Error } from "../Tool/Error/Error";
+import { ErrorType } from "../Tool/Error/ErrorType";
+import { ErrorMessage } from "../Tool/Error/ErrorMessage";
 //import { parser as Parser } from "src/app/Modelo/Analizadores/GramaticaPrueba_SinAxn.js";
 
 
@@ -18,6 +22,7 @@ export class CompilationCenter{
     private activeClassHandler:ActiveClassHandler;
     private activeFileHandler:ActiveFileHandler;
     private messageHandler:MessageHandler;
+    private errorHandler:ErrorHandler;
     //por la forma en que se trabajó con las pilas locales de cada función, no será nec, tener una pila gobal a partir de la cual se vayan buscando las sentencias para hacer que exe sus axn :3 GRACIAS DIOS!!! xD
 
     tool:Tool;
@@ -28,6 +33,7 @@ export class CompilationCenter{
         this.activeFileHandler = ActiveFileHandler.getInstance();
         this.activeClassHandler = ActiveClassHandler.getInstance();        
         this.messageHandler = MessageHandler.getInstance();
+        this.errorHandler = ErrorHandler.getInstance();
 
         this.tool = new Tool();
     }
@@ -51,6 +57,7 @@ export class CompilationCenter{
         let theFunction:Main|null = mainClass.getMainFunction(
             this.tool.regenerateFunctionHash(this.NAME_MAIN_FUNCTION, new Array<Expresion>()));
             this.messageHandler.clearList();//Sea que esté o no el main, o que hayan o no errores, debe limpiarse
+            this.errorHandler.clearList();
 
         if(theFunction != null){
             this.messageHandler.initList();
@@ -60,12 +67,12 @@ export class CompilationCenter{
                 this.messageHandler.finalizeList();//Si no estuvo bien entonces no se add el final xD
             }else{
 
-                
-            }
-
-            
+                this.errorHandler.finalizeList();
+            }            
         }else{
-            //Se add el msje por no existir el main
+            this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, 
+                ErrorMessage.INEXISTENT_MAIN, null, mainClass.getName(), null));
+            this.errorHandler.finalizeList();
         }        
     }
 

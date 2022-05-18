@@ -46,3 +46,6 @@ export class Incertitude extends Directive{
 //es un error que pongan +1 vez la directiva incertidumbre?
 //lo que yo pensaría hacer para ahorrarme esa revisada es simplemente add las directivas y exe cuando se topara con una el stack...
 //eso si, no debería dejar de revisar que aparezca solo en el área de encabezado...
+
+
+//además de servirme para mostrar los errores, la linea y col, me serán útiles para que no haya desacuerdos entre la decl, asig G y dec de func, puesto que para init la clase, revisaré el valor de estos atributos xD

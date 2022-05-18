@@ -31,6 +31,7 @@ export enum ErrorMessage{
     VOID_FUNCTION_INVOCATED_ON_EXPR = "Must invocate a function 'casue, is required return a value",
     INCORRECT_ASIGNATED_INCERTITUDE = "The asignated incertitde expression is invalid",
     INEXISTENT_IMPORTED_FILE = "The importered file doesn't correspond to any existent file",
+    INEXISTENT_MAIN = "Cannot find the Principal method",
 
     FATAL_ERROR = "Ocurrs a fatal error"
 }

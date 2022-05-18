@@ -55,8 +55,19 @@ export class FileService{
     }
 
     deleteActiveFile(indice:number){
-      if(indice!= -1){//sé que no sucederpa, puesto que solo podrá cerrar si hay pestañas y el número que se reciba siempre será de 0-n, puesto que se add con el for, pero por si xD
+      if(indice != -1){//sé que no sucederpa, puesto que solo podrá cerrar si hay pestañas y el número que se reciba siempre será de 0-n, puesto que se add con el for, pero por si xD
         this.active_Files.splice(indice, 1);
+      }
+    }
+
+    downloadFile(indice:number){
+      if(indice != -1){
+        var blob = new Blob([this.active_Files[indice].getContent()], {type: "text/plain"});
+        var url = window.URL.createObjectURL(blob);
+        var ancla = document.createElement("a");
+        ancla.download = this.active_Files[indice].getName();
+        ancla.href = url;
+        ancla.click();
       }
     }
 
