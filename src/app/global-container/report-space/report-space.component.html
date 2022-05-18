@@ -1,1 +1,11 @@
-<p>report-space works!</p>
+<div>
+    <select id="graphs">        
+        <option selected disabled>Select your main file</option>
+        <option *ngFor="let graph of graphHandler.getGraphs(); index as indice">{{graph.getName()}}</option>
+    </select>
+    
+    <button id="compile" (click)="showGraphs()">view <i class="bi bi-caret-right"></i></button>
+    <div>
+        
+    </div>
+</div>>

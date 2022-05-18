@@ -294,7 +294,7 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
 
     getRightChild():Expresion|null{
         return this.right;
-    }
+    }    
 
     //este método se exe desde la raíz, se deberá recorrer en inorder
     //y se sabrá que los hijos siempre devolverán un valor con el cuañ
