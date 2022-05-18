@@ -4,7 +4,7 @@
         <p>&nbsp;</p><img src="./assets/orange_dot.png" width="15px" height="15px">
         <p>&nbsp;</p><img src="./assets/yellow_dot.png" width="15px" height="15px">
         <select class="terminalType" style="box-shadow: -10px -10px 15px rgba(255,255,255,0.5),
-        10px 7px 15px rgba(70,70,70,0.12);">
+        10px 7px 15px rgba(70,70,70,0.12);" (change)="changeView()">
             <option>
                 Terminal
             </option>
@@ -23,7 +23,20 @@
     </div>
     
     <div class="content" id="content">
-    
+        <ng-container *ngIf="isConsole; else log">
+            <ul class="list-group">      
+                <li class="list-group-item item" *ngFor="let message of messageHandler.getMessageList()">
+                    {{message}}
+                </li>
+            </ul>
+        </ng-container>
+        <ng-template #log>
+            <ul class="list-group">      
+                <li class="list-group-item item" *ngFor="let error of errorHandler.getErrorList()">
+                    {{error}}
+                </li>
+            </ul>
+        </ng-template>
     </div>    
 </div>
 

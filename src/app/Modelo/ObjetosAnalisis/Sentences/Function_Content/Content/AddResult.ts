@@ -11,7 +11,7 @@ export class AddResult extends OperationResult{
     override getValue():any{
         if(this.content.getType() == ContentType.STRING){            
             return this.content.getValue();//puesto que aquí se habrá enviado un string con todos los elementos que recibió de parte de los hijos a manera de string... en la forma de netero, porque ya sea una suma o una concatenación estos [o al menos pienso que tb aplicará al char], deben mostrarse en su forma numérica
-        }else{//Es decir un tipo numérico o cualquiera de los demás != string
+        }else{//Es decir un tipo numérico o cualquiera de los demás != string que no será error, puesto que de serlo no se setearían los valores y por tanto no se crearía un obj de este tipo, o eso recuerdo xD
             let elements:string[] = (this.content.getValue() as string).split(" ");
             let sumaResult:number = 0;
 

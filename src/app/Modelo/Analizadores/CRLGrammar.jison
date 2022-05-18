@@ -2,7 +2,12 @@
 //[0.1] imports 
 %{      
       const {HierarchyStack} = require("../Prev-Ejecucion/HierarchyStack.ts");
-      const {ActiveFileHandler} = require("../Handlers/ActiveFileHandler.ts");      
+      const {ActiveFileHandler} = require("../Handlers/ActiveFileHandler.ts");  
+      const {ErrorHandler} = require("../Handlers/ErrorHandler.ts");
+      const {Error} = require("../Tool/Error/Error.ts");
+      const {ErrorMessage} = require("../Tool/Error/ErrorMessage.ts");
+      const {ErrorType} = require("../Tool/Error/ErrorType.ts");     
+      const {SourceLocation} = require("../Tool/SourceLocation.ts");
       
       const {Import} = require("../ObjetosAnalisis/Sentences/Class_Content/Import.ts");      
       const {Incertitude} = require("../ObjetosAnalisis/Sentences/Class_Content/Incertitude.ts");
@@ -61,9 +66,10 @@
 //[0.3] user code
 %{
       let lexer_error= "";      
-      let clase = new GlobalContainer();//puesto que aquí se van a setear todos los obj creados
-      
-      let activeFileHandler = ActiveFileHandler.getInstance();
+      let clase = new GlobalContainer();//puesto que aquí se van a setear todos los obj creados      
+
+      let activeFileHandler = ActiveFileHandler.getInstance();     
+      let errorHandler = ErrorHandler.getInstance(); 
 
       let hierarchyStack = new HierarchyStack();
       let isADirective;
@@ -73,23 +79,25 @@
       var varList = [];
 
    //HEADERS
-      function addImport(importClassName){
+      function addImport(line, column, importClassName){
             if(activeFileHandler.isExistFile(importClassName)){
                   if(!activeFileHandler.isMainFile(importClassName)){
                         console.log("[S] Header content: IMPORT [ "+ importClassName+" ]");
-                        clase.addImport(new Import(importClassName));
+                        clase.addImport(new Import(line, column, importClassName));
                   }else{
                         //Se add el error, puesto que el archivo Main no tendría porque poder importarse, ya que eso no impediría que se pudiera invocar el método Main de nuevo, y así provocar un error por quedarse enciclado...
+                        this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.INEXISTENT_IMPORTED_FILE,
+                            new SourceLocation(line, column), "IMPORT", clase.getName()));
                   }                  
             }else{
                   //Se add el error al manejador de errores, el cual se encarga de llevar el conteo y addlos de una vez a la consola...
             }            
       }
 
-      function addIncertitude(expression){
+      function addIncertitude(line, column, expression){
             //Simplemente se debe crear el obj y addlo al globalContent (lo cual se puede hacer sin problema, pruesto que para que pudiera ser seteada al contenido se hizo que heredara de Directive...), puesto que la revisión profunda [con respecto a la exp], se hace en la clase Incert...
             console.log("[S] Header content: INCERTITUDE "+expression);
-            let incertitude = new Incertitude(expression);
+            let incertitude = new Incertitude(line, column, expression);
             incertitude.setFather(clase);
             clase.addGlobalContent(incertitude);
       }
@@ -154,49 +162,49 @@
             }//no tengo que resetear la var isADirective, puesto que no se va a llegar a la RP que invoca a este método, sin haber caido en la axn que setea esta var xD
       }
 
-      function createVarDeclaration(type, varList, asignatedValue){//Este último puede ser null, puesto que no es obligatorio que especifiquen este valor...
+      function createVarDeclaration(line, column, type, varList, asignatedValue){//Este último puede ser null, puesto que no es obligatorio que especifiquen este valor...
             let declaratedVars = [];//new Array<Variable_Declaration>()
             console.log("list size "+varList.length);
 
             for(let index = 0; index < varList.length; index++){
-                  declaratedVars.push(new Variable_Declaration(type, varList[index], asignatedValue));
+                  declaratedVars.push(new Variable_Declaration(line, column, type, varList[index], asignatedValue));
             }
 
             console.log("[S] (G/L) content: DECLARATION [ "+((varList.length>0)?"var list":"var")+((asignatedValue != null)?" + expr":"")+ " ]");
             return declaratedVars;//pongo G/L, puesto que esta se usa para un decl en general, no para un tipo de decl en específico
       }//sin importar que sea G o L, puesto que esto se determina en prod más arriba de la RP en donde se crea el obj xD      
 
-      function createFunction(functionType, returnType, name, params){
+      function createFunction(line, column, functionType, returnType, name, params){
             switch(functionType){
                   case "SIMPLE":
                         console.log("[S] Global content: S_FUNCTION [ "+returnType +", " + name + ((params.length>0)?", params":"")+" ]");
-                        return new Void_Function(clase, returnType, name, params);
+                        return new Void_Function(line, column, clase, returnType, name, params);
                   case "COMPLEX":
                         console.log("[S] Global content: C_FUNCTION [ "+returnType +", " + name + ((params.length>0)?", params":"")+" ]");
-                        return new Complex_Function(clase, returnType, name, params);
+                        return new Complex_Function(line, column, clase, returnType, name, params);
                   case "MAIN":
                         console.log("[S] Global content: MAIN [ "+returnType +", "+name+" ]");
-                        return new Main(clase);
+                        return new Main(line, column, clase);
             }
             return null;//pero nunca se va a caer acá...
       }//LISTO
 
-      function createParam(type, name){
+      function createParam(line, column, type, name){
             console.log("[S] Function sub-content: PARAM ["+type+", "+name+"]");
-            return new Variable(type, name);
+            return new Variable(line, column, type, name);
       }      
 
  //FUNCTION CONTENT
 
-      function createAsignation(name, expr){
+      function createAsignation(line, column, name, expr){
             console.log("[S] Function content: ASIGNATION [ "+name+" + expr ]");
-            return new Asignacion(name, expr);
+            return new Asignacion(line, column, name, expr);
       }
 
    //EXPRESSIONS
-      function createExpr_Operation(operationType, left, symbol, right){//ya sea la root o no
+      function createExpr_Operation(line, column, operationType, left, symbol, right){//ya sea la root o no
             console.log("[S] Function content: EXPR-OPERATION [ "+symbol+" ]");
-            return new Expresion(left, createExp_Operator(operationType, symbol), right);
+            return new Expresion(line, column, left, createExp_Operator(operationType, symbol), right);
       }//se creó el método solo con tal que no esté así explícito en las axn xD, porque en realidad lo único que se hará aquí es crear el objeto y devolverlo :v xD
 
       function createExp_Operator(type, symbol){
@@ -244,90 +252,95 @@
             return null; //pero nunca se llegará hasta acá xD
       }
 
-      function createExpr_Value(valueType, content){
+      function createExpr_Value(line, column, valueType, content){
             console.log("[S] Function content: EXPR-VALUE [ "+valueType+", "+content+" ]");
 
             switch(valueType){
                   case "INTEGER"://no lo dejo como number, puesto que si lo hago así, no tendría oportunidad de setear los decimales
-                        return new Expresion(null, new Number(content), null);
+                        return new Expresion(line, column, null, new Number(content), null);
                   case "DECIMAL":
-                        return new Expresion(null, new Number(content), null);//para tratarlo como decimal, es que se hará las respectivas revisiones en la parte de la clase Expresión...                   
+                        return new Expresion(line, column, null, new Number(content), null);//para tratarlo como decimal, es que se hará las respectivas revisiones en la parte de la clase Expresión...                   
                   case "CADENA":
-                        return new Expresion(null, new String(content), null);
+                        return new Expresion(line, column, null, new String(content), null);
                   case "BOOLEAN":
-                        return new Expresion(null, new Boolean(content), null);
+                        console.log("boolean content: " + content);
+                        console.log("boolean convertion: " + ((content == "true")?true:false));//el new Boolean convierte tb el false a true :v xD
+                        return new Expresion(line, column, null, ((content == "true")?true:false), null);
                   case "CHARACTER":
-                        return new Expresion(null, new String(content), null);
-                  case "VARIABLE":
-                        return new Expresion(null, new Variable(null, content, null), null);//para este caso el argu para el valor, en realidad será el nombre xD
+                        return new Expresion(line, column, null, new String(content), null);
+                  case "VARIABLE":                        
+                        return new Expresion(line, column, null, new Variable(line, column, null, content, null), null);//para este caso el argu para el valor, en realidad será el nombre xD
                   case "INVOCACION":
-                        return new Expresion(null, content, null);//seteo de una vez el content, puesto que la invocación ya fue creada en otra parte...
+                        return new Expresion(line, column, null, content, null);//seteo de una vez el content, puesto que la invocación ya fue creada en otra parte...
             }
             return null;//no se llegará aquí, puesto que el tipo siempre será enviado por mí xD, a lo que voy es que será certero jaja xD
       }//Este se utilizará en las producciones de las expr que corresp a valores no a ops obvi xD     
       //fin de los métodos para expresión
 
-      function createInvocation(invocatedFunction, argumentos){
+      function createInvocation(line, column, invocatedFunction, argumentos){
             console.log("[S] Function content: INVOCATION [ arguments? "+ ((argumentos.length>0)?"T":"F") + " list? "+ isAList+" ]");
-            return new Invocacion(invocatedFunction, argumentos);
+            return new Invocacion(line, column, invocatedFunction, argumentos);
       }
 
-      function createMostrar(stringBase, argumentos){//simi a los de la func... o yo creo que iguales xD
+      function createMostrar(line, column, stringBase, argumentos){//simi a los de la func... o yo creo que iguales xD
             console.log("[S] Function content: MOSTRAR [arguments? "+ ((argumentos.length>0)?"T":"F") + "list? "+isAList);
-            return new Mostrar(stringBase, argumentos);
+            return new Mostrar(line, column, stringBase, argumentos);
       }
 
-      function createDraw_AST(functionName){
+      function createDraw_AST(line, column, functionName){
             console.log("[S] Function content: DRAW_AST of "+functionName);
-            return new DibujarAST(functionName);
+            return new DibujarAST(line, column, functionName);
       }
 
-      function createDraw_EXP(expression){
+      function createDraw_EXP(line, column, expression){
             console.log("[S] Function content: DRAW_EXPR");
-            return new DibujarEXP(expression);
+            return new DibujarEXP(line, column, expression);
       }     
 
-      function createDraw_TS(){
+      function createDraw_TS(line, column){
             console.log("[S] Function content: DRAW_TS");
-            return new DibujarTS();
+            return new DibujarTS(line, column);
       }//mejor cree 3 para cada uno, puesto que los tipos de param varían y son algo diferentes xD, pero si no es nec, entonces solo los fusionas y luego les indicas su tipo, para que sepa a que obj crear y poor ello devolver xD
 
-      function createBreakPoint(breakpointType, expr){//solo tendrá valor != null cuando el breakpoint a crear se un return complejo...
+      function createBreakPoint(line, column, breakpointType, expr){//solo tendrá valor != null cuando el breakpoint a crear se un return complejo...
             console.log("[S] Function subcontent: BREAKPOINT [ "+breakpointType+((breakpointType == "RETURN" && expr != null)?+"+ expr":""));
 
             switch(breakpointType){
                   case "RETURN":
-                        return new Return(expr);//si es simple pues recibirá null, sino la expr xD, así que NO PROBLEM jaja xD
+                        return new Return(line, column, expr);//si es simple pues recibirá null, sino la expr xD, así que NO PROBLEM jaja xD
                   case "CONTINUE":
-                        return new Continue();
+                        return new Continue(line, column);
                   case "BREAK":
-                        return new Break();
+                        return new Break(line, column);
             }
             return null;//pero no se llegará hasta aquí xD
       }     
 
-      function createFor(variable, condition, incremento){
+      function createFor(line, column, variable, condition, incremento){
             console.log("[S] Function content: FOR");
-            return new For(variable, condition, ((incremento == "++")?1:-1));
+            return new For(line, column, variable, condition, ((incremento == "++")?1:-1));
       } 
 
-      function createForVar(variableName, value){//este valor siempre será un entero, por lo que dijo el aux, aunque creo que en os objetos tengo ahí una expr xD
+      function createForVar(line, column, variableName, value){//este valor siempre será un entero, por lo que dijo el aux, aunque creo que en os objetos tengo ahí una expr xD
             console.log("[S] Function subcontent: FOR-VAR [ "+variableName+" ]");
-            return new Variable(ContentType.INTEGER, variableName, value);
+            let variable = new Variable(line, column, ContentType.INTEGER, variableName, value);
+            console.log("[S] Function subcontent: FOR-VAR -> "+variable);
+            console.log(variable);
+            return variable;
       }
 
-      function createWhile(condition){
+      function createWhile(line, column, condition){
             console.log("[S] Function content: WHILE");
-            return new While(condition);
+            return new While(line, column, condition);
       }      
 
-      function createControl_Sentence(expre){//será null cuando la sent a crear sea else xD
+      function createControl_Sentence(line, column, expre){//será null cuando la sent a crear sea else xD
             if(expre == null){
                   console.log("[S] Function content: ELSE");
-                  return new Else();
+                  return new Else(line, column);
             }
             console.log("[S] Function content: IF");
-            return new If(expre);
+            return new If(line, column, expre);
       }                  
 
       function handleLexerError(lexema){
@@ -472,7 +485,18 @@ letra           [a-zA-Z\u00f1\u00d1]
 
 //////////////////////////[ 3.2 grammar ]////////////////////////
 inicio : clase EOF                        { console.log("---Parser process terminated---");
-                                            return clase; }
+                                            hierarchyStack.reduceStack();//puesto que si en dado caso la última función no tuviera como último elemento una directiva, la pila no sería reducida y con ello, los LC que se quedaron ahí olvidados no setearían padre y a la función no le serían seteados dichos LC como hijos, de todos modos si la pila estuviera vacía, no pasaría nada malo y tb si solo estuviera la función, pues tampoco sucedería algo malo, puesto que ella ya fuea asignada al contenido y tb ya tiene asignado a su respect clase padre xD                                            
+                                            let claseFinal;
+                                            console.log("---PRE---");
+                                            console.log(claseFinal);
+                                            console.log(clase);
+                                            claseFinal = clase;                                            
+                                            clase = new GlobalContainer();//para cuando se invoque de nuevo el método, así no hay problema con que esté seteando la info de otra clase aquí
+                                            console.log("---POST---");
+                                            console.log(claseFinal);
+                                            console.log(clase);
+                                                                                                                                  
+                                            return claseFinal; }
                                            // se hace el return del objeto creado para que pueda setearse en la lista que posee el CompilerCenter...}
        ;
 
@@ -494,10 +518,10 @@ imports : imports import                  {console.log("[S] Header: +1 import");
         | import                          {console.log("[S] Header: 1st import");}
         ;
 
-import : IMPORT ID '.' CRL nl                       {addImport($2);}       
+import : IMPORT ID '.' CRL nl                       {addImport(@1.first_line, @1.first_column, ($2+".crl"));}       
        ;
 
-incerteza : INCERTEZA expression nl                       {addIncertitude($2);}     
+incerteza : INCERTEZA expression nl                       {addIncertitude(@1.first_line, @1.first_column, $2);}     
           ;
 
 content : content sentences                       {console.log("[S] Content: +1 sentence");}
@@ -520,8 +544,8 @@ declaracion_var_global : declaracion_var                     {console.log("[S] C
                        ;
 
 declaracion_var : content_type creacion_vars asignation_value                        { console.log("var_list-Dec "+ $2);
-                                                                                       $$ = createVarDeclaration($1, $2, $3); }
-                | content_type creacion_vars                                         { $$ = createVarDeclaration($1, $2, null); }
+                                                                                       $$ = createVarDeclaration(@1.first_line, @1.first_column, $1, $2, $3); }//envío la col y fila del content type, puesto que no tengo un método que vaya creando las Var_Decl una a una, y además seteando la ubic de ese basta xD
+                | content_type creacion_vars                                         { $$ = createVarDeclaration(@1.first_line, @1.first_column, $1, $2, null); }
                 ;
 
 creacion_vars : var_list                        { $$ = $1;
@@ -542,9 +566,9 @@ content_type : INT                        { $$ = ContentType.INTEGER; }
              | CHAR                       { $$ = ContentType.CHAR; }
              ;
 
-declaracion_funcion : content_type ID '(' params ')' ':'                      { $$ = createFunction("COMPLEX", $1, $2, $4); }
-                    | VOID ID '(' params ')' ':'                              { $$ = createFunction("SIMPLE", $1, $2, $4); }
-                    | VOID MAIN '(' ')' ':'                                   { $$ = createFunction("MAIN", $1, $2, []); }
+declaracion_funcion : content_type ID '(' params ')' ':'                      { $$ = createFunction(@1.first_line, @1.first_column, "COMPLEX", $1, $2, $4); }
+                    | VOID ID '(' params ')' ':'                              { $$ = createFunction(@1.first_line, @1.first_column, "SIMPLE", $1, $2, $4); }
+                    | VOID MAIN '(' ')' ':'                                   { $$ = createFunction(@1.first_line, @1.first_column, "MAIN", $1, $2, []); }
                     ;
 
 params : params_list                        { $$ = $1; }
@@ -559,7 +583,7 @@ params_list : params_list ',' param                   { $1.push($3);
                                                         console.log("element_param_list "+$$); }
             ;
       
-param : content_type ID                       { $$ = createParam($1, $2); }
+param : content_type ID                       { $$ = createParam(@2.first_line, @2.first_column, $1, $2); }
       ;
 
 function_content : SANGRIA function_sentence nl                        { addFunctionContent(getHierarchy($1), $2); }
@@ -582,7 +606,7 @@ only_sentence : declaracion_var                       { isAVariableDeclaration =
               | breakpoints                           { $$ = $1; }
               ;//no son acumulados directamente en la pila, sino que se add a la struct contenedora que les corresponde, luego de hacer las revisiones y ajustes correspondientes al tipo de only_sentence xD
 
-asignacion_var : ID asignation_value                        { $$ = createAsignation($1, $2); }
+asignacion_var : ID asignation_value                        { $$ = createAsignation(@1.first_line, @1.first_column, $1, $2); }
                ;
 
 asignation_value : '=' expression                    { $$ = $2; }
@@ -592,77 +616,77 @@ expression : expr                         { $$ = $1;
                                             console.log("expresión "+$$); }
            ;
 
-expr : expr '+' expr2                       { $$ = createExpr_Operation(OperatorType.ARITMETIC, $1, $2, $3); }               
-     | expr '-' expr2                       { $$ = createExpr_Operation(OperatorType.ARITMETIC, $1, $2, $3); }
+expr : expr '+' expr2                       { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.ARITMETIC, $1, $2, $3); }               
+     | expr '-' expr2                       { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.ARITMETIC, $1, $2, $3); }
      | expr2                                { $$ = $1; }//puesto que hace una de dos cosas, subir el resultado o nada xD, ahora que lo pienso quizá debería subirse xD
      ;
 
-expr2 : expr2 '*' expr3                   { $$ = createExpr_Operation(OperatorType.ARITMETIC, $1, $2, $3); }
-      | expr2 '/' expr3                   { $$ = createExpr_Operation(OperatorType.ARITMETIC, $1, $2, $3); }
-      | expr2 '%' expr3                   { $$ = createExpr_Operation(OperatorType.ARITMETIC, $1, $2, $3); }
+expr2 : expr2 '*' expr3                   { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.ARITMETIC, $1, $2, $3); }
+      | expr2 '/' expr3                   { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.ARITMETIC, $1, $2, $3); }
+      | expr2 '%' expr3                   { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.ARITMETIC, $1, $2, $3); }
       | expr3                             { $$ = $1; }
       ;
 
-expr3 : expr4 '^' expr3                   { $$ = createExpr_Operation(OperatorType.ARITMETIC, $1,$2, $3); }
+expr3 : expr4 '^' expr3                   { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.ARITMETIC, $1,$2, $3); }
       | expr4                             { $$ = $1; }
       ;//puesto que la aso es hacia la derecha
 
-expr4 : '-' expr5   %prec UMINUS                      { let expre = new Expresion(null, 0, null);
-                                                        expre.getValue();//puesto que el operate es de acceso privado xD
-                                                        $$ = createExpr_Operation(OperatorType.ARITMETIC, expre, $1, $2); }
+expr4 : '-' expr5   %prec UMINUS                      { let expre = new Expresion(@1.first_line, @1.first_column, null, 0, null);
+                                                        expre.getValue();//pienso que esto está de más, porque de todos modos lo que pasaría es que primero revisaría sus hijos, es decir el 0 y el valor a negar, exe esta función y luego lo de la resta. Pero si queires dejala aquí, no provocará algo malo, solo que se hará un mini trabajo extra xD, esto lo digo porque recuerda que caerá a la misma RP que de la resta, entonces no se req hacer este getValueo xD
+                                                        $$ = createExpr_Operation(@1.first_line, @1.first_column, OperatorType.ARITMETIC, expre, $1, $2); }
       | expr5                                         { $$ = $1; }
       ;
 
-expr5 : expr5 '==' expr6                        { $$ = createExpr_Operation(OperatorType.RELATIONAL, $1, $2, $3); }
-      | expr5 '!=' expr6                        { $$ = createExpr_Operation(OperatorType.RELATIONAL, $1, $2, $3); }
-      | expr5 '<' expr6                         { $$ = createExpr_Operation(OperatorType.RELATIONAL, $1, $2, $3); }
-      | expr5 '>' expr6                         { $$ = createExpr_Operation(OperatorType.RELATIONAL, $1, $2, $3); }
-      | expr5 '<=' expr6                        { $$ = createExpr_Operation(OperatorType.RELATIONAL, $1, $2, $3); }
-      | expr5 '>=' expr6                        { $$ = createExpr_Operation(OperatorType.RELATIONAL, $1, $2, $3); }
-      | expr5 '~' expr6                         { $$ = createExpr_Operation(OperatorType.RELATIONAL, $1, $2, $3); }
+expr5 : expr5 '==' expr6                        { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.RELATIONAL, $1, $2, $3); }
+      | expr5 '!=' expr6                        { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.RELATIONAL, $1, $2, $3); }
+      | expr5 '<' expr6                         { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.RELATIONAL, $1, $2, $3); }
+      | expr5 '>' expr6                         { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.RELATIONAL, $1, $2, $3); }
+      | expr5 '<=' expr6                        { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.RELATIONAL, $1, $2, $3); }
+      | expr5 '>=' expr6                        { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.RELATIONAL, $1, $2, $3); }
+      | expr5 '~' expr6                         { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.RELATIONAL, $1, $2, $3); }
       | expr6                                   { $$ = $1; }
       ;
 
-expr6 : expr6 OR expr7                        { $$ = createExpr_Operation(OperatorType.LOGIC, $1, $2, $3); }
+expr6 : expr6 OR expr7                        { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.LOGIC, $1, $2, $3); }
       | expr7                                   { $$ =  $1; }
       ;
 
-expr7 : expr7 XOR expr8                        { $$ = createExpr_Operation(OperatorType.LOGIC, $1, $2, $3); 
+expr7 : expr7 XOR expr8                        { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.LOGIC, $1, $2, $3); 
                                                    console.log("XOR "+$2);}
       | expr8                                   { $$ = $1; }
       ;
       
-expr8 : expr8 '&&' expr9                        { $$ = createExpr_Operation(OperatorType.LOGIC, $1, $2, $3); }
+expr8 : expr8 '&&' expr9                        { $$ = createExpr_Operation(@2.first_line, @2.first_column, OperatorType.LOGIC, $1, $2, $3); }
       | expr9                                   { $$ = $1; }
       ;
 
-expr9 : '!' expr10                        { $$ = createExpr_Operation(OperatorType.LOGIC, null, $2, $3); }
+expr9 : '!' expr10                        { $$ = createExpr_Operation(@1.first_line, @1.first_column, OperatorType.LOGIC, null, $2, $3); }
        | expr10                           { $$ = $1; }
        ;
 
-expr10 : INTEGER                    { $$ = createExpr_Value("INTEGER", $1); }
-       | DECIMAL                    { $$ = createExpr_Value("DECIMAL", $1); }
-       | CADENA                     { $$ = createExpr_Value("CADENA", $1); }
-       | booleano                   { $$ = createExpr_Value("BOOLEAN", $1); }
-       | CHARACTER                  { $$ = createExpr_Value("CHARACTER", $1); }
+expr10 : INTEGER                    { $$ = createExpr_Value(@1.first_line, @1.first_column, "INTEGER", $1); }
+       | DECIMAL                    { $$ = createExpr_Value(@1.first_line, @1.first_column, "DECIMAL", $1); }
+       | CADENA                     { $$ = createExpr_Value(@1.first_line, @1.first_column, "CADENA", $1); }
+       | booleano                   { $$ = createExpr_Value(@1.first_line, @1.first_column, "BOOLEAN", $1); }
+       | CHARACTER                  { $$ = createExpr_Value(@1.first_line, @1.first_column, "CHARACTER", $1); }
        | contenido_var              { $$ = $1; }
-       | '(' expr ')'               { $$ = createExpr_Operation(OperatorType.AGRUP, $2, "()", null); }//puesto que en realidad no pertenece a ninguno de los 3 grandes grupos
+       | '(' expr ')'               { $$ = createExpr_Operation(@1.first_line, @1.first_column, OperatorType.AGRUP, $2, "()", null); }//puesto que en realidad no pertenece a ninguno de los 3 grandes grupos
        ;
 
 booleano : TRUE                     { $$ = $1; }//también hubieramos podido crear el value desde aquí y ya solo enviarlo a la RP que invoca a "booleano" de arribita, pero para que todo se vea igual xD
          | FALSE                    { $$ = $1; }
          ;      
 
-contenido_var : ID                  { $$ = createExpr_Value("VARIABLE", $1); }
+contenido_var : ID                  { $$ = createExpr_Value(@1.first_line, @1.first_column, "VARIABLE", $1); }
               | invocacion          { $1.setIsOnlyInvocated(false);//puesto que si vino aquí, pues no lo es xD
-                                      $$ = createExpr_Value("INVOCACION", $1); }
+                                      $$ = createExpr_Value(@1.first_line, @1.first_column, "INVOCACION", $1); }
               ;
 
-invocacion : ID '(' argumentos ')'                    { $$ = createInvocation($1, $3); }
-           | ID '(' ')'                               { $$ = createInvocation($1, []); }
+invocacion : ID '(' argumentos ')'                    { $$ = createInvocation(@1.first_line, @1.first_column, $1, $3); }
+           | ID '(' ')'                               { $$ = createInvocation(@1.first_line, @1.first_column, $1, []); }
            ;
 
-mostrar : MOSTRAR '(' CADENA contenido_asignacion ')'                   { $$ = createMostrar($3, $4); }
+mostrar : MOSTRAR '(' CADENA contenido_asignacion ')'                   { $$ = createMostrar(@1.first_line, @1.first_column, $3, $4); }
         ;
 
 contenido_asignacion : ',' argumentos                       { $$ = $2; }
@@ -679,26 +703,26 @@ argumentos : argumentos ',' expression                      { $1.push($3);
                                                               isAList = false; }
            ;
 
-dibujar : DRAW_AST '(' ID ')'                   { $$ = createDraw_AST($3); }
-        | DRAW_EXP '(' expression ')'           { $$ = createDraw_EXP($3); }
-        | DRAW_TS '(' ')'                       { $$ = createDraw_TS(); }
+dibujar : DRAW_AST '(' ID ')'                   { $$ = createDraw_AST(@1.first_line, @1.first_column, $3); }
+        | DRAW_EXP '(' expression ')'           { $$ = createDraw_EXP(@1.first_line, @1.first_column, $3); }
+        | DRAW_TS '(' ')'                       { $$ = createDraw_TS(@1.first_line, @1.first_column, ); }
         ;
 
-breakpoints : RETORNO                      { $$ = createBreakPoint("RETURN", null); }
-            | RETORNO expression           { $$ = createBreakPoint("RETURN", $2); }
-            | CONTINUAR                   { $$ = createBreakPoint("CONTINUE", null); }
-            | DETENER                     { $$ = createBreakPoint("BREAK", null); }
+breakpoints : RETORNO                      { $$ = createBreakPoint(@1.first_line, @1.first_column, "RETURN", null); }
+            | RETORNO expression           { $$ = createBreakPoint(@1.first_line, @1.first_column, "RETURN", $2); }
+            | CONTINUAR                   { $$ = createBreakPoint(@1.first_line, @1.first_column, "CONTINUE", null); }
+            | DETENER                     { $$ = createBreakPoint(@1.first_line, @1.first_column, "BREAK", null); }
             ;
 
-loop_sentence : PARA '(' for_var ';' expression ';' INCREMENTO ')' ':'                    { $$ = createFor($3, $5, $7); }
-              | MIENTRAS '(' expression ')' ':'                                      { $$ = createWhile($3); }
+loop_sentence : PARA '(' for_var ';' expression ';' INCREMENTO ')' ':'                    { $$ = createFor(@1.first_line, @1.first_column, $3, $5, $7); }
+              | MIENTRAS '(' expression ')' ':'                                           { $$ = createWhile(@1.first_line, @1.first_column, $3); }
               ;
 
-for_var : INT ID '=' INTEGER                      { $$ = createForVar($2, $4); }
+for_var : INT ID '=' INTEGER                      { $$ = createForVar(@2.first_line, @2.first_column, $2, $4); }
         ;
 
-control_sentence : SI '(' expression ')' ':'                      { $$ = createControl_Sentence($3); }
-                 | SINO ':'                                       { $$ = createControl_Sentence(null); }
+control_sentence : SI '(' expression ')' ':'                      { $$ = createControl_Sentence(@1.first_line, @1.first_column, $3); }
+                 | SINO ':'                                       { $$ = createControl_Sentence(@1.first_line, @1.first_column, null); }
                  ;
 
 nl : nl NEW_LINE

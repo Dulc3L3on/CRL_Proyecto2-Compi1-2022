@@ -1,22 +1,23 @@
 import { CRL_File } from "../CRL_File";
 import { ContentType } from "../ObjetosAnalisis/Sentences/Class_Content/ContentType";
-import { Function } from "../ObjetosAnalisis/Sentences/Class_Content/Function";
 import { Expresion } from "../ObjetosAnalisis/Sentences/Function_Content/Content/Expresion";
 import { Result } from "../ObjetosAnalisis/Sentences/Function_Content/Content/Result";
 import { GlobalContainer } from "../ObjetosAnalisis/Sentences/GlobalContainer";
 import { ActiveFileHandler } from "../Handlers/ActiveFileHandler";
 import { Tool } from "../Tool/Tool";
 import { ActiveClassHandler } from "./ActiveClassHandler";
-import { parser as Parser } from "src/app/Modelo/Analizadores/CRLGrammar.js";
+import { Main } from "../ObjetosAnalisis/Sentences/Class_Content/Main";
+import { MessageHandler } from "src/app/Modelo/Handlers/MessageHandler";
 //import { parser as Parser } from "src/app/Modelo/Analizadores/GramaticaPrueba_SinAxn.js";
 
 
 export class CompilationCenter{
-    private activeFiles:Array<CRL_File>;
+    private activeFiles:Array<CRL_File>;//este solo lo tengo por el hecho que el nombre del mainFile, se recibe hasta que presionan compilar..., bien podría setearle la lista al inicializar el activeFikeHandler, pero por si acaso cuando cb la lista en realidad el componente no se vuelve a crear y por lo tnato no se reconsstruye este CompilationCenter, sino que solo cb los elementos del compoennte, mejor lo hago así
     private NAME_MAIN_FUNCTION:string = "Principal";
 
     private activeClassHandler:ActiveClassHandler;
     private activeFileHandler:ActiveFileHandler;
+    private messageHandler:MessageHandler;
     //por la forma en que se trabajó con las pilas locales de cada función, no será nec, tener una pila gobal a partir de la cual se vayan buscando las sentencias para hacer que exe sus axn :3 GRACIAS DIOS!!! xD
 
     tool:Tool;
@@ -26,29 +27,16 @@ export class CompilationCenter{
 
         this.activeFileHandler = ActiveFileHandler.getInstance();
         this.activeClassHandler = ActiveClassHandler.getInstance();        
+        this.messageHandler = MessageHandler.getInstance();
+
         this.tool = new Tool();
     }
 
     compile(mainFileName:string){//este parám se llena con la opción que haya sido seleciconada en el select...
-        this.activeFileHandler.setInfo(this.activeFiles, mainFileName);
-        this.activeClassHandler.refreshClassList();
+        this.activeFileHandler.setInfo(this.activeFiles, mainFileName);        
         console.log("#activeFiles: "+this.activeFiles.length);
-
-        for(let index:number = 0; index < this.activeFiles.length; index++){
-            console.log("class#"+index);
-
-            let modifiedContent:string = this.activeFiles[index].content.trim();//de una vez los dos, aunque al final deba add un \n xD
-            modifiedContent = modifiedContent.replace(/(    )/g,"\t");
-
-            let activeClass:GlobalContainer = Parser.parse(modifiedContent+"\n");//esto es debido a que para el primer elemento que aparezca en la gramática, sea del header o un elemento de clase, no se tiene considerado que aparezca un NL, antes de ellos, por lo cual para evitar modif en la gramática y hacer que todo esté en una sola RP, se usará el trim para esto. El \n que aparece aquí es porque toda instrucción si mal no recuerdo xD, tiene al final de su defi un NL, por lo cual el archivo siempre deberá terminar en este \n, para que el usaurio no se entere de esto xD, lo haré yo jaja xD
-            activeClass.setName(this.activeFiles[index].getName());           
-            
-            if(activeClass.getName() != mainFileName){
-                this.activeClassHandler.setActiveClass(activeClass);//hago esto porque en primer lugar el archivo del main no tendría porque poder ser improtado y porque si esto se revisa en la gramática, entonces ese arch, nada más estaría ocupando espacio en la lista de las activeClass xD
-            }else{
-                this.activeClassHandler.setMain(activeClass);
-            }
-        }//se generan todos las clases [GC], de cada archivo creado, sin importar que esté o no presente en la traza de exe
+        
+        let main:GlobalContainer = this.activeClassHandler.analizeFile(mainFileName);                   
 
         //me pregunto si debería seguir el análisis aunque hayan errores sintácticos...        
         //las clases van a tener pocas funciones y quizá tenga cosas raras, pienso que será un poco riesgozo intentar hacer la exe
@@ -56,21 +44,32 @@ export class CompilationCenter{
         //por eso digo que los errores deben ser manejados con un servicio... y tb los msjes hacia consola
         //también ahora se me ocurre que el manejo de imágenes [aunque ahí acordamos que al generar una imagen, se add a un HTML, para que así se pueda tener todo el conjunto y luego se averiguará como pasar el HTML a un PDF... a menos que graphviz tenga la opción xD]
 
-        this.initExe();
-    }
+        this.initExe(main);
+    }   
 
-    private initExe(){
-        let theFunction:Function|null = this.activeClassHandler.getMainClass().getMainFunction(
+    private initExe(mainClass:GlobalContainer){
+        let theFunction:Main|null = mainClass.getMainFunction(
             this.tool.regenerateFunctionHash(this.NAME_MAIN_FUNCTION, new Array<Expresion>()));
-            
+            this.messageHandler.clearList();//Sea que esté o no el main, o que hayan o no errores, debe limpiarse
+
         if(theFunction != null){
-            let result:Result = theFunction.exe();
+            this.messageHandler.initList();
+            let result:Result = theFunction.exe();            
             
             if(result.getType() == ContentType.SUCCESS){
-
+                this.messageHandler.finalizeList();//Si no estuvo bien entonces no se add el final xD
             }else{
 
+                
             }
+
+            
+        }else{
+            //Se add el msje por no existir el main
         }        
     }
+
+    
+
+    
 }

@@ -11,6 +11,11 @@ import { Variable } from "./Variable";
 import { ContentType } from "../../Class_Content/ContentType";
 import { OperatorType } from "./OperatorType";
 import { Incertitude } from "../../Class_Content/Incertitude";
+import { ErrorHandler } from "src/app/Modelo/Handlers/ErrorHandler";
+import { Error } from "src/app/Modelo/Tool/Error/Error";
+import { ErrorMessage } from "src/app/Modelo/Tool/Error/ErrorMessage";
+import { ErrorType } from "src/app/Modelo/Tool/Error/ErrorType";
+import { SourceLocation } from "src/app/Modelo/Tool/SourceLocation";
 
 export class Expresion{//no la hago genérica, puesto que no se hará una clase de la que hereden todos para que así al nec un obj de expre, se envíe a los diamantes dicha clase Padre...
     sentenceName:string;
@@ -23,16 +28,22 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
 
     operationHandler:OperationHandler;    
     caster:Caster;    
+    errorHandler:ErrorHandler;
     
-    constructor(left:Expresion|null, content:any, right:Expresion|null){
+    sourceLocation:SourceLocation;//no se si se pueda setear la línea y col, yo diría que sí, porque expresiones no se crean, lo que se setean son los OperationResult xD
+
+    constructor(line:number, column:number, left:Expresion|null, content:any, right:Expresion|null){
         this.left = left;
         this.content = content;//puede ser un Operator o un valor primitivo...
         this.right = right;
 
         this.caster = new Caster();
         this.operationHandler= new OperationHandler();
+        this.errorHandler = ErrorHandler.getInstance();
 
         this.sentenceName = "EXPRESION";        
+
+        this.sourceLocation = new SourceLocation(line, column);
     }//en el caso de las expresiones que corresp a valores netos, los hijos serán null...
     
     setFather(father:Container){
@@ -40,9 +51,6 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
     }
 
     private setFather_Intern(expresion:Expresion|null, father:Container){
-        console.log("expression ")
-        console.log(expresion);
-
         if(expresion != null){
             expresion.setFather_Intern(expresion.getLeftChild(), father);
             expresion.setFather_Intern(expresion.getRightChild(), father);
@@ -54,6 +62,8 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
     getValue():Result{
         this.operate(this);
 
+        console.log("getValue() " );
+        console.log(this.operationResult.getCompleteResult());
         return this.operationResult.getCompleteResult();    
     }//puedo hacer esto, ya que el obj por el cual se exe este método siempre será la raíz, entonces NO PROBLEM! xD
 
@@ -67,8 +77,7 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
     }//like as postOrder route
 
     private obtainResult(){
-        console.log("[Expresion] content: "+this.content);
-        console.log("[Expresion] is Number?: "+ (this.content instanceof Number));
+        console.log("[Expresion] content: "+this.content);        
 
         if(this.content instanceof Number && this.caster.isADecimal(this.content as number)){//de primero el double por la rev de los deci...
             this.operationResult = new OperationResult(OperatorType.VALUE, new Result(ContentType.DOUBLE, this.content as Number));            
@@ -76,7 +85,7 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
             this.operationResult = new OperationResult(OperatorType.VALUE, new Result(ContentType.INTEGER, this.content as Number));            
         }else if(this.content instanceof String && (this.content as String).length == 1){
             this.operationResult = new OperationResult(OperatorType.VALUE, new Result(ContentType.CHAR, this.content as String));            
-        }else if(this.content instanceof Boolean){
+        }else if((this.content == true || this.content == false)){
             this.operationResult = new OperationResult(OperatorType.VALUE, new Result(ContentType.BOOLEAN, this.content as Boolean));
         }else if(this.content instanceof String){//Debes ver cómo manejar los char...
             this.operationResult = new OperationResult(OperatorType.VALUE, new Result(ContentType.STRING, this.content as String));
@@ -89,7 +98,10 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
             invocation.setFather(this.father);
             let result:Result = invocation.exe();//sale mejor que se repita esta axn a provocar errores y hacer el proceso más largo...
 
-            //se add un error (a parte del que dará cuando intente operar con el result de tipo incorrecto)cuando el tipo == NOTHING [puesto que para ERR, no tendría reportar otro ERR xD]
+            if(result.getType() == ContentType.NOTHING){//se add un error (a parte del que dará cuando intente operar con el result de tipo incorrecto)cuando el tipo == NOTHING [puesto que para ERR, no tendría reportar otro ERR xD]
+                this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.VOID_FUNCTION_INVOCATED_ON_EXPR,
+                    this.sourceLocation, this.sentenceName, this.father.getSentenceName()));        
+            }//no creo que sea nec colocar el tipo cuando sea nothing como error, puesto que esto se considera en la tabla de tipos...            
 
             this.operationResult = new OperationResult(OperatorType.VALUE, new Result(result.getType(), result.getValue()));
         }else{
@@ -121,7 +133,7 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
     }
 
     private relationalEvaluation():OperationResult{
-        if(this.left!.getOperationResultType() == this.right!.getOperationResultType() && this.left!.getOperationResultType() != ContentType.ERROR){
+        if((this.left!.getOperationResultType() == this.right!.getOperationResultType()) && this.left!.getOperationResultType() != ContentType.ERROR){
             switch(this.content.getOperator()){
                 case OperatorType.EQUALS_TO:
                     return new OperationResult(OperatorType.CONDITIONAL ,new Result(ContentType.BOOLEAN, (this.left!.getOperationResultValue() == this.right!.getOperationResultValue())));//hasta donde sé typscript no tiene restricc de valores a los que se les puede app los operadores relacionales...
@@ -140,24 +152,32 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
                     return this.incertitudeCalculus(resultType);
             }
         }
+
+        this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.EXPRESSION_WITH_ERRORS,
+            this.sourceLocation, this.sentenceName, this.father.getSentenceName()));        
         return new OperationResult(OperatorType.ERROR, new Result(ContentType.ERROR, "Imposible to analize expretions with errors"));
     }
 
     private incertitudeCalculus(resultType:ContentType):OperationResult{
         let incertitudResult:Result = this.getIncertitude();
+        console.log("incertitude analisis -init-");
 
         if(resultType == ContentType.INTEGER){
             if(Math.abs(this.caster.getInteger(this.left!.getResult()).getValue() - this.caster.getInteger(this.right!.getResult()).getValue())
             <= (incertitudResult.getValue() as number)){
+                console.log("incertitude analisis [I]: true");
                 return new OperationResult(OperatorType.CONDITIONAL, new Result(ContentType.BOOLEAN, true));
             }else{
+                console.log("incertitude analisis [I]: false");
                 return new OperationResult(OperatorType.CONDITIONAL, new Result(ContentType.BOOLEAN, false));
             }
         }if(resultType == ContentType.DOUBLE){
             if(Math.abs(this.caster.getDouble(this.left!.getResult()).getValue() - this.caster.getDouble(this.right!.getResult()).getValue())
             <= (incertitudResult.getValue() as number)){
+                console.log("incertitude analisis [D]: true");
                 return new OperationResult(OperatorType.CONDITIONAL, new Result(ContentType.BOOLEAN, true));
             }else{
+                console.log("incertitude analisis [D]: false");
                 return new OperationResult(OperatorType.CONDITIONAL, new Result(ContentType.BOOLEAN, false));
             }
         }else if(resultType == ContentType.STRING){
@@ -165,11 +185,17 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
             let stringRight:string = (this.caster.getString(this.right!.getResult()).getValue() as string).trim().toLowerCase();
     
             if(stringLeft == stringRight){
+                console.log("incertitude analisis [S]: true");
                 return new OperationResult(OperatorType.CONDITIONAL, new Result(ContentType.BOOLEAN, true));
             }else{
+                console.log("incertitude analisis [S]: false");
                 return new OperationResult(OperatorType.CONDITIONAL, new Result(ContentType.BOOLEAN, false));
             }
         }
+
+        console.log("incertitude analisis: error");
+        this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.INCORRECT_INCERTITUDE_VALUE,
+            this.sourceLocation, this.sentenceName, this.father.getSentenceName())); 
         return new OperationResult(OperatorType.ERROR, new Result(ContentType.ERROR, "The incertitude only can be aplicate on numbers and STRINGs"));        
     }
 
@@ -192,7 +218,10 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
             if(this.right!.getOperationResultType() == ContentType.BOOLEAN){
                 return new OperationResult(OperatorType.CONDITIONAL, new Result (ContentType.BOOLEAN, (!this.right!.getOperationResultValue())));
             }else{
-                return new OperationResult(OperatorType.CONDITIONAL, new Result(ContentType.ERROR, "A logical expression needs both parts to be boolean"));
+
+                this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.INCORRECT_NEGATED_VALUE,
+                    this.sourceLocation, this.sentenceName, this.father.getSentenceName()));
+                return new OperationResult(OperatorType.CONDITIONAL, new Result(ContentType.ERROR, "Cannot negate values isn't be BOOLEAN"));
             }
         }else{
             if(type_equivalence[this.left!.getOperationResultType()][this.right!.getOperationResultType()] == ContentType.BOOLEAN){
@@ -204,7 +233,10 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
                     case OperatorType.XOR:
                         return new OperationResult( OperatorType.CONDITIONAL, new Result(ContentType.BOOLEAN, (this.left!.getOperationResultValue() != this.right!.getOperationResultValue())));//si da error en tiempo de exe, entonces susti esto por (a || b) && !(a && b)
                 }
-            }            
+            }         
+            
+            this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.BOOLEAN_PART_REQUIRED,
+                this.sourceLocation, this.sentenceName, this.father.getSentenceName()));
             return new OperationResult(OperatorType.ERROR, new Result(ContentType.ERROR, "A logical expression needs both parts to be boolean"));
         }
     }
@@ -226,6 +258,9 @@ export class Expresion{//no la hago genérica, puesto que no se hará una clase 
                     return this.operationHandler.evaluatePowOperator(this.left!, this.right!);
             }//vamos a acordar que cuando sea NOT, se va a setear únicamente el Right, con tal que las ramas del árbol de abajo no se pierdan y no hayan confusiones...                                 
         }
+
+        this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.EXPRESSION_PART_WITH_ERRORS,
+            this.sourceLocation, this.sentenceName, this.father.getSentenceName()));
         return new OperationResult(OperatorType.ERROR, new Result(ContentType.ERROR, "One or more expresions with errors, impossible to operate"));
     }//se supone que si se llegó hasta aquí es porque no surgió error alguno al momento de hacer la evaluación sintáctica...
   

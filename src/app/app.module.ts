@@ -8,6 +8,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CRL_File } from './Modelo/CRL_File';
 import { Tool } from './Modelo/Tool/Tool';
 import { Caster } from './Modelo/ObjetosAnalisis/Sentences/Function_Content/Content/Caster';
+import { ErrorHandler } from './Modelo/Handlers/ErrorHandler';
+import { Error } from './Modelo/Tool/Error/Error';
+import { ErrorMessage } from './Modelo/Tool/Error/ErrorMessage';
+import { ErrorType } from './Modelo/Tool/Error/ErrorType';
+import { SourceLocation } from './Modelo/Tool/SourceLocation';
 
 import { HierarchyStack } from './Modelo/Prev-Ejecucion/HierarchyStack';
 

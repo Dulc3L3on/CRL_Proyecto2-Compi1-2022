@@ -11,8 +11,8 @@ import { BreakPoint } from "./BreakPoint";
 export class Return extends BreakPoint{
     expr:Expresion|null;//en dado caso sea un simple, esto se quedrará vacío, no nukll, sino vacío xD
 
-    constructor(expresion:Expresion|null){
-        super();
+    constructor(line:number, column:number, expresion:Expresion|null){
+        super(line, column);
 
         this.expr = expresion;
 
@@ -29,9 +29,12 @@ export class Return extends BreakPoint{
 
     override exe(): Result {
         if(this.expr == null){
+            console.log("exe (Breakpoint [C_RETURN])");
+
             return new Result(ContentType.RETURN);
         }
 
+        console.log("exe (Breakpoint [S_RETURN])");
         return this.expr.getValue();        
     }
 

@@ -1,8 +1,15 @@
 import { ContentType } from "../../../Class_Content/ContentType";
 import { Directive } from "../../../Directive";
 import { Result } from "../../Content/Result";
+import { Error } from "src/app/Modelo/Tool/Error/Error";
+import { ErrorType } from "src/app/Modelo/Tool/Error/ErrorType";
+import { ErrorMessage } from "src/app/Modelo/Tool/Error/ErrorMessage";
 
 export class Dibujar extends Directive{
+
+    constructor(line:number, column:number){
+        super(line, column);
+    }
 
     override exe(): Result {
         let result:Result = this.draw();
@@ -11,6 +18,8 @@ export class Dibujar extends Directive{
             return new Result(ContentType.NOTHING);
         }
 
+        this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.DRAW_INSTRUCTION_ERRATED,
+            this.sourceLocation, this.sentenceName, this.father.getSentenceName()));
         return new Result(ContentType.ERROR, "Draw Function with errors, cannot execute corectly");
     }//NO DEBE sobreescribirse
 

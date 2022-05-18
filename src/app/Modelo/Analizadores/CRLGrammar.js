@@ -85,7 +85,18 @@ var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
  console.log("---Parser process terminated---");
-                                            return clase; 
+                                            hierarchyStack.reduceStack();//puesto que si en dado caso la última función no tuviera como último elemento una directiva, la pila no sería reducida y con ello, los LC que se quedaron ahí olvidados no setearían padre y a la función no le serían seteados dichos LC como hijos, de todos modos si la pila estuviera vacía, no pasaría nada malo y tb si solo estuviera la función, pues tampoco sucedería algo malo, puesto que ella ya fuea asignada al contenido y tb ya tiene asignado a su respect clase padre xD                                            
+                                            let claseFinal;
+                                            console.log("---PRE---");
+                                            console.log(claseFinal);
+                                            console.log(clase);
+                                            claseFinal = clase;                                            
+                                            clase = new GlobalContainer();//para cuando se invoque de nuevo el método, así no hay problema con que esté seteando la info de otra clase aquí
+                                            console.log("---POST---");
+                                            console.log(claseFinal);
+                                            console.log(clase);
+                                                                                                                                  
+                                            return claseFinal; 
 break;
 case 5:
 console.log("[S] Header + Content");
@@ -109,10 +120,10 @@ case 11:
 console.log("[S] Header: 1st import");
 break;
 case 12:
-addImport($$[$0-3]);
+addImport(_$[$0-4].first_line, _$[$0-4].first_column, ($$[$0-3]+".crl"));
 break;
 case 13:
-addIncertitude($$[$0-1]);
+addIncertitude(_$[$0-2].first_line, _$[$0-2].first_column, $$[$0-1]);
 break;
 case 14:
 console.log("[S] Content: +1 sentence");
@@ -138,10 +149,10 @@ console.log("[S] ClassC: "+ $$[$0].length +"GLOBAL var created");
 break;
 case 22:
  console.log("var_list-Dec "+ $$[$0-1]);
-                                                                                       this.$ = createVarDeclaration($$[$0-2], $$[$0-1], $$[$0]); 
+                                                                                       this.$ = createVarDeclaration(_$[$0-2].first_line, _$[$0-2].first_column, $$[$0-2], $$[$0-1], $$[$0]); 
 break;
 case 23:
- this.$ = createVarDeclaration($$[$0-1], $$[$0], null); 
+ this.$ = createVarDeclaration(_$[$0-1].first_line, _$[$0-1].first_column, $$[$0-1], $$[$0], null); 
 break;
 case 24:
  this.$ = $$[$0];
@@ -172,13 +183,13 @@ case 31:
  this.$ = ContentType.CHAR; 
 break;
 case 32:
- this.$ = createFunction("COMPLEX", $$[$0-5], $$[$0-4], $$[$0-2]); 
+ this.$ = createFunction(_$[$0-5].first_line, _$[$0-5].first_column, "COMPLEX", $$[$0-5], $$[$0-4], $$[$0-2]); 
 break;
 case 33:
- this.$ = createFunction("SIMPLE", $$[$0-5], $$[$0-4], $$[$0-2]); 
+ this.$ = createFunction(_$[$0-5].first_line, _$[$0-5].first_column, "SIMPLE", $$[$0-5], $$[$0-4], $$[$0-2]); 
 break;
 case 34:
- this.$ = createFunction("MAIN", $$[$0-4], $$[$0-3], []); 
+ this.$ = createFunction(_$[$0-4].first_line, _$[$0-4].first_column, "MAIN", $$[$0-4], $$[$0-3], []); 
 break;
 case 35: case 45: case 46: case 47: case 48: case 49: case 51: case 55: case 59: case 61: case 63: case 71: case 75: case 77: case 79: case 85: case 87: case 88: case 94:
  this.$ = $$[$0]; 
@@ -197,7 +208,7 @@ case 38:
                                                         console.log("element_param_list "+this.$); 
 break;
 case 39:
- this.$ = createParam($$[$0-1], $$[$0]); 
+ this.$ = createParam(_$[$0].first_line, _$[$0].first_column, $$[$0-1], $$[$0]); 
 break;
 case 40:
  addFunctionContent(getHierarchy($$[$0-2]), $$[$0-1]); 
@@ -215,72 +226,72 @@ case 44:
                                                         this.$ = $$[$0]; 
 break;
 case 50:
- this.$ = createAsignation($$[$0-1], $$[$0]); 
+ this.$ = createAsignation(_$[$0-1].first_line, _$[$0-1].first_column, $$[$0-1], $$[$0]); 
 break;
 case 52:
  this.$ = $$[$0];
                                             console.log("expresión "+this.$); 
 break;
 case 53: case 54: case 56: case 57: case 58:
- this.$ = createExpr_Operation(OperatorType.ARITMETIC, $$[$0-2], $$[$0-1], $$[$0]); 
+ this.$ = createExpr_Operation(_$[$0-1].first_line, _$[$0-1].first_column, OperatorType.ARITMETIC, $$[$0-2], $$[$0-1], $$[$0]); 
 break;
 case 60:
- this.$ = createExpr_Operation(OperatorType.ARITMETIC, $$[$0-2],$$[$0-1], $$[$0]); 
+ this.$ = createExpr_Operation(_$[$0-1].first_line, _$[$0-1].first_column, OperatorType.ARITMETIC, $$[$0-2],$$[$0-1], $$[$0]); 
 break;
 case 62:
- let expre = new Expresion(null, 0, null);
-                                                        expre.getValue();//puesto que el operate es de acceso privado xD
-                                                        this.$ = createExpr_Operation(OperatorType.ARITMETIC, expre, $$[$0-1], $$[$0]); 
+ let expre = new Expresion(_$[$0-1].first_line, _$[$0-1].first_column, null, 0, null);
+                                                        expre.getValue();//pienso que esto está de más, porque de todos modos lo que pasaría es que primero revisaría sus hijos, es decir el 0 y el valor a negar, exe esta función y luego lo de la resta. Pero si queires dejala aquí, no provocará algo malo, solo que se hará un mini trabajo extra xD, esto lo digo porque recuerda que caerá a la misma RP que de la resta, entonces no se req hacer este getValueo xD
+                                                        this.$ = createExpr_Operation(_$[$0-1].first_line, _$[$0-1].first_column, OperatorType.ARITMETIC, expre, $$[$0-1], $$[$0]); 
 break;
 case 64: case 65: case 66: case 67: case 68: case 69: case 70:
- this.$ = createExpr_Operation(OperatorType.RELATIONAL, $$[$0-2], $$[$0-1], $$[$0]); 
+ this.$ = createExpr_Operation(_$[$0-1].first_line, _$[$0-1].first_column, OperatorType.RELATIONAL, $$[$0-2], $$[$0-1], $$[$0]); 
 break;
 case 72: case 76:
- this.$ = createExpr_Operation(OperatorType.LOGIC, $$[$0-2], $$[$0-1], $$[$0]); 
+ this.$ = createExpr_Operation(_$[$0-1].first_line, _$[$0-1].first_column, OperatorType.LOGIC, $$[$0-2], $$[$0-1], $$[$0]); 
 break;
 case 73:
  this.$ =  $$[$0]; 
 break;
 case 74:
- this.$ = createExpr_Operation(OperatorType.LOGIC, $$[$0-2], $$[$0-1], $$[$0]); 
+ this.$ = createExpr_Operation(_$[$0-1].first_line, _$[$0-1].first_column, OperatorType.LOGIC, $$[$0-2], $$[$0-1], $$[$0]); 
                                                    console.log("XOR "+$$[$0-1]);
 break;
 case 78:
- this.$ = createExpr_Operation(OperatorType.LOGIC, null, $$[$0], $$[$01]); 
+ this.$ = createExpr_Operation(_$[$0-1].first_line, _$[$0-1].first_column, OperatorType.LOGIC, null, $$[$0], $$[$01]); 
 break;
 case 80:
- this.$ = createExpr_Value("INTEGER", $$[$0]); 
+ this.$ = createExpr_Value(_$[$0].first_line, _$[$0].first_column, "INTEGER", $$[$0]); 
 break;
 case 81:
- this.$ = createExpr_Value("DECIMAL", $$[$0]); 
+ this.$ = createExpr_Value(_$[$0].first_line, _$[$0].first_column, "DECIMAL", $$[$0]); 
 break;
 case 82:
- this.$ = createExpr_Value("CADENA", $$[$0]); 
+ this.$ = createExpr_Value(_$[$0].first_line, _$[$0].first_column, "CADENA", $$[$0]); 
 break;
 case 83:
- this.$ = createExpr_Value("BOOLEAN", $$[$0]); 
+ this.$ = createExpr_Value(_$[$0].first_line, _$[$0].first_column, "BOOLEAN", $$[$0]); 
 break;
 case 84:
- this.$ = createExpr_Value("CHARACTER", $$[$0]); 
+ this.$ = createExpr_Value(_$[$0].first_line, _$[$0].first_column, "CHARACTER", $$[$0]); 
 break;
 case 86:
- this.$ = createExpr_Operation(OperatorType.AGRUP, $$[$0-1], "()", null); 
+ this.$ = createExpr_Operation(_$[$0-2].first_line, _$[$0-2].first_column, OperatorType.AGRUP, $$[$0-1], "()", null); 
 break;
 case 89:
- this.$ = createExpr_Value("VARIABLE", $$[$0]); 
+ this.$ = createExpr_Value(_$[$0].first_line, _$[$0].first_column, "VARIABLE", $$[$0]); 
 break;
 case 90:
  $$[$0].setIsOnlyInvocated(false);//puesto que si vino aquí, pues no lo es xD
-                                      this.$ = createExpr_Value("INVOCACION", $$[$0]); 
+                                      this.$ = createExpr_Value(_$[$0].first_line, _$[$0].first_column, "INVOCACION", $$[$0]); 
 break;
 case 91:
- this.$ = createInvocation($$[$0-3], $$[$0-1]); 
+ this.$ = createInvocation(_$[$0-3].first_line, _$[$0-3].first_column, $$[$0-3], $$[$0-1]); 
 break;
 case 92:
- this.$ = createInvocation($$[$0-2], []); 
+ this.$ = createInvocation(_$[$0-2].first_line, _$[$0-2].first_column, $$[$0-2], []); 
 break;
 case 93:
- this.$ = createMostrar($$[$0-2], $$[$0-1]); 
+ this.$ = createMostrar(_$[$0-4].first_line, _$[$0-4].first_column, $$[$0-2], $$[$0-1]); 
 break;
 case 96:
  $$[$0-2].push($$[$0]); 
@@ -295,40 +306,40 @@ case 97:
                                                               isAList = false; 
 break;
 case 98:
- this.$ = createDraw_AST($$[$0-1]); 
+ this.$ = createDraw_AST(_$[$0-3].first_line, _$[$0-3].first_column, $$[$0-1]); 
 break;
 case 99:
- this.$ = createDraw_EXP($$[$0-1]); 
+ this.$ = createDraw_EXP(_$[$0-3].first_line, _$[$0-3].first_column, $$[$0-1]); 
 break;
 case 100:
- this.$ = createDraw_TS(); 
+ this.$ = createDraw_TS(_$[$0-2].first_line, _$[$0-2].first_column, ); 
 break;
 case 101:
- this.$ = createBreakPoint("RETURN", null); 
+ this.$ = createBreakPoint(_$[$0].first_line, _$[$0].first_column, "RETURN", null); 
 break;
 case 102:
- this.$ = createBreakPoint("RETURN", $$[$0]); 
+ this.$ = createBreakPoint(_$[$0-1].first_line, _$[$0-1].first_column, "RETURN", $$[$0]); 
 break;
 case 103:
- this.$ = createBreakPoint("CONTINUE", null); 
+ this.$ = createBreakPoint(_$[$0].first_line, _$[$0].first_column, "CONTINUE", null); 
 break;
 case 104:
- this.$ = createBreakPoint("BREAK", null); 
+ this.$ = createBreakPoint(_$[$0].first_line, _$[$0].first_column, "BREAK", null); 
 break;
 case 105:
- this.$ = createFor($$[$0-6], $$[$0-4], $$[$0-2]); 
+ this.$ = createFor(_$[$0-8].first_line, _$[$0-8].first_column, $$[$0-6], $$[$0-4], $$[$0-2]); 
 break;
 case 106:
- this.$ = createWhile($$[$0-2]); 
+ this.$ = createWhile(_$[$0-4].first_line, _$[$0-4].first_column, $$[$0-2]); 
 break;
 case 107:
- this.$ = createForVar($$[$0-2], $$[$0]); 
+ this.$ = createForVar(_$[$0-2].first_line, _$[$0-2].first_column, $$[$0-2], $$[$0]); 
 break;
 case 108:
- this.$ = createControl_Sentence($$[$0-2]); 
+ this.$ = createControl_Sentence(_$[$0-4].first_line, _$[$0-4].first_column, $$[$0-2]); 
 break;
 case 109:
- this.$ = createControl_Sentence(null); 
+ this.$ = createControl_Sentence(_$[$0-1].first_line, _$[$0-1].first_column, null); 
 break;
 }
 },
@@ -482,7 +493,12 @@ parse: function parse(input) {
 }};
       
       const {HierarchyStack} = require("../Prev-Ejecucion/HierarchyStack.ts");
-      const {ActiveFileHandler} = require("../Handlers/ActiveFileHandler.ts");      
+      const {ActiveFileHandler} = require("../Handlers/ActiveFileHandler.ts");  
+      const {ErrorHandler} = require("../Handlers/ErrorHandler.ts");
+      const {Error} = require("../Tool/Error/Error.ts");
+      const {ErrorMessage} = require("../Tool/Error/ErrorMessage.ts");
+      const {ErrorType} = require("../Tool/Error/ErrorType.ts");     
+      const {SourceLocation} = require("../Tool/SourceLocation.ts");
       
       const {Import} = require("../ObjetosAnalisis/Sentences/Class_Content/Import.ts");      
       const {Incertitude} = require("../ObjetosAnalisis/Sentences/Class_Content/Incertitude.ts");
@@ -533,9 +549,10 @@ parse: function parse(input) {
       const {AddResult} = require("../ObjetosAnalisis/Sentences/Function_Content/Content/AddResult.ts");
 
       let lexer_error= "";      
-      let clase = new GlobalContainer();//puesto que aquí se van a setear todos los obj creados
-      
-      let activeFileHandler = ActiveFileHandler.getInstance();
+      let clase = new GlobalContainer();//puesto que aquí se van a setear todos los obj creados      
+
+      let activeFileHandler = ActiveFileHandler.getInstance();     
+      let errorHandler = ErrorHandler.getInstance(); 
 
       let hierarchyStack = new HierarchyStack();
       let isADirective;
@@ -545,23 +562,25 @@ parse: function parse(input) {
       var varList = [];
 
    //HEADERS
-      function addImport(importClassName){
+      function addImport(line, column, importClassName){
             if(activeFileHandler.isExistFile(importClassName)){
                   if(!activeFileHandler.isMainFile(importClassName)){
                         console.log("[S] Header content: IMPORT [ "+ importClassName+" ]");
-                        clase.addImport(new Import(importClassName));
+                        clase.addImport(new Import(line, column, importClassName));
                   }else{
                         //Se add el error, puesto que el archivo Main no tendría porque poder importarse, ya que eso no impediría que se pudiera invocar el método Main de nuevo, y así provocar un error por quedarse enciclado...
+                        this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.INEXISTENT_IMPORTED_FILE,
+                            new SourceLocation(line, column), "IMPORT", clase.getName()));
                   }                  
             }else{
                   //Se add el error al manejador de errores, el cual se encarga de llevar el conteo y addlos de una vez a la consola...
             }            
       }
 
-      function addIncertitude(expression){
+      function addIncertitude(line, column, expression){
             //Simplemente se debe crear el obj y addlo al globalContent (lo cual se puede hacer sin problema, pruesto que para que pudiera ser seteada al contenido se hizo que heredara de Directive...), puesto que la revisión profunda [con respecto a la exp], se hace en la clase Incert...
             console.log("[S] Header content: INCERTITUDE "+expression);
-            let incertitude = new Incertitude(expression);
+            let incertitude = new Incertitude(line, column, expression);
             incertitude.setFather(clase);
             clase.addGlobalContent(incertitude);
       }
@@ -626,49 +645,49 @@ parse: function parse(input) {
             }//no tengo que resetear la var isADirective, puesto que no se va a llegar a la RP que invoca a este método, sin haber caido en la axn que setea esta var xD
       }
 
-      function createVarDeclaration(type, varList, asignatedValue){//Este último puede ser null, puesto que no es obligatorio que especifiquen este valor...
+      function createVarDeclaration(line, column, type, varList, asignatedValue){//Este último puede ser null, puesto que no es obligatorio que especifiquen este valor...
             let declaratedVars = [];//new Array<Variable_Declaration>()
             console.log("list size "+varList.length);
 
             for(let index = 0; index < varList.length; index++){
-                  declaratedVars.push(new Variable_Declaration(type, varList[index], asignatedValue));
+                  declaratedVars.push(new Variable_Declaration(line, column, type, varList[index], asignatedValue));
             }
 
             console.log("[S] (G/L) content: DECLARATION [ "+((varList.length>0)?"var list":"var")+((asignatedValue != null)?" + expr":"")+ " ]");
             return declaratedVars;//pongo G/L, puesto que esta se usa para un decl en general, no para un tipo de decl en específico
       }//sin importar que sea G o L, puesto que esto se determina en prod más arriba de la RP en donde se crea el obj xD      
 
-      function createFunction(functionType, returnType, name, params){
+      function createFunction(line, column, functionType, returnType, name, params){
             switch(functionType){
                   case "SIMPLE":
                         console.log("[S] Global content: S_FUNCTION [ "+returnType +", " + name + ((params.length>0)?", params":"")+" ]");
-                        return new Void_Function(clase, returnType, name, params);
+                        return new Void_Function(line, column, clase, returnType, name, params);
                   case "COMPLEX":
                         console.log("[S] Global content: C_FUNCTION [ "+returnType +", " + name + ((params.length>0)?", params":"")+" ]");
-                        return new Complex_Function(clase, returnType, name, params);
+                        return new Complex_Function(line, column, clase, returnType, name, params);
                   case "MAIN":
                         console.log("[S] Global content: MAIN [ "+returnType +", "+name+" ]");
-                        return new Main(clase);
+                        return new Main(line, column, clase);
             }
             return null;//pero nunca se va a caer acá...
       }//LISTO
 
-      function createParam(type, name){
+      function createParam(line, column, type, name){
             console.log("[S] Function sub-content: PARAM ["+type+", "+name+"]");
-            return new Variable(type, name);
+            return new Variable(line, column, type, name);
       }      
 
  //FUNCTION CONTENT
 
-      function createAsignation(name, expr){
+      function createAsignation(line, column, name, expr){
             console.log("[S] Function content: ASIGNATION [ "+name+" + expr ]");
-            return new Asignacion(name, expr);
+            return new Asignacion(line, column, name, expr);
       }
 
    //EXPRESSIONS
-      function createExpr_Operation(operationType, left, symbol, right){//ya sea la root o no
+      function createExpr_Operation(line, column, operationType, left, symbol, right){//ya sea la root o no
             console.log("[S] Function content: EXPR-OPERATION [ "+symbol+" ]");
-            return new Expresion(left, createExp_Operator(operationType, symbol), right);
+            return new Expresion(line, column, left, createExp_Operator(operationType, symbol), right);
       }//se creó el método solo con tal que no esté así explícito en las axn xD, porque en realidad lo único que se hará aquí es crear el objeto y devolverlo :v xD
 
       function createExp_Operator(type, symbol){
@@ -716,90 +735,95 @@ parse: function parse(input) {
             return null; //pero nunca se llegará hasta acá xD
       }
 
-      function createExpr_Value(valueType, content){
+      function createExpr_Value(line, column, valueType, content){
             console.log("[S] Function content: EXPR-VALUE [ "+valueType+", "+content+" ]");
 
             switch(valueType){
                   case "INTEGER"://no lo dejo como number, puesto que si lo hago así, no tendría oportunidad de setear los decimales
-                        return new Expresion(null, new Number(content), null);
+                        return new Expresion(line, column, null, new Number(content), null);
                   case "DECIMAL":
-                        return new Expresion(null, new Number(content), null);//para tratarlo como decimal, es que se hará las respectivas revisiones en la parte de la clase Expresión...                   
+                        return new Expresion(line, column, null, new Number(content), null);//para tratarlo como decimal, es que se hará las respectivas revisiones en la parte de la clase Expresión...                   
                   case "CADENA":
-                        return new Expresion(null, new String(content), null);
+                        return new Expresion(line, column, null, new String(content), null);
                   case "BOOLEAN":
-                        return new Expresion(null, new Boolean(content), null);
+                        console.log("boolean content: " + content);
+                        console.log("boolean convertion: " + ((content == "true")?true:false));//el new Boolean convierte tb el false a true :v xD
+                        return new Expresion(line, column, null, ((content == "true")?true:false), null);
                   case "CHARACTER":
-                        return new Expresion(null, new String(content), null);
-                  case "VARIABLE":
-                        return new Expresion(null, new Variable(null, content, null), null);//para este caso el argu para el valor, en realidad será el nombre xD
+                        return new Expresion(line, column, null, new String(content), null);
+                  case "VARIABLE":                        
+                        return new Expresion(line, column, null, new Variable(line, column, null, content, null), null);//para este caso el argu para el valor, en realidad será el nombre xD
                   case "INVOCACION":
-                        return new Expresion(null, content, null);//seteo de una vez el content, puesto que la invocación ya fue creada en otra parte...
+                        return new Expresion(line, column, null, content, null);//seteo de una vez el content, puesto que la invocación ya fue creada en otra parte...
             }
             return null;//no se llegará aquí, puesto que el tipo siempre será enviado por mí xD, a lo que voy es que será certero jaja xD
       }//Este se utilizará en las producciones de las expr que corresp a valores no a ops obvi xD     
       //fin de los métodos para expresión
 
-      function createInvocation(invocatedFunction, argumentos){
+      function createInvocation(line, column, invocatedFunction, argumentos){
             console.log("[S] Function content: INVOCATION [ arguments? "+ ((argumentos.length>0)?"T":"F") + " list? "+ isAList+" ]");
-            return new Invocacion(invocatedFunction, argumentos);
+            return new Invocacion(line, column, invocatedFunction, argumentos);
       }
 
-      function createMostrar(stringBase, argumentos){//simi a los de la func... o yo creo que iguales xD
+      function createMostrar(line, column, stringBase, argumentos){//simi a los de la func... o yo creo que iguales xD
             console.log("[S] Function content: MOSTRAR [arguments? "+ ((argumentos.length>0)?"T":"F") + "list? "+isAList);
-            return new Mostrar(stringBase, argumentos);
+            return new Mostrar(line, column, stringBase, argumentos);
       }
 
-      function createDraw_AST(functionName){
+      function createDraw_AST(line, column, functionName){
             console.log("[S] Function content: DRAW_AST of "+functionName);
-            return new DibujarAST(functionName);
+            return new DibujarAST(line, column, functionName);
       }
 
-      function createDraw_EXP(expression){
+      function createDraw_EXP(line, column, expression){
             console.log("[S] Function content: DRAW_EXPR");
-            return new DibujarEXP(expression);
+            return new DibujarEXP(line, column, expression);
       }     
 
-      function createDraw_TS(){
+      function createDraw_TS(line, column){
             console.log("[S] Function content: DRAW_TS");
-            return new DibujarTS();
+            return new DibujarTS(line, column);
       }//mejor cree 3 para cada uno, puesto que los tipos de param varían y son algo diferentes xD, pero si no es nec, entonces solo los fusionas y luego les indicas su tipo, para que sepa a que obj crear y poor ello devolver xD
 
-      function createBreakPoint(breakpointType, expr){//solo tendrá valor != null cuando el breakpoint a crear se un return complejo...
+      function createBreakPoint(line, column, breakpointType, expr){//solo tendrá valor != null cuando el breakpoint a crear se un return complejo...
             console.log("[S] Function subcontent: BREAKPOINT [ "+breakpointType+((breakpointType == "RETURN" && expr != null)?+"+ expr":""));
 
             switch(breakpointType){
                   case "RETURN":
-                        return new Return(expr);//si es simple pues recibirá null, sino la expr xD, así que NO PROBLEM jaja xD
+                        return new Return(line, column, expr);//si es simple pues recibirá null, sino la expr xD, así que NO PROBLEM jaja xD
                   case "CONTINUE":
-                        return new Continue();
+                        return new Continue(line, column);
                   case "BREAK":
-                        return new Break();
+                        return new Break(line, column);
             }
             return null;//pero no se llegará hasta aquí xD
       }     
 
-      function createFor(variable, condition, incremento){
+      function createFor(line, column, variable, condition, incremento){
             console.log("[S] Function content: FOR");
-            return new For(variable, condition, ((incremento == "++")?1:-1));
+            return new For(line, column, variable, condition, ((incremento == "++")?1:-1));
       } 
 
-      function createForVar(variableName, value){//este valor siempre será un entero, por lo que dijo el aux, aunque creo que en os objetos tengo ahí una expr xD
+      function createForVar(line, column, variableName, value){//este valor siempre será un entero, por lo que dijo el aux, aunque creo que en os objetos tengo ahí una expr xD
             console.log("[S] Function subcontent: FOR-VAR [ "+variableName+" ]");
-            return new Variable(ContentType.INTEGER, variableName, value);
+            let variable = new Variable(line, column, ContentType.INTEGER, variableName, value);
+            console.log("[S] Function subcontent: FOR-VAR -> "+variable);
+            console.log(variable);
+            return variable;
       }
 
-      function createWhile(condition){
+      function createWhile(line, column, condition){
             console.log("[S] Function content: WHILE");
-            return new While(condition);
+            return new While(line, column, condition);
       }      
 
-      function createControl_Sentence(expre){//será null cuando la sent a crear sea else xD
+      function createControl_Sentence(line, column, expre){//será null cuando la sent a crear sea else xD
             if(expre == null){
                   console.log("[S] Function content: ELSE");
-                  return new Else();
+                  return new Else(line, column);
             }
             console.log("[S] Function content: IF");
-            return new If(expre);
+            return new If(line, column, expre);
       }                  
 
       function handleLexerError(lexema){

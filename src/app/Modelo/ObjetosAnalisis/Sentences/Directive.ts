@@ -4,8 +4,8 @@ import { Sentence } from "./Sentence";
 export class Directive extends Sentence{
     father:Container;//esto es solo para que esté informada la directiva, porque en realidad no es necesario que la posea, a menos que req buscar en la TAS para obtener algún dato...
 
-    constructor(){
-        super();
+    constructor(line:number, column:number, ){
+        super(line, column);
     }   
 
     public setFather(father:Container){

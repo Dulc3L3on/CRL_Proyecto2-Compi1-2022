@@ -16,19 +16,34 @@ export class Stack<T>{//LIFO
     }
 
     setAll(theElements:Array<T>){
+        /*this.copyArray(theElements);        
+
+        console.log("copied array: "+ this.elements);*/
         this.elements = theElements;
     }
 
     getReverse():Array<T>{
-        let reverseElements:Array<T> = new Array<T>();
-
-        for(let actual = this.size(); actual > 0; actual--){
-            reverseElements.push(this.elements[actual-1]);
-        }
+        let reverseElements:Array<T> = new Array<T>();        
+        let size:number = this.size();        
         
+        for(let actual = size; actual > 0; actual--){
+            reverseElements.push(this.elements[actual-1]);
+            console.log("actual element: "+ (actual-1));
+            console.log(this.elements[actual-1]);
+            
+            console.log(reverseElements);
+        }
         return reverseElements;
-        //return this.elements.reverse();//no voy a usar reverse, porque la referencia que se obtiene es al mismo array y yo no quiero que se modifique el arreglo original...
-    }//este no debe usarse a menos que se quiera que empiece a exe desde la última axn hasta la primera, esto en caso que la lectura del stack, se haga desde 0, hasta size -1...
+    }
+
+    private copyArray(original:Array<T>){
+        /*original.forEach( element => 
+            this.elements.push(element) );      */ 
+        /*console.log("original");
+        console.log(original);
+
+        this.elements = original.slice(0, 12);*/        
+    }
 
     getElement():T|null{
         if(!this.isEmpty()){

@@ -1,3 +1,6 @@
+import { Error } from "src/app/Modelo/Tool/Error/Error";
+import { ErrorMessage } from "src/app/Modelo/Tool/Error/ErrorMessage";
+import { ErrorType } from "src/app/Modelo/Tool/Error/ErrorType";
 import { ContentType } from "../../Class_Content/ContentType";
 import { Container } from "../../Container";
 import { LocalContainer } from "../../LocalContainer";
@@ -7,11 +10,10 @@ import { Result } from "../Content/Result";
 export class Control_Sentence extends LocalContainer{
     condition:Expresion|null;
 
-    constructor(/*padre:LocalContainer, */condition:Expresion|null){//el null, es debido al else... no habrá problemas con el if, puesto que al llegar a esa línea, siempre se va a establecer como argu un objeto expre...
-        super(/*padre*/);
+    constructor(line:number, column:number, condition:Expresion|null){//el null, es debido al else... no habrá problemas con el if, puesto que al llegar a esa línea, siempre se va a establecer como argu un objeto expre...
+        super(line, column);
         
-        this.condition = condition;//para el caso del IF, no hay problema puesto que siempre recibirá una condi, ya que eso lo colocaré en las axn de la gram, entonces NO PROBLEM! xD   
-        //this.condition.setFather(padre);        
+        this.condition = condition;//para el caso del IF, no hay problema puesto que siempre recibirá una condi, ya que eso lo colocaré en las axn de la gram, entonces NO PROBLEM! xD             
     }
 
     override setFather(father: Container): void {
@@ -28,7 +30,10 @@ export class Control_Sentence extends LocalContainer{
             result = this.exe_ControlSentence();
             //el tipo de Result no se revisará aquí sino que será en el método exeFunction, puesto que ahí es donde es de interés esta revisión...
         } catch (error) {
-            return new Result(ContentType.ERROR, "el msje del error xD");//ahora que lo pienso quizá este error deba setearse desde el método exeLoop, ya que al parecer no se pueden hacer throws, para que puedan ser manejados los errores en otros lados. Revisa más sobre el manejo de errores en Typscript xD
+            this.errorHandler.addMessage(new Error(ErrorType.RUNTIME_EXCEP, ErrorMessage.FATAL_ERROR,
+                this.sourceLocation, this.sentenceName, this.father.getSentenceName()));
+
+            return new Result(ContentType.ERROR, error);//ahora que lo pienso quizá este error deba setearse desde el método exeLoop, ya que al parecer no se pueden hacer throws, para que puedan ser manejados los errores en otros lados. Revisa más sobre el manejo de errores en Typscript xD
         }
         return result;
     }
@@ -39,9 +44,12 @@ export class Control_Sentence extends LocalContainer{
     }
 
     evaluateCondition():Result{        
-        if(this.condition!.getValue().getType() == ContentType.BOOLEAN){
-            return this.condition!.getValue().getValue();//Esto se hará con la clase que s eencarga de castear, aunque quizá no porque nada más que un boolean, puede ser un boolean xD
+        let result:Result = this.condition!.getValue();
+
+        if(result.getType() == ContentType.BOOLEAN){//no se req un casting, porque para que sea boolean no puede ser más que true/false
+            return result;
         }
+
         //se add el error, porque el R// de la expr no fue booleano...
         return new Result(ContentType.ERROR, "Was expected a boolean");
     }//no hay problema con asegurar que no será null, puesto que siempre que se invoque  este método será porque existe una condi xD

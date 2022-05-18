@@ -2,6 +2,8 @@ import { Function } from "../ObjetosAnalisis/Sentences/Class_Content/Function";
 import { Stack } from "../ObjetosAnalisis/EDDs/Stack";
 import { Directive } from "../ObjetosAnalisis/Sentences/Directive";
 import { LocalContainer } from "../ObjetosAnalisis/Sentences/LocalContainer";
+import { Else } from "../ObjetosAnalisis/Sentences/Function_Content/Control_Sentences/Else";
+import { If } from "../ObjetosAnalisis/Sentences/Function_Content/Control_Sentences/If";
 
 export class HierarchyStack{
     private stack:Stack<LocalContainer>;//pueso que solo se pueden insertar o funciones o estructuras [loop, control_sentence]
@@ -80,8 +82,16 @@ export class HierarchyStack{
             if(actualContainer!.getScope() == (scope -1)){//se asegura que será != null, puesto que el for avanza según el tamaño del scope según vaya variando
                 return actualContainer!;
             }else if(this.stack.size() >= 1){//puesto que quiere decir que al menos tendrá el elemento que se req para hacer el acoplamiento final
-                actualContainer!.setFather(this.stack.previewElement()!);//se setea el padre, ojo, esto solo se app a los LC puesto que ese es el único tipo de Sentence que está en el STACK!
-                this.stack.previewElement()!.setContent(actualContainer!);
+                if(actualContainer!.getSentenceName() != "SINO"){//si no llegara a funcionar, entonces harás la comparación con el sentenceName xD
+                    actualContainer!.setFather(this.stack.previewElement()!);//se setea el padre, ojo, esto solo se app a los LC puesto que ese es el único tipo de Sentence que está en el STACK!
+                    this.stack.previewElement()!.setContent(actualContainer!);
+                }else{
+                    if(this.stack.previewElement()!.content.previewElement()?.getSentenceName() != "SI"){//Que suceede si no hay elementos y por lo tanto se obtiene null, acaso da error?
+                        //se add un error, pero por ello debería retornarse un error?? por lo que veo, los errores de aquí no los andas retornando...
+                    }else{
+                        (this.stack.previewElement()!.content.previewElement() as If).setElse((actualContainer!) as Else);
+                    }
+                }                
             }
             console.log("number of elements "+this.stack.size());
         }

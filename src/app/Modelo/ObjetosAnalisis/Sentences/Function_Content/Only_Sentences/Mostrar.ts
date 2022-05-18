@@ -1,20 +1,28 @@
+import { MessageHandler } from "src/app/Modelo/Handlers/MessageHandler";
 import { ContentType } from "../../Class_Content/ContentType";
 import { Container } from "../../Container";
 import { Directive } from "../../Directive";
 import { Expresion } from "../Content/Expresion";
 import { Result } from "../Content/Result";
+import { Error } from "src/app/Modelo/Tool/Error/Error";
+import { ErrorMessage } from "src/app/Modelo/Tool/Error/ErrorMessage";
+import { ErrorType } from "src/app/Modelo/Tool/Error/ErrorType";
 
 export class Mostrar extends Directive{
     stringBase:string;
-    argumentos:Array<Expresion>;
+    argumentos:Array<Expresion>;    
+    errorPresent:boolean;
 
-    constructor(stringBase:string, argumentos:Array<Expresion>){
-        super();
+    private messageHandler:MessageHandler;
+
+    constructor(line:number, column:number, stringBase:string, argumentos:Array<Expresion>){
+        super(line, column);
 
         this.stringBase = stringBase;        
         this.argumentos = argumentos;//de no haber asignado una lista el usuario, aquí se obtendrá una lista vacía, mas no null, entonces NO PROBLEM! xD
 
-        this.sentenceName = "MOSTRAR";
+        this.sentenceName = "MOSTRAR";    
+        this.messageHandler = MessageHandler.getInstance();
     }
 
     override setFather(father: Container): void {
@@ -31,37 +39,59 @@ export class Mostrar extends Directive{
     override exe(): Result{
         this.print();
 
+        if(this.errorPresent){            
+            this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.SHOW_DIRECTIVE_WITH_ERRORS,
+                this.sourceLocation, this.sentenceName, this.father.getSentenceName()));
+            console.log("Errors on Mostrar directive, impossible execute correctly");
+            return new Result(ContentType.ERROR, "Errors on Mostrar directive, impossible execute correctly");
+        }
+
         return new Result(ContentType.NOTHING);
     }
 
     print(){
+        this.errorPresent = false;
+        console.log("print (MOSTRAR)");
         let resultante:string = this.stringBase;
         //se cuenta el número de {, para saber si el #argus corrsponde a lo que está en el string base...
 
         for(let index = 0; index < this.argumentos.length; index++){
-            if(this.existRequest("{"+(index)+"}", this.stringBase)){//por el momento si requerirá que los valores estén pegaditos, a menos que haga un anaĺisis por separado
-                resultante.replace("{"+(index)+"}", String (this.argumentos[index]));//por el momento se hace así, pero se deberá llamar a la clase que se encarga de los casteos, para así tener los valores según el enunciado lo requiere xD
+            if(this.existRequest("{"+(index)+"}", this.stringBase)){//por el momento si requerirá que los valores estén pegaditos, a menos que haga un anaĺisis por separado                
+                console.log("expresion");
+                console.log(this.argumentos[index]);
+                console.log("resultante: ");               
+                let value:string =  this.caster.getOnlyString(this.argumentos[index].getValue());//(this.caster.getOnlyString(this.argumentos[index].getValue())
+                resultante = resultante.replace("{"+(index)+"}", value);//por el momento se hace así, pero se deberá llamar a la clase que se encarga de los casteos, para así tener los valores según el enunciado lo requiere xD                
             }else{
-                //Se muestra el msje: Errores en la directiva MOSTRAR, imposible continuar
-                break;//puesto que no hay razón para seguir...
+                break;//puesto que no hay razón para seguir... no hago return porque no habría nada de malo y esa es la costume, retornar los msjes en los momentos en los que no existió error alguno
             }
         }//si no hubieran argumentos no habría problema, ya que no se entraría al for y por lo tanto se imprimiría solo el string base xD
-
-        //se imprime el resultante, a partir de la clase que modifica la consola... [o servicio, porque ahora que lo pienso si se puede :v xD]
+        
+        this.messageHandler.addMessage(resultante);
         console.log(resultante);
     }
 
-    existRequest(request:string, expect:string):boolean{
+    private existRequest(request:string, expect:string):boolean{
         if(expect.includes(request)){
-            if(expect.includes(request, request.indexOf(request)+request.length)){
-                //Se add el error por repetición de un índice de request
+            console.log("request" + request);
+            console.log("indice posterior " + expect.indexOf(request)+request.length);
+            if(expect.includes(request, expect.indexOf(request)+request.length)){
+
+                this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.MORE_SAME_REQUEST,
+                    this.sourceLocation, this.sentenceName, this.father.getSentenceName()));
+                console.log("request is present more than is required");
+                this.errorPresent = true;
                 return false;//pues con una repetición más basta para devolver error
             }else{                
+                console.log("request is present");
                 return true;
             }
         }
 
-        //se add el error porque hay argumentos pero no request en el stringBase...
+        this.errorPresent = true;
+        this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.UNMATCH_WITH_REQUEST_PARAM,
+            this.sourceLocation, this.sentenceName, this.father.getSentenceName()));
+        console.log("the number of arguments missmatch with request");
         return false;
     }
 

@@ -9,13 +9,14 @@ export class GlobalContainer extends Container{
     name:string;
 
     imports: Array<Import>;    
-    classContent: Array<Sentence>;//pienso que convedría más que fuera una HASH... para que aśi concuerde con la definición de tabla...
+    classContent: Array<Sentence>;//incertitude, VG, funciones
+    //pienso que convedría más que fuera una HASH... para que aśi concuerde con la definición de tabla...
     //vamos a dejar la lista, puesto que en la función dibujar, se envía el nombre, y tendría que hacer que a partir de ese nombre se genere una key válida,
     //basada en un patrón, el cual estaba pensando fuera dep del #función add a la clase, pero eso no lo podríamos saber a partir del nombre y generar
     //keys que no sean de un valor exagerado, req pensar mejor, porque no sería útil si creara valores muy grandes, puesto que la lista, se haría enorme y por
     //lo tanto habría mucho espaciio sin utilizar...
-    constructor(){
-        super();
+    constructor(line:number, column:number){
+        super(line, column);
         
         this.setScope(-1);//puesto que aquí no es de interés ese valor xD
 
@@ -25,6 +26,8 @@ export class GlobalContainer extends Container{
 
     setName(name:string){
         this.name = name;
+
+        this.sentenceName = "CLASE " + this.name;
     }
 
     addImport(importt:Import){
@@ -36,17 +39,20 @@ export class GlobalContainer extends Container{
     }        
 
     getMainFunction(hash:string):Function|null{//Auqneu en realidad la clase Main no requiere de este atrib puesto que será única, por los parámetros dados en el eunciado [no pueden haber clases que se llamen igual y tengan el lmismo tipo de dev y params iguales]
-        return (this.findFunction(null, hash) as Function| null); 
+        return (this.findFunction(null, hash) as Function| null);//no se usa el getInvocatedFun, puesto que si no la llegara a encontrar buscaría en otro lado y NO DEBE ser así, si no la halló pues error xD
     }//Este se invocará una sola vez y será para el container específico con el fin de ini el stack de exe xD
 
     getInvocatedFunction(hash:string):Function|null{
         let theFunction:Function|null = (this.findFunction(null, hash) as Function| null);
+        console.log("i have the invaocated fun? "+ theFunction);
         let iHaveTheFunction:boolean = true;
+
 
         if(theFunction == null){
             iHaveTheFunction = false;//con tal que el if, que se encarga de ini la TAS, solo se app para la clase en la que se encontró dentro de su cuerpo a la función
 
             for(let actual:number = 0; actual < this.imports.length; actual++){
+                console.log("i'm finding the function on "+ this.imports[actual]);
                 theFunction = this.imports[actual].getImportedClass().getInvocatedFunction(hash);
 
                 if(theFunction != null){
@@ -91,6 +97,7 @@ export class GlobalContainer extends Container{
         while(!(this.classContent[index] instanceof Function)){
             this.classContent[index].exe();//no hay problema con invocar a este método, puesto que todo lo que haya ahí dentro será o una directiva o un contenedor, que al final de cuentas terminan siendo una sentencia xD
 
+            console.log(this.TAS);//para que veas que si se modifica asignando el dato a otra var xD
             index++;
         }
     }//con esto basta ya que las directivas de declaración de variable e incertidumbre, se encargan de enviar los datos a la TAS...
@@ -101,4 +108,3 @@ export class GlobalContainer extends Container{
 
 }
 
-//este será la que antes era clase...

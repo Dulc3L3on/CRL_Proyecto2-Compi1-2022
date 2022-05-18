@@ -13,6 +13,7 @@ export class ActiveFileHandler{
             ActiveFileHandler.instance = new ActiveFileHandler();
         }
 
+        console.log("new instance Active File Handler");
         return ActiveFileHandler.instance;
     }
 
@@ -22,8 +23,11 @@ export class ActiveFileHandler{
     }
 
     isExistFile(name:String):boolean{
-        for(let index:number = 0; index < this.activeFiles.length; index++){
+        for(let index:number = 0; index < this.activeFiles.length; index++){            
+            console.log("name: " + name + " =? " + this.activeFiles[index]);
+
             if(this.activeFiles[index].getName() == name){
+                console.log("class imported finded");
                 return true;
             }
         }
@@ -31,10 +35,27 @@ export class ActiveFileHandler{
     }
 
     isMainFile(possible:string){
-        if(possible = this.mainFileName){
+        console.log("is main file? " + (possible == this.mainFileName));
+
+        if(possible == this.mainFileName){
             return true;
         }
         return false;
     }
+
+    public getActiveFile(fileName:string){
+        let indexEncountered = 0;//este lo coloco, puesto que siempre se encontrará el archivo, entonces con tal que el método no tenga un valor de retorno | null, enotnces hago esto xD
+        console.log("existing files: ")
+        console.log(this.activeFiles);
+
+        for(let index:number = 0; index < this.activeFiles.length; index++){
+            if(this.activeFiles[index].getName() == fileName){
+                indexEncountered = index;                
+                break;
+            }
+        }        
+        return this.activeFiles[indexEncountered];
+    }//método empleado en analizeFile xD
+
     
 }

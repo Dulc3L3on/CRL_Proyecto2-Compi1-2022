@@ -8,8 +8,8 @@ export class LocalContainer extends Container{
     father:Container;//solo puede ser Clase en el caso de las funciones, yo me encargaré de verificar eso, entonces no problem xD    
     content:Stack<Sentence>;
 
-    constructor(){
-        super();
+    constructor(line:number, column:number){
+        super(line, column);
 
         this.content = new Stack<Sentence>();
     }//a mi pensar, el padre no debería tener que estar en el cnstruct, puesto que la mejor parte en la que se puede setear al progenitor es cuando se están guardando las sentencias, dentro de su respectivo contenedor xD
@@ -24,10 +24,17 @@ export class LocalContainer extends Container{
     
     readStack():Result{
         let temporalStack:Stack<Sentence> = new Stack<Sentence>();
-        temporalStack.setAll(this.content.getReverse());        
+        //temporalStack.setAll(this.content.getElements());
+        temporalStack.setAll(this.content.getReverse());
+        console.log("tmp stack: ");
+        console.log(temporalStack.elements);
 
         while(!temporalStack.isEmpty()){//no se devolverá indefinidos el pop, por haber sobrepasado el número de ele que contiene, gracias a este while que se encarga de llevar el control xD
-            let result:Result = temporalStack.getElements().pop()!.exe();//en lugar de usar getElements y el índice podríamos y más se debería, para ahorrarse el hecho que el for, puesto que se tendría como condi mientrar el stack no esté vacío, pienso que se puede hacer, puesto que en primer lugar el stack que se está tomando aquí es temp y por lo tanto no se afectaría al original y porque ya no se req buscar a los elementos que ya fueron exe...
+            let sentence:Sentence = temporalStack.getElements().pop()!;
+            console.log("execute sentence: "+ sentence.getSentenceName());            
+            console.log(sentence);
+
+            let result:Result = sentence.exe();//en lugar de usar getElements y el índice podríamos y más se debería, para ahorrarse el hecho que el for, puesto que se tendría como condi mientrar el stack no esté vacío, pienso que se puede hacer, puesto que en primer lugar el stack que se está tomando aquí es temp y por lo tanto no se afectaría al original y porque ya no se req buscar a los elementos que ya fueron exe...
 
             if(result.getType() != ContentType.NOTHING ){
                 return result;
@@ -40,9 +47,7 @@ export class LocalContainer extends Container{
         return this.father;        
     }
 
-    getFunctionContent(){
-        return this.content.getReverse();
-    }//envío el contenido al revés, así podrá empezar a exe lo primero que cayó a la pila, que es justo lo que necesito xD
+    //recuerda que acordamos que los msjes de error se van a setear en el lugar donde se generaron y en los demás solo se va a hacer el traspaso...
 }
 
 //HEREDEROS

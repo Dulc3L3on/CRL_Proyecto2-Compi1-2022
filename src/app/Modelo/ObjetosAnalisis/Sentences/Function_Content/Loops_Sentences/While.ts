@@ -7,18 +7,21 @@ import { ThisReceiver } from "@angular/compiler";
 import { ContentType } from "../../Class_Content/ContentType";
 
 export class While extends Loop{
-    constructor(/*padre:LocalContainer, */condition:Expresion){
-        super(/*padre, */condition);
+    constructor(line:number, column:number, condition:Expresion){
+        super(line, column, condition);
 
         this.sentenceName = "MIENTRAS";
     }
 
     override exeLoop(): Result{       
+        console.log("exeLoop [WHILE]");
+
         if(this.evaluateCondition().getType() == ContentType.BOOLEAN){
             this.TAS = new TAS();
             let result:Result;
 
             while((this.evaluateCondition().getValue() as boolean)){
+                console.log("[WHILE] condition evaluate");
                  result = this.readStack();
 
                  if(result.getType() == ContentType.BREAK){
@@ -32,6 +35,7 @@ export class While extends Loop{
                  }//es decir ERR, B, C, S, I, D y RET xD                 
             }
         }else{
+            //por la misma razón que mencioné en el for, no debe retornarse error
             return new Result(ContentType.ERROR);
         }
         return new Result(ContentType.NOTHING);//puesto que se llegó al final del for y ninguno de los ele de la pila devolvió un Result, con un tipo diferente...

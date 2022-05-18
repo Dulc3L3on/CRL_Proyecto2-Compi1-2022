@@ -1,13 +1,15 @@
 import { Dibujar } from "./Dibujar";
-import { Function } from "../../../Class_Content/Function";
 import { Result } from "../../Content/Result";
 import { ContentType } from "../../../Class_Content/ContentType";
+import { Error } from "src/app/Modelo/Tool/Error/Error";
+import { ErrorMessage } from "src/app/Modelo/Tool/Error/ErrorMessage";
+import { ErrorType } from "src/app/Modelo/Tool/Error/ErrorType";
 
 export class DibujarAST extends Dibujar{     
     functionName:string;
 
-    constructor(functionName:string){
-        super();
+    constructor(line:number, column:number, functionName:string){
+        super(line, column);
 
         this.functionName = functionName;
 
@@ -26,6 +28,8 @@ export class DibujarAST extends Dibujar{
     }
 
     override generateGraphic(file: string):Result{  
+        console.log("exe DRAW [AST]");
+
         //Se invoca al meodo [drawFUN] que tiene el código para generar el .jpg o de una vez
         //el .pdf a partir del string recibido dependiendo del resultado que devuelva
         //se enviará msje SUCCESS or FAIL
@@ -34,6 +38,8 @@ export class DibujarAST extends Dibujar{
             return new Result(ContentType.NOTHING);
         }
 
+        this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.DRAW_SCRIPT_FAILED_AST,
+            this.sourceLocation, this.sentenceName, this.father.getSentenceName()));
         return new Result(ContentType.ERROR, "Encountered errors at tried draw the AST");
     }
    

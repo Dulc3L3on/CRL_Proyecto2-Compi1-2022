@@ -8,6 +8,8 @@ export class TAS{
     }
     
     setVariable(variable:Variable){
+        console.log("variable declarada");
+        console.log(variable);
         this.variables.push(variable);
     }
 

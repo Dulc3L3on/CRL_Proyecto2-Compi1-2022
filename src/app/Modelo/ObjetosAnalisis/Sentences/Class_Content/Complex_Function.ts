@@ -3,16 +3,21 @@ import { Function } from "./Function";
 import { Result } from "../Function_Content/Content/Result";
 import { GlobalContainer } from "../GlobalContainer";
 import { ContentType } from "./ContentType";
+import { Error } from "src/app/Modelo/Tool/Error/Error";
+import { ErrorType } from "src/app/Modelo/Tool/Error/ErrorType";
+import { ErrorMessage } from "src/app/Modelo/Tool/Error/ErrorMessage";
 
 export class Complex_Function extends Function{    
 
-    constructor(padre:GlobalContainer, type:number, functionName:string, parametros:Array<Variable>){
-        super(padre, type, functionName, parametros);     
+    constructor(line:number, column:number, padre:GlobalContainer, type:number, functionName:string, parametros:Array<Variable>){
+        super(line, column, padre, type, functionName, parametros);     
 
         this.sentenceName = "FUNCTION ";//+ toString que da la firma de la función
     }
 
     override exe_Function(): Result {
+        console.log("exe_Function [Complex]");
+
         let result:Result = this.readStack();
         
         if(result.getType() == ContentType.ERROR){
@@ -23,12 +28,18 @@ export class Complex_Function extends Function{
                 //a menos que haga falta más msjitos xD
             
         }else if(result.getType() == ContentType.RETURN){
+            this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.ABSENT_EXPR_RETURN_FUNCTION,
+                this.sourceLocation, this.sentenceName, this.father.getSentenceName()));
+
             result = new Result(ContentType.ERROR, "A function should return"
             +" a value");
 
             //Se add el msje al listado de errores, o de una vez a la consola,
             //por medio del servicio xD
         }else if(result.getType() != this.getType()){
+            this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.UNMATCH_EXPR_RETURN_FUNCTION,
+                this.sourceLocation, this.sentenceName, this.father.getSentenceName()));
+
             result = new Result(ContentType.ERROR, "A "+this.getType()
              + " function cannot return an "+ result.getType());
         }

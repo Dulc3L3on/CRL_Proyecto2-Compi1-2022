@@ -1,3 +1,4 @@
+import { SourceLocation } from "src/app/Modelo/Tool/SourceLocation";
 import { ContentType } from "../../Class_Content/ContentType";
 import { Result } from "./Result";
 
@@ -5,7 +6,9 @@ export class Variable{//NOTA, recuerda que las variables reciben en resultado de
     name:string;        
     content:Result;
 
-    constructor(type:ContentType|null, name:string, value:any|null){//se tendrá type, nomrbre y value, cuando se use como param [puesto que se llenará la TAS, cuando la función sea invocada xD], ninguno de eso dos cuando se utilice en expr. Cuando sea la var de la TAS, se empleará el setValue, por las != asignaciones que se podrán hacer...
+    sourceLocation:SourceLocation;
+
+    constructor(line:number, column:number, type:ContentType|null, name:string, value:any|null){//se tendrá type, nomrbre y value, cuando se use como param [puesto que se llenará la TAS, cuando la función sea invocada xD], ninguno de eso dos cuando se utilice en expr. Cuando sea la var de la TAS, se empleará el setValue, por las != asignaciones que se podrán hacer...
         this.name = name;
 
         this.content = new Result();//independientemente de que se le haya asignado o no el tipo, ahí te recuerdas que por defecto tendrá NOTHING, lo cual es un error para la variable
@@ -15,6 +18,8 @@ export class Variable{//NOTA, recuerda que las variables reciben en resultado de
         if(value != null){
             this.content.setValue(value);
         }
+
+        this.sourceLocation = new SourceLocation(line, column);//lo hago así directamente sin revisar, puesto que en todos los lugares donde se crea una variable, puedo setearle la línea y columna
 
     }//el tipo sería utilizado para cuando se utilice esto para los parám...    
 

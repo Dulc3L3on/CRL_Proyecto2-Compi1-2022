@@ -19,11 +19,18 @@ export class Tool{
     regenerateFunctionHash(name:string, argumentos:Array<Expresion>){
         if(argumentos.length > 0){
             let rehash:string = name + argumentos.length;
+            console.log(argumentos);
 
             for(let index = 0; index < argumentos.length; index++){
-                rehash += argumentos[index].getValue().getType();
+                console.log("--argumento--");
+                console.log(argumentos[index]);
+                let tipo = argumentos[index].getValue().getType();
+                console.log("tipo" + tipo);
+
+                rehash += tipo;
             }
     
+            console.log("rehash: " + rehash);
             return rehash;
         }
         return name;

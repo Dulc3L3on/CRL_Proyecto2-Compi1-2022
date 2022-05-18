@@ -1,3 +1,6 @@
+import { Error } from "../../Tool/Error/Error";
+import { ErrorMessage } from "../../Tool/Error/ErrorMessage";
+import { ErrorType } from "../../Tool/Error/ErrorType";
 import { TAS } from "../EDDs/TablaSimbolos/TAS";
 import { ContentType } from "./Class_Content/ContentType";
 import { Result } from "./Function_Content/Content/Result";
@@ -6,10 +9,10 @@ import { LocalContainer } from "./LocalContainer";
 import { Sentence } from "./Sentence";
 
 export class Container extends Sentence{
-    TAS:TAS;
+    TAS:TAS;    
 
-    constructor(){
-        super();
+    constructor(line:number, column:number){
+        super(line, column);
     }
 
     findVariable(name:string):Result{
@@ -24,6 +27,9 @@ export class Container extends Sentence{
         }else if(index == -1 && !(container instanceof GlobalContainer)){//con tal de que no tenga que addse el atrib father y que este le ponga null xD, o sea, sería funcional, pero para no mover esa struct xD, aunque pensándolo bien quizá sea mejor jajaj
             return this.searchVariable((container as LocalContainer).getFather(), name);
         }
+
+        this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.INEXSITENT_VAR,
+            this.sourceLocation, this.sentenceName, null));
         return new Result(ContentType.ERROR, "There is no variable named " + name);
     }//devuelve el contenido de la variable, lo que involucra, el result completo [type + value]    
 

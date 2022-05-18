@@ -1,4 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { ErrorHandler } from 'src/app/Modelo/Handlers/ErrorHandler';
+import { MessageHandler } from 'src/app/Modelo/Handlers/MessageHandler';
 
 @Component({
   selector: 'app-console',
@@ -6,12 +8,20 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
   styleUrls: ['./console.component.css']
 })
 export class ConsoleComponent implements OnInit {
-  isHide: boolean = false;
+  public messageHandler:MessageHandler = MessageHandler.getInstance();
+  public errorHandler:ErrorHandler = ErrorHandler.getInstance();
+
+  isConsole:boolean = true;
+  isHide: boolean = false;  
   @Output() minimaxer: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  changeView(){
+    this.isConsole = !this.isConsole;
   }
 
   hide(hidden: boolean){

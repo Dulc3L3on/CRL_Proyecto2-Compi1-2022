@@ -119,7 +119,7 @@ export class Caster{
             case ContentType.CHAR:                
                 return new Result(ContentType.INTEGER, (result.getValue() as string).charCodeAt); 
             case ContentType.INTEGER:                 
-                return result.getValue();
+                return result;//no hay conversión que hacer al valor, por lo tanto se retorna el result original
         }
 
         return new Result(ContentType.ERROR, "Impossible to cast an "+result.getType() + "value to INTEGER");
@@ -138,7 +138,7 @@ export class Caster{
                 auxiliar = (result.getValue() as string).charCodeAt + ".0";
                 return new Result(ContentType.DOUBLE, parseFloat(auxiliar)); 
             case ContentType.DOUBLE:
-                return result.getValue();
+                return result;//no hay conversión que hacer al valor, por lo tanto se retorna el result original
         }
 
         //esto se mostrará cuadno tipo == ERR o uno de los normales no aceptados...
@@ -158,6 +158,20 @@ export class Caster{
         
         return new Result(ContentType.ERROR, "Impossible to cast an "+result.getType() + "value to STRING");
     }//todos los tipos pueden pasarse a string sin problemas
+
+    getOnlyString(result:Result):string{
+        switch(result.getType()){
+            case ContentType.BOOLEAN:
+                return (((result.getValue() as boolean) == true)?"1":"0");
+            case ContentType.INTEGER: case ContentType.DOUBLE: 
+                return String(result.getValue());
+            case ContentType.STRING: case ContentType.CHAR:
+                return (result.getValue() as string);//el doble getValue() lo tenía, porque por error, al crear una variable en la invocación, por medio de los argumentos, enviaba el result al contenido de la variable, en lugar del valor del result xD jeje xD
+
+        }
+        
+        return "Impossible to cast an "+result.getType() + "value to STRING";
+    }
 
     getBoolean(result:Result):Result{
         if(result.getType() == ContentType.BOOLEAN){

@@ -2,11 +2,14 @@ import { TAS } from "src/app/Modelo/ObjetosAnalisis/EDDs/TablaSimbolos/TAS";
 import { ContentType } from "../../../Class_Content/ContentType";
 import { Result } from "../../Content/Result";
 import { Dibujar } from "./Dibujar";
+import { Error } from "src/app/Modelo/Tool/Error/Error";
+import { ErrorMessage } from "src/app/Modelo/Tool/Error/ErrorMessage";
+import { ErrorType } from "src/app/Modelo/Tool/Error/ErrorType";
 
 export class DibujarTS extends Dibujar{
 
-    constructor(){
-        super();
+    constructor(line:number, column:number, ){
+        super(line, column);
 
         this.sentenceName = "DIBUJAR_TS";
     }
@@ -24,6 +27,8 @@ export class DibujarTS extends Dibujar{
     }
 
     override generateGraphic(file: string): Result{
+        console.log("exe DRAW [TS]");
+
         //Se invoca al meodo [drawFUN] que tiene el código para generar el .jpg o de una vez
         //el .pdf a partir del string recibido dependiendo del resultado que devuelva
         //se enviará msje SUCCESS or FAIL
@@ -31,8 +36,10 @@ export class DibujarTS extends Dibujar{
         if(this.drawTAS()){
             return new Result(ContentType.NOTHING);
         }
-
-        return new Result(ContentType.ERROR, "Encountered errors at tried draw the AST");
+        
+        this.errorHandler.addMessage(new Error(ErrorType.SEMANTIC, ErrorMessage.DRAW_SCRIPT_FAILED_TS,
+            this.sourceLocation, this.sentenceName, this.father.getSentenceName()));
+        return new Result(ContentType.ERROR, "Encountered errors at tried draw the TS representation");
     }
 
     drawTAS():boolean{

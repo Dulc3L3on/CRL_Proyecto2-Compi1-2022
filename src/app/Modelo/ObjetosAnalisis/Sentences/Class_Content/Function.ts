@@ -12,8 +12,8 @@ export class Function extends LocalContainer{
     hash:string
     parametros: Array<Variable>;    
 
-    constructor(padre:GlobalContainer, type:number, functionName:string, parametros:Array<Variable>){
-        super();
+    constructor(line:number, column:number, padre:GlobalContainer, type:number, functionName:string, parametros:Array<Variable>){
+        super(line, column);
 
         this.setScope(0);//puesto que este valor es fijo
         this.setFather(padre);
@@ -30,8 +30,8 @@ export class Function extends LocalContainer{
         this.TAS = new TAS();
 
         for(let index = 0; index < this.parametros.length; index++){//par así indicar tb si además de no corresponde el #, no corresp el tipo...            
-            this.TAS.setVariable(new Variable(this.parametros[index].getType(), 
-            this.parametros[index].getName(), theArguments[index].getValue()));
+            this.TAS.setVariable(new Variable(this.sourceLocation.getLine(), this.sourceLocation.getColumn(), this.parametros[index].getType(), 
+            this.parametros[index].getName(), theArguments[index].getResult().getValue()));//aquí ya no es nec invocar el getValue de expre, puseto que se llamó al regenerar el Hash, por lo tanto, se puede invocar de una vez el result, y así ahorrar tiempo, recursos y trabajo xD
         }   
     }//no es nec hacer una verificación de correspondencia, puesto que si se halló la función, esto indica que 
     //el #params y tipos de la invocada estaban definidos en la función de algun GlobalContainer    

@@ -12,6 +12,11 @@
     "src/app/Modelo/CRL_File.ts",
     "src/app/Modelo/Tool/Tool.ts",
     "src/app/Modelo/ObjetosAnalisis/Sentences/Function_Content/Content/Caster.ts",
+    "src/app/Modelo/Handlers/ErrorHandler.ts",
+    "src/app/Modelo/Tool/Error/Error.ts",
+    "src/app/Modelo/Tool/Error/ErrorMessage.ts",
+    "src/app/Modelo/Tool/Error/ErrorType.ts", 
+    "src/app/Modelo/Tool/SourceLocation.ts",
 
     "src/app/Modelo/Prev-Ejecucion/HierarchyStack.ts",
 
